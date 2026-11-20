@@ -5,7 +5,7 @@ Tick tasks as they are completed (the agent updates this at the end of each task
 Legend: [ ] todo · [~] in progress · [x] done · [!] blocked
 
 ## Phase 00 — Repo, toolchain, Cloudflare spike
-- [ ] T00.1 · [ ] T00.2 · [ ] T00.3 · [ ] T00.4 · [ ] T00.5 · [ ] T00.6 · [ ] T00.7
+- [x] T00.1 · [ ] T00.2 · [ ] T00.3 · [ ] T00.4 · [ ] T00.5 · [ ] T00.6 · [ ] T00.7
 ## Phase 01 — Design tokens, primitives, styleguide
 - [ ] T01.1 · [ ] T01.2 · [ ] T01.3 · [ ] T01.4 · [ ] T01.5 · [ ] T01.6 · [ ] T01.7
 ## Phase 02 — i18n and routing
@@ -28,6 +28,12 @@ Legend: [ ] todo · [~] in progress · [x] done · [!] blocked
 - [ ] T10.1 · [ ] T10.2 · [ ] T10.3 · [ ] T10.4 · [ ] T10.5
 ## Phase 11 — QA, launch, template packaging
 - [ ] T11.1 · [ ] T11.2 · [ ] T11.3 · [ ] T11.4 · [ ] T11.5 · [ ] T11.6 · [ ] T11.7
+
+## Task notes
+
+Phases 00–01 were run in one batch chat at the owner's request (no per-task Plan Mode, the agent commits). Tasks needing Sanity, Cloudflare or Resend accounts were skipped.
+
+- **T00.1:** Scaffolded with `create-next-app@16.4.6` in a temp dir (`--turbopack` no longer exists, Turbopack is the default; the scaffold refuses names starting with `_`). The scaffold now wires Tailwind via the `@tailwindcss/turbopack` loader in `next.config.ts`; we use `@tailwindcss/postcss` + `postcss.config.mjs` instead, as ARCHITECTURE §1 and the Next 16 CSS guide specify. Pinned `@types/node@24.19.2`, `@types/react(-dom)@19.3.0`. Demo SVGs dropped.
 
 ## Spike results (T00.4)
 _To be filled: proxy.ts OK?, worker size, cold start, CPU ms for static hit / ISR miss / server action / draft mode._
