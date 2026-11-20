@@ -5,7 +5,7 @@ Tick tasks as they are completed (the agent updates this at the end of each task
 Legend: [ ] todo · [~] in progress · [x] done · [!] blocked
 
 ## Phase 00 — Repo, toolchain, Cloudflare spike
-- [x] T00.1 · [x] T00.2 · [~] T00.3 · [ ] T00.4 · [~] T00.5 · [x] T00.6 · [ ] T00.7
+- [x] T00.1 · [x] T00.2 · [~] T00.3 · [ ] T00.4 · [~] T00.5 · [x] T00.6 · [~] T00.7
 ## Phase 01 — Design tokens, primitives, styleguide
 - [ ] T01.1 · [ ] T01.2 · [ ] T01.3 · [ ] T01.4 · [ ] T01.5 · [ ] T01.6 · [ ] T01.7
 ## Phase 02 — i18n and routing
@@ -39,6 +39,14 @@ Phases 00–01 were run in one batch chat at the owner's request (no per-task Pl
 - **T00.4:** skipped in the batch run (needs the Cloudflare sandbox account). ADR-003/004/010 stay pending.
 - **T00.5 (partial):** `ci.yml`, `deploy.yml` and `renovate.json` are written and pass `@action-validator/cli` schema validation. Actions pinned to current majors (checkout v7, setup-node v7, pnpm/action-setup v6, upload-artifact v7, github-script v9). CI runs e2e against workerd with Turnstile test keys. The preview job greps the `*.workers.dev` URL from the `opennextjs-cloudflare upload` output and upserts one PR comment. Renovate enforces the ADR-009 caps and requires dashboard approval for platform majors. The `pnpm typegen` + `git diff` CI step is added in T03.1. **Open (needs GitHub repo + Cloudflare secrets):** the Done check (test PR with green CI and a preview URL comment).
 - **T00.6:** `readPublicEnv(...keys)` (`src/env.ts`) and `readServerEnv(...keys)` (`src/env.server.ts`, `server-only`) validate **only the requested keys** with Zod (`src/lib/env/reader.ts`), so missing Sanity/Resend config doesn't break pages that don't use it yet. Errors list every missing/invalid key. `next.config.ts` validates `BUILD_REQUIRED_PUBLIC_ENV` (`NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_ENV`): `NEXT_PUBLIC_SITE_URL= pnpm build` fails with "NEXT_PUBLIC_SITE_URL: missing". In `next dev` only, `SITE_URL` defaults to `http://localhost:3000` and Turnstile falls back to the test keys. Verified a client component importing `env.server` fails the build. Deviation: the task's single `serverEnv`/`clientEnv` objects became per-key reader functions (same intent, lazy by design).
+- **T00.7 (partial):** Skills installed with the README §3 commands and committed (`.agents/skills/`, `.claude/skills/` symlinks, `skills-lock.json`): frontend-design, web-design-guidelines, vercel-react-best-practices, next-dev-loop, next-bundle-optimizer, 5 Sanity skills, 4 Cloudflare skills (`npx skills ls` shows all 15). `CHANGELOG.md`, `LICENSE` (proprietary, holder name left generic) and `.editorconfig` added. **Blocked:** `.cursor/mcp.json`, `.mcp.json` and `.cursor/rules/*.mdc` from the planning pack are **missing from the repo**, so the MCP server status can't be confirmed and the scoped rules don't exist. Copy them from the original pack (not recreated, to avoid inventing their content). OAuth needed later: `sanity`, `cloudflare-bindings`, `cloudflare-observability`.
+
+### MCP / skills status
+| Item | Status |
+| --- | --- |
+| Skills (15, project-level) | Installed |
+| `.cursor/mcp.json` / `.mcp.json` | Missing from repo |
+| `.cursor/rules/*.mdc` | Missing from repo |
 
 ## Spike results (T00.4)
 _To be filled: proxy.ts OK?, worker size, cold start, CPU ms for static hit / ISR miss / server action / draft mode._

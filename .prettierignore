@@ -11,3 +11,6 @@ sanity.types.ts
 schema.json
 docs
 *.md
+.agents
+.claude
+skills-lock.json
