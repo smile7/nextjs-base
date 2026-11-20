@@ -1,0 +1,16 @@
+import { Container } from '@/components/primitives/Container'
+import { Heading } from '@/components/primitives/Heading'
+import { ComponentsDemo } from '@/components/styleguide/ComponentsDemo'
+
+export default function StyleguidePage() {
+  return (
+    <main>
+      <Container className="pt-12">
+        <Heading as="h1" size="step-4">
+          Styleguide
+        </Heading>
+      </Container>
+      <ComponentsDemo />
+    </main>
+  )
+}

@@ -14,6 +14,14 @@ const eslintConfig = defineConfig([
   {
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
+      'jsx-a11y/label-has-associated-control': [
+        'error',
+        {
+          labelComponents: ['Label'],
+          controlComponents: ['Input', 'Textarea', 'Checkbox'],
+          assert: 'either',
+        },
+      ],
       '@typescript-eslint/consistent-type-imports': 'error',
       // Content-layer boundary: patterns are filled in T04.6 (see ARCHITECTURE §4).
       'no-restricted-imports': ['error', { patterns: [] }],
@@ -21,7 +29,8 @@ const eslintConfig = defineConfig([
   },
   {
     files: ['src/components/**/*.tsx'],
-    ignores: ['**/*.test.tsx'],
+    // Styleguide: internal, env-gated, noindex demo page with sample copy, not user-facing UI.
+    ignores: ['**/*.test.tsx', 'src/components/styleguide/**'],
     rules: {
       'react/jsx-no-literals': [
         'warn',
