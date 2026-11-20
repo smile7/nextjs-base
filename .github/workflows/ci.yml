@@ -19,6 +19,7 @@ jobs:
     env:
       NEXT_PUBLIC_SITE_URL: http://localhost:8787
       NEXT_PUBLIC_ENV: development
+      NEXT_PUBLIC_ENABLE_STYLEGUIDE: 'true'
       NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
       TURNSTILE_SECRET_KEY: 1x0000000000000000000000000000000AA
     steps:
@@ -32,6 +33,7 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
+      - run: pnpm contrast
       - run: pnpm build
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium webkit

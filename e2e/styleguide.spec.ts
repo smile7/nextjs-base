@@ -9,6 +9,27 @@ test('styleguide has no a11y violations', async ({ page }) => {
   await expectNoA11yViolations(page)
 })
 
+test('styleguide is noindex', async ({ page }) => {
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/)
+})
+
+test('no horizontal scroll at 360, 768 and 1280 px', async ({ page }) => {
+  for (const width of [360, 768, 1280]) {
+    await page.setViewportSize({ width, height: 800 })
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    )
+    expect(overflow, `horizontal overflow at ${width}px`).toBeLessThanOrEqual(0)
+  }
+})
+
+test('live contrast ratios are computed and all pass', async ({ page }) => {
+  const pairs = page.locator('[data-contrast-pair]')
+  await expect(pairs).toHaveCount(30)
+  await expect(pairs.filter({ hasText: '…' })).toHaveCount(0)
+  await expect(pairs.filter({ hasText: '<' })).toHaveCount(0)
+})
+
 async function focusWithKeyboard(page: Page, target: Locator) {
   await target.focus()
   await expect(target).toBeFocused()

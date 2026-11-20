@@ -50,14 +50,28 @@ export function oklchToLinearSrgb({ l, c, h }: Oklch): [number, number, number] 
   ]
 }
 
-/** WCAG 2.x relative luminance from linear sRGB channels. */
-export function relativeLuminance(color: Oklch): number {
-  const [r, g, b] = oklchToLinearSrgb(color)
+function luminanceFromLinear([r, g, b]: [number, number, number]): number {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b
 }
 
-export function contrastRatio(a: Oklch, b: Oklch): number {
-  const la = relativeLuminance(a)
-  const lb = relativeLuminance(b)
+/** WCAG 2.x relative luminance from linear sRGB channels. */
+export function relativeLuminance(color: Oklch): number {
+  return luminanceFromLinear(oklchToLinearSrgb(color))
+}
+
+/** WCAG 2.x relative luminance from 8-bit sRGB channels (e.g. canvas pixel data). */
+export function relativeLuminanceFromSrgb8([r, g, b]: [number, number, number]): number {
+  const toLinear = (channel: number) => {
+    const c = channel / 255
+    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+  }
+  return luminanceFromLinear([toLinear(r), toLinear(g), toLinear(b)])
+}
+
+export function ratioFromLuminance(la: number, lb: number): number {
   return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05)
+}
+
+export function contrastRatio(a: Oklch, b: Oklch): number {
+  return ratioFromLuminance(relativeLuminance(a), relativeLuminance(b))
 }

@@ -3,7 +3,9 @@ import {
   contrastRatio,
   parseCustomProperties,
   parseOklch,
+  ratioFromLuminance,
   relativeLuminance,
+  relativeLuminanceFromSrgb8,
   resolveValue,
 } from './contrast'
 
@@ -17,6 +19,13 @@ describe('contrast math', () => {
 
   it('matches the sRGB luminance of pure red (#ff0000 ≈ 0.2126)', () => {
     expect(relativeLuminance({ l: 0.62796, c: 0.25768, h: 29.2339 })).toBeCloseTo(0.2126, 2)
+  })
+
+  it('computes luminance from 8-bit sRGB like the OKLCH path', () => {
+    expect(relativeLuminanceFromSrgb8([255, 255, 255])).toBeCloseTo(1, 5)
+    expect(relativeLuminanceFromSrgb8([255, 0, 0])).toBeCloseTo(0.2126, 4)
+    expect(relativeLuminanceFromSrgb8([0, 0, 0])).toBe(0)
+    expect(ratioFromLuminance(1, 0)).toBeCloseTo(21, 5)
   })
 
   it('parses oklch with a percentage lightness', () => {
