@@ -5,7 +5,7 @@ Tick tasks as they are completed (the agent updates this at the end of each task
 Legend: [ ] todo · [~] in progress · [x] done · [!] blocked
 
 ## Phase 00 — Repo, toolchain, Cloudflare spike
-- [x] T00.1 · [x] T00.2 · [~] T00.3 · [ ] T00.4 · [~] T00.5 · [ ] T00.6 · [ ] T00.7
+- [x] T00.1 · [x] T00.2 · [~] T00.3 · [ ] T00.4 · [~] T00.5 · [x] T00.6 · [ ] T00.7
 ## Phase 01 — Design tokens, primitives, styleguide
 - [ ] T01.1 · [ ] T01.2 · [ ] T01.3 · [ ] T01.4 · [ ] T01.5 · [ ] T01.6 · [ ] T01.7
 ## Phase 02 — i18n and routing
@@ -38,6 +38,7 @@ Phases 00–01 were run in one batch chat at the owner's request (no per-task Pl
 - **T00.3 (partial):** ISR config (`wrangler.jsonc`, `open-next.config.ts`) and Static variants (`infra/static/`) match the OpenNext caching guide. `pnpm preview` serves 200 in workerd with all bindings simulated locally; `pnpm cf-typegen` writes `cloudflare-env.d.ts` (committed, regenerate after binding changes). `compatibility_date` is `2026-11-18` (the pinned workerd build date) rather than "today", because a later date fails locally. **Open (needs Cloudflare account):** step 6, create the R2 bucket (EU) and D1 database on the sandbox account and replace the placeholder `database_id` (commands are in `wrangler.jsonc` comments). pnpm `allowBuilds` now also allows `workerd`.
 - **T00.4:** skipped in the batch run (needs the Cloudflare sandbox account). ADR-003/004/010 stay pending.
 - **T00.5 (partial):** `ci.yml`, `deploy.yml` and `renovate.json` are written and pass `@action-validator/cli` schema validation. Actions pinned to current majors (checkout v7, setup-node v7, pnpm/action-setup v6, upload-artifact v7, github-script v9). CI runs e2e against workerd with Turnstile test keys. The preview job greps the `*.workers.dev` URL from the `opennextjs-cloudflare upload` output and upserts one PR comment. Renovate enforces the ADR-009 caps and requires dashboard approval for platform majors. The `pnpm typegen` + `git diff` CI step is added in T03.1. **Open (needs GitHub repo + Cloudflare secrets):** the Done check (test PR with green CI and a preview URL comment).
+- **T00.6:** `readPublicEnv(...keys)` (`src/env.ts`) and `readServerEnv(...keys)` (`src/env.server.ts`, `server-only`) validate **only the requested keys** with Zod (`src/lib/env/reader.ts`), so missing Sanity/Resend config doesn't break pages that don't use it yet. Errors list every missing/invalid key. `next.config.ts` validates `BUILD_REQUIRED_PUBLIC_ENV` (`NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_ENV`): `NEXT_PUBLIC_SITE_URL= pnpm build` fails with "NEXT_PUBLIC_SITE_URL: missing". In `next dev` only, `SITE_URL` defaults to `http://localhost:3000` and Turnstile falls back to the test keys. Verified a client component importing `env.server` fails the build. Deviation: the task's single `serverEnv`/`clientEnv` objects became per-key reader functions (same intent, lazy by design).
 
 ## Spike results (T00.4)
 _To be filled: proxy.ts OK?, worker size, cold start, CPU ms for static hit / ISR miss / server action / draft mode._

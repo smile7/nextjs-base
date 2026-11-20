@@ -1,5 +1,8 @@
 import type { NextConfig } from 'next'
 import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare'
+import { BUILD_REQUIRED_PUBLIC_ENV, readPublicEnv } from './src/env'
+
+readPublicEnv(...BUILD_REQUIRED_PUBLIC_ENV)
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
