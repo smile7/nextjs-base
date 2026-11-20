@@ -1,0 +1,13 @@
+pnpm-lock.yaml
+.next
+.open-next
+.wrangler
+.screenshots
+playwright-report
+test-results
+next-env.d.ts
+cloudflare-env.d.ts
+sanity.types.ts
+schema.json
+docs
+*.md
