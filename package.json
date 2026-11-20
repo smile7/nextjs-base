@@ -28,6 +28,7 @@
     "typegen": "echo \"pnpm typegen: implemented in T03.1\" && exit 1"
   },
   "dependencies": {
+    "@opennextjs/cloudflare": "1.20.17",
     "next": "16.4.6",
     "react": "19.3.1",
     "react-dom": "19.3.1"
@@ -53,6 +54,7 @@
     "tailwindcss": "4.3.5",
     "tsx": "4.23.15",
     "typescript": "6.0.3",
-    "vitest": "5.1.1"
+    "vitest": "5.1.1",
+    "wrangler": "4.165.0"
   }
 }

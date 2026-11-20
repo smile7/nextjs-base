@@ -5,7 +5,7 @@ Tick tasks as they are completed (the agent updates this at the end of each task
 Legend: [ ] todo · [~] in progress · [x] done · [!] blocked
 
 ## Phase 00 — Repo, toolchain, Cloudflare spike
-- [x] T00.1 · [x] T00.2 · [ ] T00.3 · [ ] T00.4 · [ ] T00.5 · [ ] T00.6 · [ ] T00.7
+- [x] T00.1 · [x] T00.2 · [~] T00.3 · [ ] T00.4 · [ ] T00.5 · [ ] T00.6 · [ ] T00.7
 ## Phase 01 — Design tokens, primitives, styleguide
 - [ ] T01.1 · [ ] T01.2 · [ ] T01.3 · [ ] T01.4 · [ ] T01.5 · [ ] T01.6 · [ ] T01.7
 ## Phase 02 — i18n and routing
@@ -35,6 +35,7 @@ Phases 00–01 were run in one batch chat at the owner's request (no per-task Pl
 
 - **T00.1:** Scaffolded with `create-next-app@16.4.6` in a temp dir (`--turbopack` no longer exists, Turbopack is the default; the scaffold refuses names starting with `_`). The scaffold now wires Tailwind via the `@tailwindcss/turbopack` loader in `next.config.ts`; we use `@tailwindcss/postcss` + `postcss.config.mjs` instead, as ARCHITECTURE §1 and the Next 16 CSS guide specify. Pinned `@types/node@24.19.2`, `@types/react(-dom)@19.3.0`. Demo SVGs dropped.
 - **T00.2:** ESLint flat config (next core-web-vitals + typescript, jsx-a11y strict rules, `react/jsx-no-literals` warn in `src/components/**`, prettier last); `pnpm lint` runs with `--max-warnings 0`, so literal-string warnings fail `pnpm check`. Vitest 5 uses two inline projects (`node` for `*.test.ts`, `dom`/jsdom for `*.test.tsx`) and Vite's `resolve.tsconfigPaths`. `globals.css` moved to `src/styles/` now because Prettier's `tailwindStylesheet` points there. `package.json` is `"type": "module"`. pnpm 12 blocks build scripts: `esbuild` allowed in `pnpm-workspace.yaml`. Playwright needs `chromium` + `webkit` (iPad Mini is WebKit). Optional pre-commit hooks skipped. `preview`/`deploy`/`upload`/`cf-typegen` scripts work from T00.3.
+- **T00.3 (partial):** ISR config (`wrangler.jsonc`, `open-next.config.ts`) and Static variants (`infra/static/`) match the OpenNext caching guide. `pnpm preview` serves 200 in workerd with all bindings simulated locally; `pnpm cf-typegen` writes `cloudflare-env.d.ts` (committed, regenerate after binding changes). `compatibility_date` is `2026-11-18` (the pinned workerd build date) rather than "today", because a later date fails locally. **Open (needs Cloudflare account):** step 6, create the R2 bucket (EU) and D1 database on the sandbox account and replace the placeholder `database_id` (commands are in `wrangler.jsonc` comments). pnpm `allowBuilds` now also allows `workerd`.
 
 ## Spike results (T00.4)
 _To be filled: proxy.ts OK?, worker size, cold start, CPU ms for static hit / ISR miss / server action / draft mode._
