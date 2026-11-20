@@ -1,6 +1,7 @@
 import { Container } from '@/components/primitives/Container'
 import { Heading } from '@/components/primitives/Heading'
 import { ComponentsDemo } from '@/components/styleguide/ComponentsDemo'
+import { MotionDemo } from '@/components/styleguide/MotionDemo'
 
 export default function StyleguidePage() {
   return (
@@ -11,6 +12,7 @@ export default function StyleguidePage() {
         </Heading>
       </Container>
       <ComponentsDemo />
+      <MotionDemo />
     </main>
   )
 }
