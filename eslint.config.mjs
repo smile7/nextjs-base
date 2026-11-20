@@ -21,6 +21,7 @@ const eslintConfig = defineConfig([
   },
   {
     files: ['src/components/**/*.tsx'],
+    ignores: ['**/*.test.tsx'],
     rules: {
       'react/jsx-no-literals': [
         'warn',

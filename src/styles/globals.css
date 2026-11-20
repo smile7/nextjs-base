@@ -2,6 +2,7 @@
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 @import './tokens.css';
+@plugin '@tailwindcss/typography';
 
 /* Light theme only in v1; token names already allow a [data-theme='dark'] override. */
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
@@ -28,6 +29,31 @@
   --color-input: var(--color-border-strong);
   --color-ring: var(--color-focus);
   --radius: var(--radius-md);
+}
+
+/* Typography plugin colors → semantic tokens (used by the Prose primitive). */
+@utility prose-theme {
+  --tw-prose-body: var(--color-fg);
+  --tw-prose-headings: var(--color-fg);
+  --tw-prose-lead: var(--color-fg-muted);
+  --tw-prose-links: var(--color-link);
+  --tw-prose-bold: var(--color-fg);
+  --tw-prose-counters: var(--color-fg-muted);
+  --tw-prose-bullets: var(--color-brand-400);
+  --tw-prose-hr: var(--color-border);
+  --tw-prose-quotes: var(--color-fg);
+  --tw-prose-quote-borders: var(--color-accent-400);
+  --tw-prose-captions: var(--color-fg-muted);
+  --tw-prose-code: var(--color-fg);
+  --tw-prose-th-borders: var(--color-border-strong);
+  --tw-prose-td-borders: var(--color-border);
+  font-size: var(--text-step-0);
+  line-height: var(--leading-body);
+
+  & :where(h1, h2, h3, h4) {
+    font-family: var(--font-display);
+    line-height: var(--leading-heading);
+  }
 }
 
 @layer base {

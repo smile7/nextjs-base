@@ -7,7 +7,7 @@ Legend: [ ] todo · [~] in progress · [x] done · [!] blocked
 ## Phase 00 — Repo, toolchain, Cloudflare spike
 - [x] T00.1 · [x] T00.2 · [~] T00.3 · [ ] T00.4 · [~] T00.5 · [x] T00.6 · [~] T00.7
 ## Phase 01 — Design tokens, primitives, styleguide
-- [x] T01.1 · [x] T01.2 · [ ] T01.3 · [ ] T01.4 · [ ] T01.5 · [ ] T01.6 · [ ] T01.7
+- [x] T01.1 · [x] T01.2 · [x] T01.3 · [ ] T01.4 · [ ] T01.5 · [ ] T01.6 · [ ] T01.7
 ## Phase 02 — i18n and routing
 - [ ] T02.1 · [ ] T02.2 · [ ] T02.3 · [ ] T02.4 · [ ] T02.5
 ## Phase 03 — Sanity Studio and schemas
@@ -46,6 +46,7 @@ Phases 00–01 were run in one batch chat at the owner's request (no per-task Pl
   - Added semantic tokens the components need: `surface-muted`, `border-strong` (3:1 input borders, WCAG 1.4.11), `primary-hover`, `accent-hover`, `link`, `focus-on-dark` (focus ring on brand/inverse tones). Component tokens: `--radius-button|field|card|tile|media`.
   - shadcn's `accent` (menu hover) is deliberately not bridged because our `accent` is the brand accent; restyled components use `bg-muted` for hover.
 - **T01.2:** `src/config/fonts.ts`: Nunito (display, not preloaded) + Onest (body, preloaded), both variable with `latin` + `cyrillic` subsets and `adjustFontFallback` (size-adjusted Arial fallbacks in the CSS). Build output contains the Cyrillic `unicode-range` faces. Alternatives for Silvena (M PLUS Rounded 1c + Manrope, Comfortaa + Golos Text) are shown in `/styleguide` (T01.6). `Wordmark` takes the brand name as a prop (no hard-coded name), `variant: full | compact`, optional decorative smile arc (`aria-hidden`); em-based arbitrary values are used for logo letter-spacing/glyph size so they scale with the variant. Type specimen screenshot: see T01.7.
+- **T01.3:** `src/components/primitives/`: `Container` (prose/content/wide), `Section` (`tone`, `spacing`, `anchorId`, `labelledBy`; dark tones swap focus ring/link/muted colors to stay visible), `Stack`/`Cluster` (gap scale xs–xl), `Heading` (`as` + `size`, default size per level), `Text` (small/body/lead, default/muted), `Prose` (`@tailwindcss/typography` + a `prose-theme` utility mapping its colors to tokens), `Icon` (lucide, 1.5 stroke, decorative unless `label`), `VisuallyHidden`. All server components, tokens only. Tailwind's built-in `max-w-prose` (65ch) beats the `--container-prose` token, so prose width uses `max-w-(--container-prose)`. `react/jsx-no-literals` now ignores `*.test.tsx`. Tests: Heading level/size mapping, Icon a11y, Section region, Container width. `SkipLink`/`ContentImage`/`RichText` come with their phases (05/04).
 
 ### MCP / skills status
 | Item | Status |
