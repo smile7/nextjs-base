@@ -21,7 +21,7 @@
     "e2e": "playwright test",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm contrast",
     "contrast": "tsx scripts/check-contrast.ts",
-    "shots": "echo \"pnpm shots: implemented in T01.7\" && exit 1",
+    "shots": "tsx scripts/shots.ts",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
