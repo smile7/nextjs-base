@@ -17,6 +17,10 @@ const nextConfig: NextConfig = {
   logging: {
     fetches: { fullUrl: process.env.NODE_ENV === 'development' },
   },
+  rewrites: async () => [
+    // The Studio is one prerendered page; its client router reads the deep-link URL.
+    { source: '/admin/:path+', destination: '/admin' },
+  ],
 }
 
 export default withNextIntl(nextConfig)

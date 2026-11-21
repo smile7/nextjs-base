@@ -24,7 +24,7 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 - [ ] [D] `pnpm sanity login`, then confirm `sanity.cli.ts` has the project ID and dataset.
 - [ ] [D] Create datasets: `production`, `development` (both public on Free).
 - [ ] [D] API → Tokens: `SANITY_API_READ_TOKEN` (Viewer) for the site, `SANITY_WRITE_TOKEN` (Editor) for seeding, kept in `.env.local` only.
-- [ ] [D] API → CORS origins (with credentials): `http://localhost:3000`, the preview URL pattern (`https://*.<account>.workers.dev`), `https://<domain>`, `https://www.<domain>`.
+- [ ] [D] API → CORS origins (with credentials): `http://localhost:3000`, `http://localhost:8787` (`pnpm preview`), the preview URL pattern (`https://*.<account>.workers.dev`), `https://<domain>`, `https://www.<domain>`.
 - [ ] [D] `pnpm seed --client --dataset production` → structure: system pages (home/services/about/gallery/blog/contact) with default sections, empty settings, legal templates.
 - [ ] [D] Optional: `pnpm sanity deploy` → `<slug>.sanity.studio` (hosted Studio as a backup entry point).
 - [ ] [D] Publish webhook (Manage → API → Webhooks), **1 of the 2 allowed on Free** (ARCHITECTURE §6.2): URL `https://api.github.com/repos/<owner>/<repo>/dispatches`, dataset `production`, triggers create/update/delete, filter `!(_type match "sanity.*")`, **"Trigger webhook when drafts are modified" off**, POST, headers `Authorization: Bearer <fine-grained PAT with contents:write on this repo only>` and `Accept: application/vnd.github+json`, projection `{"event_type": "sanity-publish"}`. Add a calendar reminder to rotate the PAT before it expires.
