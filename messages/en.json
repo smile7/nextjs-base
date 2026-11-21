@@ -1,6 +1,7 @@
 {
   "LanguageSwitcher": {
-    "label": "Language"
+    "label": "Language",
+    "missingTranslation": "(this page isn’t translated; the link goes to the closest translated page)"
   },
   "NotFound": {
     "code": "404",

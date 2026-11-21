@@ -5,6 +5,8 @@ export default defineConfig({
   plugins: [react()],
   resolve: { tsconfigPaths: true },
   test: {
+    // next-intl imports `next/navigation` without an extension; Vite must bundle it to resolve that.
+    server: { deps: { inline: ['next-intl'] } },
     projects: [
       {
         extends: true,

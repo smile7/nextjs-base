@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
+import { getMessages } from 'next-intl/server'
 
 import { MotionProvider } from '@/components/motion/MotionProvider'
 import { fontVariables } from '@/config/fonts'
@@ -22,11 +23,13 @@ export function generateMetadata(): Metadata {
 export default async function LocaleLayout({ children, params }: LayoutProps<'/[locale]'>) {
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) notFound()
+  const messages = await getMessages()
 
   return (
     <html lang={locale} className={fontVariables}>
       <body>
-        <NextIntlClientProvider messages={null}>
+        {/* Client components get only the namespaces they use. */}
+        <NextIntlClientProvider messages={{ LanguageSwitcher: messages.LanguageSwitcher }}>
           <MotionProvider>{children}</MotionProvider>
         </NextIntlClientProvider>
       </body>
