@@ -132,6 +132,8 @@
   --header-h-expanded: 6rem;
   --header-h-compact: 4rem;
   --header-h-mobile: 4rem;
+  /* Expanded − compact: the sticky header's negative top and the compact threshold. */
+  --header-shrink: calc(var(--header-h-expanded) - var(--header-h-compact));
   --action-bar-h: 4.5rem;
   --radius-button: var(--radius-pill);
   --radius-field: var(--radius-sm);

@@ -15,5 +15,10 @@
   },
   "Preview": {
     "exit": "Exit preview"
+  },
+  "Header": {
+    "nav": "Main navigation",
+    "call": "Call",
+    "opensInNewTab": "(opens in a new tab)"
   }
 }
