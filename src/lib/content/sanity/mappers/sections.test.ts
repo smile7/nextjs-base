@@ -108,13 +108,39 @@ describe('mapSections', () => {
     const photo = (n: number) => ({ _id: `g${n}`, album: 'clinic', image: imageRow() })
     const [blog, gallery, faq] = mapSections(
       rows(
-        { ...base, _key: 'b', _type: 'section.blogTeaser', heading: null, count: 2, articles: [1, 2, 3].map(article) },
-        { ...base, _key: 'g', _type: 'section.gallery', heading: null, limit: 1, showLinkToGallery: true, items: [1, 2].map(photo) },
-        { ...base, _key: 'f', _type: 'section.faq', heading: null, intro: null, emitSchema: null, items: [] },
+        {
+          ...base,
+          _key: 'b',
+          _type: 'section.blogTeaser',
+          heading: null,
+          count: 2,
+          articles: [1, 2, 3].map(article),
+        },
+        {
+          ...base,
+          _key: 'g',
+          _type: 'section.gallery',
+          heading: null,
+          limit: 1,
+          showLinkToGallery: true,
+          items: [1, 2].map(photo),
+        },
+        {
+          ...base,
+          _key: 'f',
+          _type: 'section.faq',
+          heading: null,
+          intro: null,
+          emitSchema: null,
+          items: [],
+        },
       ),
       'bg',
     )
-    expect(blog).toMatchObject({ type: 'blogTeaser', articles: [{ href: '/bg/blog/article-1' }, { id: 'a2' }] })
+    expect(blog).toMatchObject({
+      type: 'blogTeaser',
+      articles: [{ href: '/bg/blog/article-1' }, { id: 'a2' }],
+    })
     expect(blog?.type === 'blogTeaser' && blog.articles).toHaveLength(2)
     expect(gallery?.type === 'gallery' && gallery.items).toHaveLength(1)
     expect(faq).toMatchObject({ type: 'faq', emitSchema: true })

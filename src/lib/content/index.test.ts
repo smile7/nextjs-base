@@ -83,14 +83,37 @@ describe('content API', () => {
       { locale: 'en', slug: 'about-us' },
       { locale: 'bg', slug: 'za-nas' },
     ])
-    expect(lastCall()).toMatchObject({ stega: false, perspective: 'published', params: { type: 'page' } })
+    expect(lastCall()).toMatchObject({
+      stega: false,
+      perspective: 'published',
+      params: { type: 'page' },
+    })
+  })
+
+  it('strips stega from nested content for metadata and JSON-LD', () => {
+    const marker = '\u200b\u200c\u200d\ufeff'.repeat(8)
+    const seo = {
+      title: `Детска стоматология${marker}`,
+      nested: [{ name: `Д-р Иванова${marker}` }],
+      n: 3,
+    }
+
+    const plain = content.withoutStega(seo)
+
+    expect(plain).toEqual({ title: 'Детска стоматология', nested: [{ name: 'Д-р Иванова' }], n: 3 })
+    expect(JSON.stringify(plain)).not.toMatch(/[\u200b-\u200d\ufeff]/)
+    expect(content.withoutStega(plain)).toEqual(plain)
   })
 
   it('returns no translations for a missing or non-routable document', async () => {
     mocks.sanityFetch.mockResolvedValue(null)
     await expect(content.getTranslations('missing-doc')).resolves.toEqual({})
 
-    mocks.sanityFetch.mockResolvedValue({ _type: 'siteSettings', language: 'bg', translations: null })
+    mocks.sanityFetch.mockResolvedValue({
+      _type: 'siteSettings',
+      language: 'bg',
+      translations: null,
+    })
     await expect(content.getTranslations('siteSettings-bg')).resolves.toEqual({})
   })
 })

@@ -118,7 +118,14 @@ export function mapSection(row: SectionQueryRow, locale: Locale): Section | null
         ...text('intro', row.intro),
         steps: (row.steps ?? []).flatMap((step) =>
           step.title
-            ? [{ key: step._key, title: step.title, ...text('text', step.text), icon: icon(step.icon) }]
+            ? [
+                {
+                  key: step._key,
+                  title: step.title,
+                  ...text('text', step.text),
+                  icon: icon(step.icon),
+                },
+              ]
             : [],
         ),
         cta: mapCta(row.cta, locale),

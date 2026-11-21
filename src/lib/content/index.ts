@@ -58,6 +58,13 @@ import type { ArticleSummary, FaqItem, GalleryAlbum, SystemPageKey, Translations
 export type * from './types'
 export { RichText } from './rich-text'
 
+/**
+ * Content with Visual Editing markers removed (deep). In draft mode text fields carry invisible
+ * stega characters; metadata, JSON-LD and anything compared in code must go through this.
+ * A no-op on published content.
+ */
+export const withoutStega = <T>(value: T): T => clean(value)
+
 const i18nParams = (locale: Locale) => ({ locale, fallback: defaultLocale })
 
 function missing(what: string): null {

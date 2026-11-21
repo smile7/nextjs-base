@@ -12,5 +12,8 @@
     "description": "The address may be mistyped, or the page has moved. Start from the home page, or get in touch if you’re looking for something specific.",
     "home": "Go to the home page",
     "contact": "Contact us"
+  },
+  "Preview": {
+    "exit": "Exit preview"
   }
 }

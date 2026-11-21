@@ -15,7 +15,13 @@ describe('mapSiteSettings', () => {
       fixture<SiteSettingsQueryRow>({
         brandName: 'Demo Dental',
         tagline: '',
-        address: { street: 'ul. Pliska 54', city: 'Ruse', postalCode: '7000', region: null, countryCode: null },
+        address: {
+          street: 'ul. Pliska 54',
+          city: 'Ruse',
+          postalCode: '7000',
+          region: null,
+          countryCode: null,
+        },
         geo: { lat: 43.85, lng: 25.97 },
         phones: [
           { key: 'primary', e164: '+359888123456', display: '088 812 3456', label: null },
@@ -58,7 +64,11 @@ describe('mapNavigation', () => {
             label: 'Services',
             link: linkRow({ systemRoute: 'services' }),
             children: [
-              { _key: 'c1', label: 'Kids', link: linkRow({ internal: routeDoc({ slug: 'kids' }) }) },
+              {
+                _key: 'c1',
+                label: 'Kids',
+                link: linkRow({ internal: routeDoc({ slug: 'kids' }) }),
+              },
               { _key: 'c2', label: 'Untranslated', link: linkRow() },
             ],
           },

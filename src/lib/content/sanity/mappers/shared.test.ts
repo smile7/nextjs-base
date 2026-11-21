@@ -80,7 +80,10 @@ describe('links', () => {
       external: false,
     })
     expect(
-      linkHref(linkRow({ kind: 'external', href: 'https://maps.google.com', openInNewTab: true }), 'bg'),
+      linkHref(
+        linkRow({ kind: 'external', href: 'https://maps.google.com', openInNewTab: true }),
+        'bg',
+      ),
     ).toEqual({ href: 'https://maps.google.com', external: true, newTab: true })
     expect(linkHref(linkRow({ kind: 'tel', phone: '+359888123456' }), 'bg')?.href).toBe(
       'tel:+359888123456',
@@ -88,9 +91,9 @@ describe('links', () => {
     expect(linkHref(linkRow({ kind: 'email', email: 'hi@demo.bg' }), 'bg')?.href).toBe(
       'mailto:hi@demo.bg',
     )
-    expect(linkHref(linkRow({ kind: stega('anchor') as 'anchor', anchor: 'hours' }), 'bg')?.href).toBe(
-      '#hours',
-    )
+    expect(
+      linkHref(linkRow({ kind: stega('anchor') as 'anchor', anchor: 'hours' }), 'bg')?.href,
+    ).toBe('#hours')
   })
 
   it('returns null when the internal target has no version in this locale', () => {
@@ -100,7 +103,11 @@ describe('links', () => {
 
   it('labels internal links with the target title when no label is given', () => {
     const link = linkRow({ internal: routeDoc({ slug: 'za-detsa', title: 'За деца' }) })
-    expect(mapLink(link, null, 'bg')).toEqual({ href: '/bg/za-detsa', external: false, label: 'За деца' })
+    expect(mapLink(link, null, 'bg')).toEqual({
+      href: '/bg/za-detsa',
+      external: false,
+      label: 'За деца',
+    })
     expect(mapLink(link, 'Виж още', 'bg')?.label).toBe('Виж още')
   })
 })
@@ -118,7 +125,12 @@ describe('mapCta', () => {
 
   it('cleans stega from action and style', () => {
     const cta = mapCta(
-      { label: 'Book', action: stega('booking') as 'booking', style: stega('outline') as 'outline', link: null },
+      {
+        label: 'Book',
+        action: stega('booking') as 'booking',
+        style: stega('outline') as 'outline',
+        link: null,
+      },
       'bg',
     )
     expect(cta).toMatchObject({ action: 'booking', style: 'outline' })
@@ -152,7 +164,13 @@ describe('mapSeo', () => {
   it('omits empty fields and defaults noIndex to false', () => {
     expect(mapSeo(null)).toEqual({ noIndex: false })
     expect(
-      mapSeo({ title: 'T', description: null, noIndex: true, canonicalOverride: null, ogImage: null }),
+      mapSeo({
+        title: 'T',
+        description: null,
+        noIndex: true,
+        canonicalOverride: null,
+        ogImage: null,
+      }),
     ).toEqual({ title: 'T', noIndex: true })
   })
 })
@@ -182,6 +200,11 @@ describe('mapRichText', () => {
       { _type: 'link', _key: 'l1', href: '/en/contact', external: false },
     ])
     expect(value[1]).toMatchObject({ _type: 'image', caption: 'Caption', image: { width: 1200 } })
-    expect(value[2]).toEqual({ _type: 'callout', _key: 'c1', tone: 'tip', text: 'Brush twice a day' })
+    expect(value[2]).toEqual({
+      _type: 'callout',
+      _key: 'c1',
+      tone: 'tip',
+      text: 'Brush twice a day',
+    })
   })
 })

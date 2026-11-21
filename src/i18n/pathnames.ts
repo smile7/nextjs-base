@@ -20,3 +20,15 @@ export const pathnames = {
   '/styleguide': '/styleguide',
   '/[slug]': '/[slug]',
 } as const satisfies Record<string, string | Record<Locale, string>>
+
+export type InternalPathname = keyof typeof pathnames
+
+/** CMS `page.pageKey` → its internal pathname (the content mappers and the Presentation resolver). */
+export const systemPathnames = {
+  home: '/',
+  services: '/services',
+  about: '/about',
+  gallery: '/gallery',
+  blog: '/blog',
+  contact: '/contact',
+} as const satisfies Record<string, InternalPathname>

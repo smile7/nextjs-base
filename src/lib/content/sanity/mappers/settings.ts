@@ -1,10 +1,6 @@
 import type { Locale } from '@/config/i18n'
 
-import type {
-  AnnouncementQueryRow,
-  NavigationQueryRow,
-  SiteSettingsQueryRow,
-} from '../query-types'
+import type { AnnouncementQueryRow, NavigationQueryRow, SiteSettingsQueryRow } from '../query-types'
 import type { Address, Announcement, Navigation, SiteSettings, Weekday } from '../../types'
 import { mapList } from './collections'
 import { clean, mapCta, mapImage, mapLink, routePath } from './shared'
@@ -30,14 +26,18 @@ function present<K extends string>(fields: Record<K, string | null | undefined>)
   ) as Partial<Record<K, string>>
 }
 
-export function mapSiteSettings(row: SiteSettingsQueryRow | null, locale: Locale): SiteSettings | null {
+export function mapSiteSettings(
+  row: SiteSettingsQueryRow | null,
+  locale: Locale,
+): SiteSettings | null {
   if (!row?.brandName) return null
   const brandName = row.brandName
   const logo = mapImage(row.logo, brandName)
   const logoCompact = mapImage(row.logoCompact, brandName)
   const mapPlaceholder = mapImage(row.mapPlaceholder)
   const ogImage = mapImage(row.seoDefaults?.ogImage)
-  const geo = row.geo?.lat != null && row.geo.lng != null ? { lat: row.geo.lat, lng: row.geo.lng } : undefined
+  const geo =
+    row.geo?.lat != null && row.geo.lng != null ? { lat: row.geo.lat, lng: row.geo.lng } : undefined
 
   return {
     brandName,
@@ -96,12 +96,22 @@ export function mapSiteSettings(row: SiteSettingsQueryRow | null, locale: Locale
     timeZone: clean(row.timeZone) ?? DEFAULT_TIME_ZONE,
     socials: (row.socials ?? []).flatMap((social) =>
       social.platform && social.url
-        ? [{ platform: clean(social.platform), url: clean(social.url), ...present({ label: social.label }) }]
+        ? [
+            {
+              platform: clean(social.platform),
+              url: clean(social.url),
+              ...present({ label: social.label }),
+            },
+          ]
         : [],
     ),
     booking: {
       mode: clean(row.booking?.mode) ?? 'phone',
-      ...present({ url: clean(row.booking?.url), label: row.booking?.label, note: row.booking?.note }),
+      ...present({
+        url: clean(row.booking?.url),
+        label: row.booking?.label,
+        note: row.booking?.note,
+      }),
     },
     contactForm: present({
       subjectPrefix: row.contactForm?.subjectPrefix,
@@ -141,13 +151,19 @@ export function mapNavigation(row: NavigationQueryRow | null, locale: Locale): N
     header: mapList(row?.header, (item) => {
       const link = mapLink(item.link, item.label, locale)
       return link
-        ? { ...link, children: mapList(item.children, (child) => mapLink(child.link, child.label, locale)) }
+        ? {
+            ...link,
+            children: mapList(item.children, (child) => mapLink(child.link, child.label, locale)),
+          }
         : null
     }),
     headerCta: mapCta(row?.headerCta, locale),
     footerColumns: mapList(row?.footerColumns, (column) =>
       column.title
-        ? { title: column.title, links: mapList(column.links, (l) => mapLink(l.link, l.label, locale)) }
+        ? {
+            title: column.title,
+            links: mapList(column.links, (l) => mapLink(l.link, l.label, locale)),
+          }
         : null,
     ),
     mobileActionBar: {

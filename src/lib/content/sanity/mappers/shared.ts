@@ -3,6 +3,7 @@ import { stegaClean } from 'next-sanity'
 import type { ContentIcon } from '@/config/icons'
 import { locales, type Locale } from '@/config/i18n'
 import { getPathname } from '@/i18n/navigation'
+import { systemPathnames } from '@/i18n/pathnames'
 import type { Href } from '@/lib/i18n/translations'
 
 import type {
@@ -41,14 +42,7 @@ export type RouteDoc = {
   hasDetailPage?: boolean | null
 }
 
-export const systemHrefs = {
-  home: '/',
-  services: '/services',
-  about: '/about',
-  gallery: '/gallery',
-  blog: '/blog',
-  contact: '/contact',
-} as const satisfies Record<SystemPageKey, Href>
+export const systemHrefs = systemPathnames satisfies Record<SystemPageKey, Href>
 
 /**
  * Internal href of a routable document. A service without its own page lives on the services
@@ -117,7 +111,8 @@ export function linkHref(
   switch (clean(link.kind)) {
     case 'internal': {
       const systemRoute = clean(link.systemRoute)
-      if (systemRoute) return { href: getPathname({ locale, href: systemHrefs[systemRoute] }), external: false }
+      if (systemRoute)
+        return { href: getPathname({ locale, href: systemHrefs[systemRoute] }), external: false }
       const path = link.internal ? routePath(link.internal, locale) : null
       return path ? { href: path, external: false } : null
     }
@@ -193,7 +188,10 @@ const percent = (value: number) => Math.round(Math.min(100, Math.max(0, value * 
  * The editor's crop becomes a `rect` param (so `src` is already cropped), and the hotspot becomes
  * a focal point relative to the cropped image. Undefined when the asset is missing.
  */
-export function mapImage(image: Nullable<ImageInput>, fallbackAlt?: string): ImageAsset | undefined {
+export function mapImage(
+  image: Nullable<ImageInput>,
+  fallbackAlt?: string,
+): ImageAsset | undefined {
   const url = clean(image?.url)
   if (!image || !url || !image.width || !image.height) return undefined
 
@@ -259,7 +257,12 @@ type BlockInput = {
  * links carry a resolved `href`, images an `ImageAsset`, inline CTAs a `Cta`.
  */
 export type RichTextLinkMark = { _type: 'link'; _key: string } & Omit<LinkTarget, 'label'>
-export type RichTextImageBlock = { _type: 'image'; _key: string; image: ImageAsset; caption?: string }
+export type RichTextImageBlock = {
+  _type: 'image'
+  _key: string
+  image: ImageAsset
+  caption?: string
+}
 export type RichTextCtaBlock = { _type: 'cta'; _key: string; cta: Cta }
 export type RichTextCalloutBlock = {
   _type: 'callout'
@@ -286,7 +289,14 @@ export function mapRichText(blocks: Nullable<BlockInput[]>, locale: Locale): Ric
         const image = mapImage(block as unknown as ImageInput)
         const caption = block.caption as Nullable<string>
         return image
-          ? [{ _type: 'image', _key: block._key, image, ...(caption ? { caption } : {}) } satisfies RichTextImageBlock]
+          ? [
+              {
+                _type: 'image',
+                _key: block._key,
+                image,
+                ...(caption ? { caption } : {}),
+              } satisfies RichTextImageBlock,
+            ]
           : []
       }
       case 'ctaInline': {
