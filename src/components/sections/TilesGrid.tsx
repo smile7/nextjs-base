@@ -13,6 +13,13 @@ import type { Locale } from '@/config/i18n'
 import type { TileItem, TilesSection } from '@/lib/content/types'
 import { cn } from '@/lib/utils'
 
+/** Hidden while an ancestor's `data-audience-filter` (services index chips) excludes the tile. */
+const audienceFilterClass: Record<NonNullable<TileItem['audience']>, string> = {
+  children: 'in-data-[audience-filter=adults]:hidden',
+  adults: 'in-data-[audience-filter=children]:hidden',
+  everyone: '',
+}
+
 type TilesGridProps = {
   items: Omit<TileItem, 'body'>[]
   bodies: Record<string, ReactNode>
@@ -88,7 +95,7 @@ export function TilesGrid({
         const buttonId = `tile-${item.key}`
         const body = bodies[item.key]
         return (
-          <li key={item.key} className="contents">
+          <li key={item.key} className={cn('contents', audienceFilterClass[item.audience ?? 'everyone'])}>
             <Heading as={tileHeadingLevel} size="step-0" className="m-0">
               <button
                 type="button"
@@ -143,7 +150,7 @@ export function TilesGrid({
                 >
                   {item.cta.label}
                 </NextLink>
-              ) : source === 'services' && item.slug ? (
+              ) : source === 'services' && item.slug && item.hasDetailPage ? (
                 <Link
                   href={{ pathname: '/services/[slug]', params: { slug: item.slug } }}
                   locale={locale}

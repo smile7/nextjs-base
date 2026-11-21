@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { renderWithIntl } from '@/test/intl'
 
 import { LanguageSwitcher } from './LanguageSwitcher'
+import { PageTranslationsProvider, SetPageTranslations } from './PageTranslations'
 
 const route = vi.hoisted(() => ({
   pathname: '/bg',
@@ -98,6 +99,58 @@ describe('LanguageSwitcher', () => {
     const note = within(en).getByText(/не е преведена/)
     expect(note).toHaveAttribute('lang', 'bg')
     expect(note).toHaveClass('sr-only')
+  })
+
+  describe('in the header, with translations published by the page', () => {
+    const bgService = {
+      pathname: '/services/[slug]',
+      params: { slug: 'profilaktichen-pregled' },
+    } as const
+
+    beforeEach(() => {
+      route.pathname = '/bg/uslugi/profilaktichen-pregled'
+      route.params = { locale: 'bg', slug: 'profilaktichen-pregled' }
+    })
+
+    it('links other locales to the parent page until the page reports its translations', () => {
+      renderWithIntl(
+        <PageTranslationsProvider>
+          <LanguageSwitcher />
+        </PageTranslationsProvider>,
+      )
+      const { bg, en } = links()
+      expect(bg).toHaveAttribute('href', '/bg/uslugi/profilaktichen-pregled')
+      expect(en).toHaveAttribute('href', '/en/services')
+    })
+
+    it('maps a service to its English slug', () => {
+      renderWithIntl(
+        <PageTranslationsProvider>
+          <LanguageSwitcher />
+          <SetPageTranslations
+            translations={{
+              bg: bgService,
+              en: { pathname: '/services/[slug]', params: { slug: 'check-up' } },
+            }}
+            fallback="/services"
+          />
+        </PageTranslationsProvider>,
+      )
+      expect(links().en).toHaveAttribute('href', '/en/services/check-up')
+      expect(screen.queryByText(/не е преведена/)).not.toBeInTheDocument()
+    })
+
+    it('sends a BG-only service to /en/services and says so', () => {
+      renderWithIntl(
+        <PageTranslationsProvider>
+          <LanguageSwitcher />
+          <SetPageTranslations translations={{ bg: bgService }} fallback="/services" />
+        </PageTranslationsProvider>,
+      )
+      const { en } = links()
+      expect(en).toHaveAttribute('href', '/en/services')
+      expect(within(en).getByText(/не е преведена/)).toHaveClass('sr-only')
+    })
   })
 
   it('uses the English UI strings on English pages', () => {

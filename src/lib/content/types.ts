@@ -305,6 +305,10 @@ export type TileItem = {
   cta: Cta | null
   /** Deep-link id (`#slug`). */
   slug?: string
+  /** `source: services` only: the services index filters tiles by it. */
+  audience?: ServiceCategory['audience']
+  /** `source: services` only: the tile links to the service's own page. */
+  hasDetailPage?: boolean
 }
 
 export type TilesSection = SectionBase & {

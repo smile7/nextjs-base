@@ -103,5 +103,20 @@
     "description": "This page could not load. Try again in a moment or go back to the home page.",
     "retry": "Try again",
     "home": "Go to the home page"
+  },
+  "Breadcrumbs": {
+    "label": "Breadcrumb",
+    "home": "Home"
+  },
+  "Services": {
+    "filterLabel": "Show services for",
+    "all": "All",
+    "children": "For children",
+    "adults": "For adults",
+    "faqHeading": "Frequently asked questions",
+    "relatedHeading": "More services",
+    "ctaHeading": "Book an appointment",
+    "book": "Book a visit",
+    "call": "Call us"
   }
 }

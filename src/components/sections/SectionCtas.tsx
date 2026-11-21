@@ -60,7 +60,7 @@ export async function SectionCtas({ ctas, site, className }: SectionCtasProps) {
         return (
           <a key={`${cta.label}-${index}`} href={target.href} className={classes} {...newTab}>
             {label}
-            <span className="sr-only">{t('opensInNewTab')}</span>
+            {target.external ? <span className="sr-only">{t('opensInNewTab')}</span> : null}
           </a>
         )
       })}

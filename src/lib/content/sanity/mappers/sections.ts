@@ -82,6 +82,8 @@ export function mapSection(row: SectionQueryRow, locale: Locale): Section | null
               body: s.summary,
               cta: null,
               slug: s.slug,
+              ...(s.category ? { audience: s.category.audience } : {}),
+              hasDetailPage: s.hasDetailPage,
             }))
           : (row.items ?? []).flatMap((item) => {
               if (!item.title) return []
