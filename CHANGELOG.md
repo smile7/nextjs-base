@@ -7,7 +7,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 - Next.js 16 scaffold with pinned toolchain, strict TypeScript, ESLint/Prettier and Vitest.
-- OpenNext Cloudflare configuration with ISR (default) and Static cache profiles.
+- OpenNext Cloudflare configuration with Static (default, card-free) and ISR (`infra/isr/`) cache profiles.
 - CI and deploy workflows, Renovate config.
 - Typed, lazily validated environment variables.
 - Agent skills for Cursor and Claude Code.

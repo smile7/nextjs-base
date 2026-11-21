@@ -4,7 +4,7 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 
 ## 0. Before you start (sales/contract)
 - [ ] [D] The contract clause says: "Third-party service fees (hosting, CMS, email, domain) are borne by the client. Expected $0–10/month."
-- [ ] [D] Decide the **cache profile**: ISR (needs a card on the Cloudflare account for R2, still $0) or Static (card-free, publishes go live in ~3–5 min). Decide the **Workers plan**: Free, or Paid $5/mo (recommended if the Phase 00 spike showed CPU-limit hits).
+- [ ] [D] Decide the **cache profile**: Static (default, card-free, publishes go live in ~3–5 min) or ISR (optional upgrade, needs a card on the Cloudflare account for R2, still $0; ADR-012). Decide the **Workers plan**: Free, or Paid $5/mo (recommended if the Phase 00 spike showed CPU-limit hits).
 - [ ] [D] Gather: legal entity data (name, ЕИК, address, registrations), domain registrar access, logo/wordmark wishes, brand colors (if any), photos, team bios, services list, hours, phones, socials, booking method.
 
 ## 1. Accounts (client-owned, developer invited)

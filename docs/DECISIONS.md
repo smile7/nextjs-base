@@ -18,7 +18,7 @@ Format: Context → Decision → Consequences → Status. To change a decision, 
 - **Context:** OpenNext's recommended small-site setup is R2 + DO queue + D1 tag cache. R2 requires a payment method on file even at $0. ISR regeneration runs inside the Worker (CPU limit on Free).
 - **Decision:** Support both profiles, selected per client in `new-client`. ISR is the default. Static (static-assets incremental cache + rebuild via GitHub `repository_dispatch` from the Sanity webhook) is the fallback.
 - **Consequences:** Two infra variants to test (CI builds both in the template repo).
-- **Status:** Accepted. Revisit after the Phase 00 spike measurements.
+- **Status:** Superseded by ADR-012 (2026-11-21): Static is the default, ISR is the optional upgrade.
 
 ## ADR-004 `proxy.ts` for next-intl, with a fallback
 - **Context:** Next 16 renamed middleware → proxy (Node runtime). OpenNext Cloudflare supports Node middleware experimentally since 1.20.3 (maintainers confirm it is supported in the latest releases, Nov 2026). Edge `middleware.ts` still works but is deprecated.
@@ -55,4 +55,10 @@ Format: Context → Decision → Consequences → Status. To change a decision, 
 - **Context:** The owner decided (2026-11-21) to drop Playwright entirely.
 - **Decision:** Removed `e2e/`, `playwright.config.ts`, `@playwright/test`, `@axe-core/playwright`, the `e2e` and `shots` scripts (`scripts/shots.ts`) and the CI e2e step. Every e2e, Playwright, axe-in-browser and `pnpm shots` step, AC and Done check in `docs/tasks/*` is **skipped**. Where a behavior can be tested in jsdom (render output, ARIA attributes, keyboard handlers, pure logic), cover it with a Vitest test instead.
 - **Consequences:** Keyboard journeys, focus traps, axe on real pages, reduced motion, no-horizontal-scroll and network assertions (consent, map, Turnstile) are no longer verified automatically. WCAG 2.2 AA remains a requirement, now checked manually. Sign-off screenshots for clients are taken by hand. Revisit if regressions appear.
+- **Status:** Accepted.
+
+## ADR-012 Static cache profile is the default; ISR is an optional upgrade (supersedes ADR-003)
+- **Context:** R2 (needed by the ISR profile's incremental cache) can only be enabled with a payment card on the Cloudflare account, even at $0 usage. The owner decided (2026-11-21) that clients won't add a card, so the template must work out of the box without one. The Phase 00 spike ran on the Static profile only.
+- **Decision:** The repo root `wrangler.jsonc` + `open-next.config.ts` are the **Static** profile (`staticAssetsIncrementalCache`, `enableCacheInterception`, no R2/D1/DO). Publishing triggers a rebuild + deploy (Sanity webhook → GitHub `repository_dispatch` → `deploy.yml`). The **ISR** profile (R2 + D1 tag cache + DO queue) lives in `infra/isr/` and is copied to the root only for a client who accepts a card.
+- **Consequences:** + No card, no R2/D1 setup, and almost no Worker CPU spent on rendering, because pages are prerendered in CI. − Publishes go live in minutes, not seconds (PRD AC2). The static-assets cache is read-only, so `revalidateTag` refreshes nothing, and a route that was not prerendered (e.g. a CMS page published after the last build with `dynamicParams`) renders on **every** request until the next deploy (CPU cost per request; see the spike results in `docs/PROGRESS.md`). The `/api/revalidate` route is only used by ISR clients. Every Phase 07 route must enumerate all slugs in `generateStaticParams`.
 - **Status:** Accepted.

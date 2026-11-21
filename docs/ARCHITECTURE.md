@@ -90,7 +90,7 @@ Principles:
 | --- | --- | --- |
 | ADR-001 | Hybrid i18n: **document-level** for routable types (`page`, `article`, `service`, `legalPage`); **field-level** (internationalized arrays) for shared, non-routable types | See §7. |
 | ADR-002 | Manual `sanityFetch` with tags + signed webhook → `revalidateTag(tag, { expire: 0 })`. **Not** `defineLive` | No browser EventSource for every visitor, no Live Content API quota use, fully static pages. Visual Editing still works in Draft Mode. |
-| ADR-003 | Two cache profiles per client: **ISR** (default; R2 + D1 tag cache + DO queue) or **Static** (read-only static-assets cache + rebuild on publish) | ISR gives seconds-fast publishes. Static needs no R2 card and has the least CPU risk on Free. |
+| ADR-012 (supersedes 003) | Two cache profiles per client: **Static** (default; read-only static-assets cache + rebuild on publish) or **ISR** (optional upgrade; R2 + D1 tag cache + DO queue) | Static needs no payment card and has the least CPU risk on Free. ISR gives seconds-fast publishes for clients who accept a card. |
 | ADR-004 | `src/proxy.ts` for next-intl, with a fallback to `src/middleware.ts` (edge) | `proxy.ts` is the Next 16 convention. OpenNext support is experimental, so the Phase 00 spike must confirm it. |
 | ADR-005 | CMS images via the Sanity Image CDN with our own `next/image` loader | Free resizing and modern formats. No Cloudflare transformation quota. Hotspot/crop supported. |
 | ADR-006 | No `cacheComponents` (Cache Components/PPR) in v1 | Classic fetch-tag caching is the best-trodden path on OpenNext. Revisit in v2 (ADR placeholder). |
@@ -200,7 +200,7 @@ Rules: `src/components/**` never imports from `src/lib/content/sanity/**`. Pages
 2. The route (Server Component) awaits `params`, validates the locale (`hasLocale`) and calls `@/lib/content` functions such as `getPageByKey('services', locale)`.
 3. The content API calls `sanityFetch({ query, params, tags })`, maps the typegen result → domain model and returns it.
 4. The page renders `<SectionRenderer sections={page.sections} />`, plus JSON-LD and `generateMetadata` via `@/lib/seo`.
-5. At build time `generateStaticParams` enumerates all locales × slugs. `dynamicParams = true` lets a page published after the build render on first request and then get cached (ISR profile).
+5. At build time `generateStaticParams` enumerates all locales × slugs. `dynamicParams = true` lets a page published after the build render on first request and then get cached (ISR profile). In the Static profile (default) such a page renders on every request until the next deploy, which the publish webhook triggers.
 
 ### 5.2 `sanityFetch` contract (`src/lib/content/sanity/fetch.ts`)
 ```ts
@@ -237,9 +237,16 @@ Behaviour:
 
 ### 6.1 Cache profiles (`open-next.config.ts` + `wrangler.jsonc`), selected per client
 
-**Profile ISR (default):** publish → live in seconds.
+**Profile Static (default, ADR-012; repo root):** publish → live in about 3–5 minutes.
 ```ts
-// open-next.config.ts
+import staticAssetsIncrementalCache from '@opennextjs/cloudflare/overrides/incremental-cache/static-assets-incremental-cache'
+export default defineCloudflareConfig({ incrementalCache: staticAssetsIncrementalCache, enableCacheInterception: true })
+```
+No R2/D1/DO, no payment card. The Sanity webhook calls the GitHub `repository_dispatch` API, which triggers `deploy.yml` (rebuild + deploy). Rendering happens in CI, so there is no Worker CPU risk for prerendered pages. The cache is read-only: `revalidateTag` has no effect, and a page published after the build (not in `generateStaticParams`) renders on **every** request until the next deploy.
+
+**Profile ISR (optional upgrade, `infra/isr/`):** publish → live in seconds. Only for clients who accept a card on the Cloudflare account.
+```ts
+// infra/isr/open-next.config.ts
 import { defineCloudflareConfig } from '@opennextjs/cloudflare'
 import r2IncrementalCache from '@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache'
 import doQueue from '@opennextjs/cloudflare/overrides/queue/do-queue'
@@ -254,14 +261,7 @@ export default defineCloudflareConfig({
 wrangler bindings: `NEXT_INC_CACHE_R2_BUCKET` (R2), `NEXT_CACHE_DO_QUEUE` (DO class `DOQueueHandler`, migration `new_sqlite_classes`), `NEXT_TAG_CACHE_D1` (D1), `WORKER_SELF_REFERENCE` (service binding to itself), `IMAGES` (Images binding), `ASSETS`. Flags: `nodejs_compat`, `global_fetch_strictly_public`. Set `compatibility_date` to the scaffold date. Create the R2 bucket in the **EU jurisdiction**, which can't be changed later.
 Requires: R2 enabled on the client's Cloudflare account (payment method on file; expected cost $0).
 
-**Profile Static (card-free fallback):** publish → live in about 3–5 minutes.
-```ts
-import staticAssetsIncrementalCache from '@opennextjs/cloudflare/overrides/incremental-cache/static-assets-incremental-cache'
-export default defineCloudflareConfig({ incrementalCache: staticAssetsIncrementalCache, enableCacheInterception: true })
-```
-No R2/D1/DO. The Sanity webhook calls the GitHub `repository_dispatch` API, which triggers `deploy.yml` (rebuild + deploy). Rendering happens in CI, so there is no Worker CPU risk. Pages published after the build render dynamically until the next deploy.
-
-The profile is chosen with `CACHE_PROFILE=isr|static` at build. `open-next.config.ts` and `wrangler.jsonc` variants live in `infra/` and are copied by `scripts/new-client.ts`. Use the OpenNext deploy command (`opennextjs-cloudflare deploy`), which also populates the cache for build-time data.
+The root files are the Static profile. For an ISR client, `scripts/new-client.ts` copies `infra/isr/{open-next.config.ts,wrangler.jsonc}` over them. Use the OpenNext deploy command (`opennextjs-cloudflare deploy`), which also populates the cache for build-time data.
 
 ### 6.2 Tag strategy (`src/lib/content/tags.ts`)
 - Every fetch carries `sanity` (global) + `type:<_type>`; document-specific fetches add `doc:<_id>`.

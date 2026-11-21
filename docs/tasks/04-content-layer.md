@@ -26,7 +26,7 @@
 **Done check:** unit tests for the param/tag/null behavior; a local script `pnpm tsx scripts/smoke-content.ts` prints a summary from the development dataset.
 
 ### T04.4 — `/api/revalidate` and cache profiles
-**Steps:** Route handler per ARCHITECTURE §6.3 (`parseBody(req, secret, true)`, 401 on bad signature, 400 on missing `_type`, tag mapping, `revalidateTag(tag, { expire: 0 })`, JSON response, `runtime` default (no edge)). Unit-test the tag mapping. Configure the Sanity webhook on the sandbox (dataset `development` for preview, `production` for prod). Verify the full loop on the preview worker: publish in Studio → page shows the change within ~10 s. Also implement `CACHE_PROFILE=static` wiring (`infra/static/*` copied by a script `scripts/use-profile.ts`), and verify that the Static profile builds.
+**Steps:** Route handler per ARCHITECTURE §6.3 (`parseBody(req, secret, true)`, 401 on bad signature, 400 on missing `_type`, tag mapping, `revalidateTag(tag, { expire: 0 })`, JSON response, `runtime` default (no edge)). Unit-test the tag mapping. Configure the Sanity webhook on the sandbox (dataset `development` for preview, `production` for prod). Verify the full loop on the preview worker: publish in Studio → page shows the change within ~10 s. Also implement the profile switch (`infra/isr/*` copied over the root Static files by a script `scripts/use-profile.ts`; ADR-012 made Static the default), and verify that both profiles build.
 **AC:** Valid webhook → 200 with tags; invalid → 401; end-to-end publish works on ISR; Static profile builds and deploys.
 **Done check:** `curl` with a bad signature → 401; screen recording/notes in PROGRESS of the publish test.
 

@@ -1,0 +1,59 @@
+// Cache profile: ISR (optional upgrade, ADR-012; needs R2, i.e. a payment card). Copied to the repo root per client.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "site-starter-demo",
+  "main": ".open-next/worker.js",
+  // Latest date supported by the pinned workerd (1.20261118.x); a later date fails locally.
+  "compatibility_date": "2026-11-18",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+  },
+  "services": [
+    {
+      // Must match "name" above.
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "site-starter-demo",
+    },
+  ],
+  "images": {
+    "binding": "IMAGES",
+  },
+  "observability": {
+    "enabled": true,
+  },
+  // R2 incremental cache. Create the bucket in the EU jurisdiction (cannot be changed later):
+  //   pnpm wrangler r2 bucket create site-starter-demo-cache --jurisdiction eu
+  "r2_buckets": [
+    {
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "site-starter-demo-cache",
+      "jurisdiction": "eu",
+    },
+  ],
+  // Durable Object queue for ISR regeneration.
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "NEXT_CACHE_DO_QUEUE",
+        "class_name": "DOQueueHandler",
+      },
+    ],
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["DOQueueHandler"],
+    },
+  ],
+  // D1 tag cache for on-demand revalidation. Placeholder ID until the database exists:
+  //   pnpm wrangler d1 create site-starter-demo-tags --location weur
+  "d1_databases": [
+    {
+      "binding": "NEXT_TAG_CACHE_D1",
+      "database_name": "site-starter-demo-tags",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+    },
+  ],
+}
