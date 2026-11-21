@@ -75,7 +75,25 @@ export const closesAfterOpens = (opens: string | undefined, closes: string | und
   !TIME.test(closes) ||
   toMinutes(closes, { closing: true }) > toMinutes(opens)
 
-type PortableTextBlock = { _type: string; _key: string; style?: string }
+type PortableTextBlock = {
+  _type: string
+  _key: string
+  style?: string
+  children?: { _type: string; text?: string }[]
+}
+
+const PLACEHOLDER = /\[\[[^\]]*\]\]/g
+
+/** Template placeholders like `[[company name]]` left in Portable Text, without duplicates. */
+export const placeholdersIn = (blocks: PortableTextBlock[] | undefined): string[] => {
+  const found = new Set<string>()
+  for (const block of blocks ?? []) {
+    for (const child of block.children ?? []) {
+      for (const match of child.text?.match(PLACEHOLDER) ?? []) found.add(match)
+    }
+  }
+  return [...found]
+}
 
 const HEADING_LEVEL: Record<string, number> = { h2: 2, h3: 3, h4: 4 }
 

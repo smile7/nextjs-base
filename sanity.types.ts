@@ -102,25 +102,6 @@ export type Seo = {
   canonicalOverride?: string
 }
 
-export type SanityImageAssetReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-}
-
-export type ImageWithAlt = {
-  _type: 'imageWithAlt'
-  asset?: SanityImageAssetReference
-  media?: unknown
-  hotspot?: SanityImageHotspot
-  crop?: SanityImageCrop
-  alt?: InternationalizedArrayString
-  decorative?: boolean
-  caption?: InternationalizedArrayString
-  credit?: string
-}
-
 export type CtaInline = {
   _type: 'ctaInline'
   label?: string
@@ -239,6 +220,25 @@ export type RichText = Array<
     } & CtaInline)
 >
 
+export type SanityImageAssetReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+}
+
+export type ImageWithAlt = {
+  _type: 'imageWithAlt'
+  asset?: SanityImageAssetReference
+  media?: unknown
+  hotspot?: SanityImageHotspot
+  crop?: SanityImageCrop
+  alt?: InternationalizedArrayString
+  decorative?: boolean
+  caption?: InternationalizedArrayString
+  credit?: string
+}
+
 export type Announcement = {
   _id: string
   _type: 'announcement'
@@ -320,74 +320,6 @@ export type InternationalizedArrayRichTextSimple = Array<
   {
     _key: string
   } & InternationalizedArrayRichTextSimpleValue
->
-
-export type ServiceCategoryReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'serviceCategory'
-}
-
-export type TeamMember = {
-  _id: string
-  _type: 'teamMember'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  name?: string
-  nameLatin?: string
-  honorific?: InternationalizedArrayString
-  role?: InternationalizedArrayString
-  specialties?: Array<{
-    label?: InternationalizedArrayString
-    _type: 'specialty'
-    _key: string
-  }>
-  bioShort?: InternationalizedArrayText
-  bio?: InternationalizedArrayRichTextSimple
-  photo?: ImageWithAlt
-  featured?: boolean
-  categories?: Array<
-    {
-      _key: string
-    } & ServiceCategoryReference
-  >
-  credentials?: Array<{
-    label?: InternationalizedArrayString
-    year?: number
-    _type: 'credential'
-    _key: string
-  }>
-  sameAs?: Array<string>
-  slug?: Slug
-  orderRank?: string
-}
-
-export type Slug = {
-  _type: 'slug'
-  current?: string
-  source?: string
-}
-
-export type ServiceCategory = {
-  _id: string
-  _type: 'serviceCategory'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  title?: InternationalizedArrayString
-  slug?: InternationalizedArraySlug
-  description?: InternationalizedArrayText
-  audience?: 'children' | 'adults' | 'everyone'
-  tone?: 'soft' | 'brand' | 'accent'
-  orderRank?: string
-}
-
-export type InternationalizedArraySlug = Array<
-  {
-    _key: string
-  } & InternationalizedArraySlugValue
 >
 
 export type Navigation = {
@@ -552,6 +484,12 @@ export type InternationalizedArrayStringValue = {
   language?: string
 }
 
+export type InternationalizedArraySlug = Array<
+  {
+    _key: string
+  } & InternationalizedArraySlugValue
+>
+
 export type TranslationMetadata = {
   _id: string
   _type: 'translation.metadata'
@@ -581,7 +519,25 @@ export type LegalPage = {
   _updatedAt: string
   _rev: string
   language?: string
+  kind?: 'privacy' | 'cookies' | 'gdpr' | 'terms' | 'other'
   title?: string
+  slug?: Slug
+  body?: RichText
+  lastUpdated?: string
+  showCookieTable?: boolean
+}
+
+export type Slug = {
+  _type: 'slug'
+  current?: string
+  source?: string
+}
+
+export type TeamMemberReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'teamMember'
 }
 
 export type Article = {
@@ -592,6 +548,70 @@ export type Article = {
   _rev: string
   language?: string
   title?: string
+  slug?: Slug
+  excerpt?: string
+  cover?: ImageWithAlt
+  body?: RichText
+  related?: Array<
+    {
+      _key: string
+    } & ArticleReference
+  >
+  author?: TeamMemberReference
+  reviewedBy?: TeamMemberReference
+  publishedAt?: string
+  updatedAt?: string
+  categories?: Array<string>
+  seo?: Seo
+}
+
+export type ServiceCategoryReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'serviceCategory'
+}
+
+export type TeamMember = {
+  _id: string
+  _type: 'teamMember'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name?: string
+  nameLatin?: string
+  honorific?: InternationalizedArrayString
+  role?: InternationalizedArrayString
+  specialties?: Array<{
+    label?: InternationalizedArrayString
+    _type: 'specialty'
+    _key: string
+  }>
+  bioShort?: InternationalizedArrayText
+  bio?: InternationalizedArrayRichTextSimple
+  photo?: ImageWithAlt
+  featured?: boolean
+  categories?: Array<
+    {
+      _key: string
+    } & ServiceCategoryReference
+  >
+  credentials?: Array<{
+    label?: InternationalizedArrayString
+    year?: number
+    _type: 'credential'
+    _key: string
+  }>
+  sameAs?: Array<string>
+  slug?: Slug
+  orderRank?: string
+}
+
+export type FaqItemReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'faqItem'
 }
 
 export type Service = {
@@ -602,6 +622,87 @@ export type Service = {
   _rev: string
   language?: string
   title?: string
+  slug?: Slug
+  category?: ServiceCategoryReference
+  icon?:
+    | 'smile'
+    | 'smile-plus'
+    | 'baby'
+    | 'toothbrush'
+    | 'sparkles'
+    | 'wand-sparkles'
+    | 'gem'
+    | 'shield-check'
+    | 'shield-plus'
+    | 'stethoscope'
+    | 'syringe'
+    | 'pill'
+    | 'bone'
+    | 'microscope'
+    | 'scan-face'
+    | 'scan-line'
+    | 'layers'
+    | 'ruler'
+    | 'brush'
+    | 'droplets'
+    | 'siren'
+    | 'heart'
+    | 'heart-pulse'
+    | 'hand-heart'
+    | 'puzzle'
+    | 'graduation-cap'
+    | 'award'
+    | 'badge-check'
+    | 'star'
+    | 'users'
+    | 'clock'
+    | 'calendar-check'
+    | 'clipboard-list'
+    | 'message-circle'
+    | 'phone'
+    | 'languages'
+    | 'accessibility'
+    | 'square-parking'
+    | 'car'
+    | 'credit-card'
+    | 'wallet'
+    | 'leaf'
+    | 'house'
+    | 'circle-check'
+    | 'zap'
+  image?: ImageWithAlt
+  teaser?: string
+  summary?: RichTextSimple
+  durationNote?: string
+  priceNote?: string
+  hasDetailPage?: boolean
+  body?: RichText
+  faq?: Array<
+    {
+      _key: string
+    } & FaqItemReference
+  >
+  doctors?: Array<
+    {
+      _key: string
+    } & TeamMemberReference
+  >
+  seo?: Seo
+  orderRank?: string
+}
+
+export type ServiceCategory = {
+  _id: string
+  _type: 'serviceCategory'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title?: InternationalizedArrayString
+  slug?: InternationalizedArraySlug
+  description?: InternationalizedArrayText
+  audience?: 'children' | 'adults' | 'everyone'
+  tone?: 'soft' | 'brand' | 'accent'
+  orderRank?: string
 }
 
 export type Page = {
@@ -611,7 +712,13 @@ export type Page = {
   _updatedAt: string
   _rev: string
   language?: string
+  pageKey?: 'home' | 'services' | 'about' | 'gallery' | 'blog' | 'contact'
   title?: string
+  slug?: Slug
+  intro?: string
+  seo?: Seo
+  hideFromNav?: boolean
+  hideFromSitemap?: boolean
 }
 
 export type SanityImagePaletteSwatch = {
@@ -721,8 +828,6 @@ export type AllSanitySchemaTypes =
   | Geo
   | Address
   | Seo
-  | SanityImageAssetReference
-  | ImageWithAlt
   | CtaInline
   | CtaI18n
   | Cta
@@ -734,6 +839,8 @@ export type AllSanitySchemaTypes =
   | Callout
   | RichTextSimple
   | RichText
+  | SanityImageAssetReference
+  | ImageWithAlt
   | Announcement
   | InternationalizedArrayString
   | Testimonial
@@ -742,11 +849,6 @@ export type AllSanitySchemaTypes =
   | GalleryItem
   | FaqItem
   | InternationalizedArrayRichTextSimple
-  | ServiceCategoryReference
-  | TeamMember
-  | Slug
-  | ServiceCategory
-  | InternationalizedArraySlug
   | Navigation
   | SiteSettings
   | SanityImageCrop
@@ -755,12 +857,19 @@ export type AllSanitySchemaTypes =
   | InternationalizedArrayRichTextSimpleValue
   | InternationalizedArrayTextValue
   | InternationalizedArrayStringValue
+  | InternationalizedArraySlug
   | TranslationMetadata
   | InternationalizedArrayReference
   | InternationalizedArrayReferenceValue
   | LegalPage
+  | Slug
+  | TeamMemberReference
   | Article
+  | ServiceCategoryReference
+  | TeamMember
+  | FaqItemReference
   | Service
+  | ServiceCategory
   | Page
   | SanityImagePaletteSwatch
   | SanityImagePalette

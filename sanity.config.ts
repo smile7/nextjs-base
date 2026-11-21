@@ -25,9 +25,14 @@ export default defineConfig({
   },
   document: {
     singletons: singletonTypes,
-    actions: (prev, context) =>
-      context.singleton
-        ? prev.filter(({ action }) => action && singletonActions.has(action))
-        : prev,
+    actions: (prev, context) => {
+      if (context.singleton) {
+        return prev.filter(({ action }) => action && singletonActions.has(action))
+      }
+      // Legal pages are required in every language: they can be unpublished, never deleted.
+      if (context.schemaType === 'legalPage')
+        return prev.filter(({ action }) => action !== 'delete')
+      return prev
+    },
   },
 })

@@ -148,7 +148,7 @@ Slug uniqueness per language: custom `isUnique` that queries `!defined(*[_type =
 ### `page`
 | Field | Type | Validation / notes |
 | --- | --- | --- |
-| pageKey | enum `home services about gallery blog contact` \| empty | Unique per language. If set, the page is a **system page** bound to a code route (its slug is ignored and hidden). If empty, the page is generic at `/[slug]`. |
+| pageKey | enum `home services about gallery blog contact` \| empty | Unique per language. Locked once set (administrators can still change it, to fix a mis-click). If set, the page is a **system page** bound to a code route (its slug is ignored and hidden). If empty, the page is generic at `/[slug]`. |
 | title | string | required |
 | slug | slug | required when no pageKey. Must not be a reserved segment: `uslugi services za-nas about galeriya gallery blog kontakti contact pravna-informaciya legal admin api styleguide en bg` (generated from pathnames config). |
 | intro | text | optional; used in cards, meta fallback |
@@ -162,7 +162,7 @@ Slug uniqueness per language: custom `isUnique` that queries `!defined(*[_type =
 | title | string | required, ≤ 60 |
 | slug | slug | required |
 | category | reference → serviceCategory | required |
-| icon | string (lucide icon name from a curated list) or image | one of icon/image |
+| icon | string (lucide icon name from the curated list in `src/config/icons.ts`) or image | one of icon/image |
 | image | imageWithAlt | optional |
 | teaser | string | required, ≤ 120 (tile teaser) |
 | summary | richTextSimple (plain, [D] doc) | required (tile panel content) |

@@ -8,9 +8,33 @@ import {
   headingsSkippingLevels,
   i18nValue,
   isTimeZone,
+  placeholdersIn,
   toMinutes,
   validateI18n,
 } from './validation'
+
+describe('placeholdersIn', () => {
+  const block = (key: string, ...texts: string[]) => ({
+    _type: 'block',
+    _key: key,
+    children: texts.map((text) => ({ _type: 'span', text })),
+  })
+
+  it('finds every distinct [[placeholder]] in the text spans', () => {
+    expect(
+      placeholdersIn([
+        block('a', 'Администратор: [[company name]], ЕИК [[EIK]].'),
+        block('b', 'Пишете на ', '[[email]]', ' или на [[company name]].'),
+        { _type: 'imageWithAlt', _key: 'c' },
+      ]),
+    ).toEqual(['[[company name]]', '[[EIK]]', '[[email]]'])
+  })
+
+  it('ignores single brackets and handles empty content', () => {
+    expect(placeholdersIn([block('a', 'See [1] and [link].')])).toEqual([])
+    expect(placeholdersIn(undefined)).toEqual([])
+  })
+})
 
 const rows = [
   { _key: 'a', language: 'bg', value: 'Здравейте' },
