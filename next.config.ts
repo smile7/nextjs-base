@@ -1,6 +1,9 @@
 import type { NextConfig } from 'next'
 import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare'
+import createNextIntlPlugin from 'next-intl/plugin'
 import { BUILD_REQUIRED_PUBLIC_ENV, readPublicEnv } from './src/env'
+
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
 readPublicEnv(...BUILD_REQUIRED_PUBLIC_ENV)
 
@@ -16,6 +19,6 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default nextConfig
+export default withNextIntl(nextConfig)
 
 initOpenNextCloudflareForDev()
