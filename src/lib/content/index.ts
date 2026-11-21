@@ -59,6 +59,10 @@ import type {
 import type { ArticleSummary, FaqItem, GalleryAlbum, SystemPageKey, Translations } from './types'
 
 export type * from './types'
+/**
+ * Server routes may import `RichText` from here. Client components must use `@/lib/content/rich-text`
+ * so the barrel does not pull `sanityFetch` / `next/headers` into the browser bundle.
+ */
 export { RichText } from './rich-text'
 
 /**

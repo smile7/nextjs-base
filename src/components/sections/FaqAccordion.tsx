@@ -1,11 +1,17 @@
 'use client'
 
+import type { ReactNode } from 'react'
+
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { RichText } from '@/lib/content'
-import type { FaqItem } from '@/lib/content'
+
+type FaqAccordionItem = {
+  id: string
+  question: string
+  answer: ReactNode
+}
 
 type FaqAccordionProps = {
-  items: FaqItem[]
+  items: FaqAccordionItem[]
   idPrefix: string
 }
 
@@ -15,11 +21,7 @@ export function FaqAccordion({ items, idPrefix }: FaqAccordionProps) {
       {items.map((item) => (
         <AccordionItem key={item.id} value={item.id}>
           <AccordionTrigger id={`${idPrefix}-${item.id}`}>{item.question}</AccordionTrigger>
-          <AccordionContent>
-            <div className="prose-theme">
-              <RichText value={item.answer} />
-            </div>
-          </AccordionContent>
+          <AccordionContent>{item.answer}</AccordionContent>
         </AccordionItem>
       ))}
     </Accordion>

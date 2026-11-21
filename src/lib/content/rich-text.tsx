@@ -1,3 +1,5 @@
+'use client'
+
 import { PortableText, type PortableTextComponents } from '@portabletext/react'
 import { useTranslations } from 'next-intl'
 import NextLink from 'next/link'

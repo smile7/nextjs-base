@@ -80,6 +80,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             ActionBar: messages.ActionBar,
             Announcement: messages.Announcement,
             Error: messages.Error,
+            Sections: messages.Sections,
           }}
         >
           <PageShell

@@ -76,10 +76,18 @@
     "tileExpand": "Show details",
     "tileCollapse": "Hide details",
     "galleryAll": "All",
+    "galleryAlbum": {
+      "clinic": "Clinic",
+      "team": "Team",
+      "patients": "Patients",
+      "events": "Events",
+      "other": "Other"
+    },
     "galleryPrev": "Previous photo",
     "galleryNext": "Next photo",
     "galleryClose": "Close",
     "galleryCounter": "{current} / {total}",
+    "testimonialsList": "Customer reviews",
     "testimonialsPrev": "Previous review",
     "testimonialsNext": "Next review",
     "ratingStars": "{rating} out of 5",

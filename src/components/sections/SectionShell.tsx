@@ -24,13 +24,12 @@ export function SectionShell({
   width = 'content',
   children,
 }: SectionShellProps) {
-  const titleId = sectionTitleId(section.key)
   return (
     <Section
       tone={section.tone}
       spacing={section.spacing}
       anchorId={section.anchorId}
-      labelledBy={labelledBy ?? titleId}
+      labelledBy={labelledBy}
       className={className}
     >
       <Container width={width} className={containerClassName}>

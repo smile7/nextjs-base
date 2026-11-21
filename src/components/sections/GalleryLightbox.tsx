@@ -68,9 +68,9 @@ export function GalleryLightbox({ items, albums }: GalleryLightboxProps) {
             type="button"
             aria-pressed={filter === album}
             onClick={() => setFilter(album)}
-            className="min-h-11 rounded-pill border border-border px-4 text-step--1 font-semibold capitalize aria-pressed:border-primary aria-pressed:bg-tone-soft-bg"
+            className="min-h-11 rounded-pill border border-border px-4 text-step--1 font-semibold aria-pressed:border-primary aria-pressed:bg-tone-soft-bg"
           >
-            {album}
+            {t(`galleryAlbum.${album}`)}
           </button>
         ))}
       </div>

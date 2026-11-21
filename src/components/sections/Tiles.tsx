@@ -1,5 +1,6 @@
 import { Heading } from '@/components/primitives/Heading'
 import { Text } from '@/components/primitives/Text'
+import { RichText } from '@/lib/content'
 import type { TilesSection as TilesModel } from '@/lib/content'
 
 import { SectionShell, sectionTitleId } from './SectionShell'
@@ -36,7 +37,35 @@ export function TilesSection({
         </Text>
       ) : null}
       <div className="mt-10">
-        <TilesGrid section={section} locale={locale} tileHeadingLevel={tileLevel} />
+        <TilesGrid
+          items={section.items.map((item) => {
+            const { body, ...row } = item
+            void body
+            return row
+          })}
+          bodies={Object.fromEntries(
+            section.items.flatMap((item) =>
+              item.body
+                ? [
+                    [
+                      item.key,
+                      <div
+                        key={item.key}
+                        className="prose-theme max-w-(--container-prose)"
+                      >
+                        <RichText value={item.body} />
+                      </div>,
+                    ],
+                  ]
+                : [],
+            ),
+          )}
+          allowMultiple={section.allowMultiple}
+          source={section.source}
+          density={section.density}
+          locale={locale}
+          tileHeadingLevel={tileLevel}
+        />
       </div>
     </SectionShell>
   )

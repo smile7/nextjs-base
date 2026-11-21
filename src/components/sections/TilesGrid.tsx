@@ -2,37 +2,44 @@
 
 import { ChevronDownIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import type { ReactNode } from 'react'
 import { useCallback, useEffect, useId, useState } from 'react'
 
 import { Heading } from '@/components/primitives/Heading'
 import { ContentIcon } from '@/components/primitives/ContentIcon'
 import NextLink from 'next/link'
 import { Link } from '@/i18n/navigation'
-import { RichText } from '@/lib/content'
 import type { Locale } from '@/config/i18n'
-import type { TileItem, TilesSection } from '@/lib/content'
+import type { TileItem, TilesSection } from '@/lib/content/types'
 import { cn } from '@/lib/utils'
 
 type TilesGridProps = {
-  section: TilesSection
+  items: Omit<TileItem, 'body'>[]
+  bodies: Record<string, ReactNode>
+  allowMultiple: TilesSection['allowMultiple']
+  source: TilesSection['source']
+  density: TilesSection['density']
   locale: Locale
   tileHeadingLevel: 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 }
 
-export function TilesGrid({ section, locale, tileHeadingLevel }: TilesGridProps) {
+export function TilesGrid({
+  items,
+  bodies,
+  allowMultiple,
+  source,
+  density,
+  locale,
+  tileHeadingLevel,
+}: TilesGridProps) {
   const t = useTranslations('Sections')
   const listId = useId()
-  const [openKeys, setOpenKeys] = useState<Set<string>>(() => {
-    if (typeof window === 'undefined') return new Set()
-    const hash = window.location.hash.replace(/^#/, '')
-    const match = section.items.find((item) => item.slug === hash)
-    return match ? new Set([match.key]) : new Set()
-  })
+  const [openKeys, setOpenKeys] = useState<Set<string>>(() => new Set())
 
   const toggle = useCallback(
-    (item: TileItem) => {
+    (item: Omit<TileItem, 'body'>) => {
       setOpenKeys((prev) => {
-        const next = new Set(section.allowMultiple ? prev : [])
+        const next = new Set(allowMultiple ? prev : [])
         const isOpen = prev.has(item.key)
         if (isOpen) {
           next.delete(item.key)
@@ -45,30 +52,41 @@ export function TilesGrid({ section, locale, tileHeadingLevel }: TilesGridProps)
         return next
       })
     },
-    [section.allowMultiple],
+    [allowMultiple],
   )
 
   useEffect(() => {
     const hash = window.location.hash.replace(/^#/, '')
     if (!hash) return
-    const match = section.items.find((item) => item.slug === hash)
+    const match = items.find((item) => item.slug === hash)
+    if (!match) return
+    // Hash is client-only; opening after mount avoids SSR/client open-state mismatch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- deep-link on load (T06.4)
+    setOpenKeys(new Set([match.key]))
+  }, [items])
+
+  useEffect(() => {
+    const hash = window.location.hash.replace(/^#/, '')
+    if (!hash) return
+    const match = items.find((item) => item.slug === hash)
     if (!match || !openKeys.has(match.key)) return
     requestAnimationFrame(() => {
       document.getElementById(`tile-${match.key}`)?.scrollIntoView({ block: 'nearest' })
     })
-  }, [openKeys, section.items])
+  }, [openKeys, items])
 
   const cols =
-    section.density === 'compact'
+    density === 'compact'
       ? 'sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
       : 'min-[30rem]:grid-cols-2 lg:grid-cols-3'
 
   return (
     <ul className={cn('grid grid-flow-dense gap-4', cols)} id={listId}>
-      {section.items.map((item) => {
+      {items.map((item) => {
         const isOpen = openKeys.has(item.key)
         const panelId = `tile-panel-${item.key}`
         const buttonId = `tile-${item.key}`
+        const body = bodies[item.key]
         return (
           <li key={item.key} className="contents">
             <Heading as={tileHeadingLevel} size="step-0" className="m-0">
@@ -78,6 +96,11 @@ export function TilesGrid({ section, locale, tileHeadingLevel }: TilesGridProps)
                 aria-expanded={isOpen}
                 aria-controls={panelId}
                 onClick={() => toggle(item)}
+                onKeyDown={(event) => {
+                  if (event.key !== 'Enter' && event.key !== ' ') return
+                  event.preventDefault()
+                  toggle(item)
+                }}
                 className={cn(
                   'flex min-h-30 w-full flex-col items-start gap-3 rounded-tile border border-border bg-surface p-5 text-left shadow-sm transition-[box-shadow,transform] duration-(--duration-base) ease-standard hover:shadow-md',
                   isOpen && 'shadow-md',
@@ -112,11 +135,7 @@ export function TilesGrid({ section, locale, tileHeadingLevel }: TilesGridProps)
               className="col-span-full rounded-card border border-border bg-surface-muted p-6"
               onBeforeMatch={() => setOpenKeys((prev) => new Set(prev).add(item.key))}
             >
-              {item.body ? (
-                <div className="prose-theme max-w-(--container-prose)">
-                  <RichText value={item.body} />
-                </div>
-              ) : null}
+              {body}
               {item.cta?.link ? (
                 <NextLink
                   href={item.cta.link.href}
@@ -124,7 +143,7 @@ export function TilesGrid({ section, locale, tileHeadingLevel }: TilesGridProps)
                 >
                   {item.cta.label}
                 </NextLink>
-              ) : section.source === 'services' && item.slug ? (
+              ) : source === 'services' && item.slug ? (
                 <Link
                   href={{ pathname: '/services/[slug]', params: { slug: item.slug } }}
                   locale={locale}

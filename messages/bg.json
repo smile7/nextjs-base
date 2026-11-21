@@ -76,10 +76,18 @@
     "tileExpand": "Покажи подробности",
     "tileCollapse": "Скрий подробности",
     "galleryAll": "Всички",
+    "galleryAlbum": {
+      "clinic": "Клиника",
+      "team": "Екип",
+      "patients": "Пациенти",
+      "events": "Събития",
+      "other": "Друго"
+    },
     "galleryPrev": "Предишна снимка",
     "galleryNext": "Следваща снимка",
     "galleryClose": "Затвори",
     "galleryCounter": "{current} / {total}",
+    "testimonialsList": "Отзиви от клиенти",
     "testimonialsPrev": "Предишен отзив",
     "testimonialsNext": "Следващ отзив",
     "ratingStars": "{rating} от 5",

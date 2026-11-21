@@ -13,6 +13,7 @@ type TestimonialsRowProps = {
   showRating: boolean
 }
 
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-noninteractive-element-interactions -- T06.6 keyboard-scrollable snap row */
 export function TestimonialsRow({ items, showRating }: TestimonialsRowProps) {
   const t = useTranslations('Sections')
   const scroller = useRef<HTMLUListElement>(null)
@@ -27,7 +28,7 @@ export function TestimonialsRow({ items, showRating }: TestimonialsRowProps) {
 
   return (
     <div className="relative mt-8">
-      <div className="hidden gap-2 md:absolute md:-top-14 md:right-0 md:flex">
+      <div className="mb-4 flex justify-end gap-2 md:absolute md:-top-14 md:right-0 md:mb-0">
         <Button
           type="button"
           variant="outline"
@@ -49,6 +50,18 @@ export function TestimonialsRow({ items, showRating }: TestimonialsRowProps) {
       </div>
       <ul
         ref={scroller}
+        tabIndex={0}
+        aria-label={t('testimonialsList')}
+        onKeyDown={(event) => {
+          if (event.key === 'ArrowRight') {
+            event.preventDefault()
+            scroll(1)
+          }
+          if (event.key === 'ArrowLeft') {
+            event.preventDefault()
+            scroll(-1)
+          }
+        }}
         className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {items.map((item) => (
@@ -76,3 +89,4 @@ export function TestimonialsRow({ items, showRating }: TestimonialsRowProps) {
     </div>
   )
 }
+/* eslint-enable jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-noninteractive-element-interactions */
