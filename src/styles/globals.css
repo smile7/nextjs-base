@@ -68,6 +68,13 @@
     text-size-adjust: 100%;
   }
 
+  /* The mobile action bar (below md) must never cover a focused element (WCAG 2.4.11). */
+  @media (width < 48rem) {
+    html {
+      scroll-padding-bottom: calc(var(--action-bar-h) + env(safe-area-inset-bottom) + 1rem);
+    }
+  }
+
   body {
     @apply bg-bg font-body text-step-0 text-fg;
     line-height: var(--leading-body);

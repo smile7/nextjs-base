@@ -1,5 +1,6 @@
 'use client'
 
+import { PhoneIcon } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Cluster, Stack } from '@/components/primitives/Stack'
@@ -11,7 +12,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -55,6 +56,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { cn } from '@/lib/utils'
 import { DemoBlock } from './DemoBlock'
 
 const variants = ['primary', 'secondary', 'outline', 'ghost', 'link'] as const
@@ -80,17 +82,10 @@ export function ButtonsDemo() {
         <Text as="span" size="small" tone="muted" className="w-24">
           call
         </Text>
-        <Button
-          variant="call"
-          nativeButton={false}
-          render={({ children, ...props }) => (
-            <a {...props} href="tel:+35982841190">
-              {children}
-            </a>
-          )}
-        >
+        <a href="tel:+35982841190" className={cn(buttonVariants({ variant: 'call' }))}>
+          <PhoneIcon aria-hidden="true" strokeWidth={2} />
           082 841 190
-        </Button>
+        </a>
       </Cluster>
       <Cluster gap="md">
         <Text as="span" size="small" tone="muted" className="w-24">

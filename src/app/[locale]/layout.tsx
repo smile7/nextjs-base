@@ -1,16 +1,18 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { draftMode } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { getMessages, getTranslations } from 'next-intl/server'
 
 import { MotionProvider } from '@/components/motion/MotionProvider'
+import { MobileActionBar } from '@/components/site/MobileActionBar'
 import { MobileNav } from '@/components/site/MobileNav'
 import { SiteHeader } from '@/components/site/SiteHeader'
 import { fontVariables } from '@/config/fonts'
 import { getNavigation, getSiteSettings } from '@/lib/content'
 import { PreviewTools } from '@/lib/content/preview'
-import { bookingAction, primaryPhone } from '@/lib/site/actions'
+import { bookingAction, mobileBarActions, primaryPhone } from '@/lib/site/actions'
+import { cn } from '@/lib/utils'
 import { readPublicEnv } from '@/env'
 import { routing } from '@/i18n/routing'
 import '@/styles/globals.css'
@@ -26,6 +28,9 @@ export function generateMetadata(): Metadata {
   return { metadataBase: new URL(NEXT_PUBLIC_SITE_URL) }
 }
 
+// `cover` makes `env(safe-area-inset-*)` non-zero on notched phones (mobile action bar).
+export const viewport: Viewport = { viewportFit: 'cover' }
+
 export default async function LocaleLayout({ children, params }: LayoutProps<'/[locale]'>) {
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) notFound()
@@ -34,21 +39,40 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
     draftMode(),
     getSiteSettings(locale),
     getNavigation(locale),
-    getTranslations('MobileNav'),
+    getTranslations(),
   ])
   const nav = navigation?.header ?? []
   const phone = settings ? primaryPhone(settings) : null
-  const booking = settings ? bookingAction(settings, navigation?.headerCta, t('book')) : null
+  const booking = settings
+    ? bookingAction(settings, navigation?.headerCta, t('MobileNav.book'))
+    : null
+  const barActions =
+    settings && navigation
+      ? mobileBarActions(settings, navigation.mobileActionBar, booking, {
+          call: t('ActionBar.call'),
+          directions: t('ActionBar.directions'),
+          book: t('ActionBar.book'),
+          viber: t('ActionBar.viber'),
+          whatsapp: t('ActionBar.whatsapp'),
+          email: t('ActionBar.email'),
+        })
+      : []
 
   return (
     <html lang={locale} className={fontVariables}>
-      <body>
+      <body
+        className={cn(
+          barActions.length > 0 &&
+            'pb-[calc(var(--action-bar-h)+env(safe-area-inset-bottom))] md:pb-0',
+        )}
+      >
         {/* Client components get only the namespaces they use. */}
         <NextIntlClientProvider
           messages={{
             LanguageSwitcher: messages.LanguageSwitcher,
             Header: messages.Header,
             MobileNav: messages.MobileNav,
+            ActionBar: messages.ActionBar,
           }}
         >
           {settings ? (
@@ -60,6 +84,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             />
           ) : null}
           <MotionProvider>{children}</MotionProvider>
+          {barActions.length > 0 ? <MobileActionBar actions={barActions} /> : null}
         </NextIntlClientProvider>
         {draft.isEnabled && <PreviewTools />}
       </body>

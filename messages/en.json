@@ -28,5 +28,15 @@
     "nav": "Main navigation",
     "call": "Call",
     "book": "Book a visit"
+  },
+  "ActionBar": {
+    "label": "Quick actions",
+    "call": "Call",
+    "directions": "Directions",
+    "book": "Book",
+    "viber": "Viber",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "opensInNewTab": "(opens in a new tab)"
   }
 }

@@ -2,7 +2,14 @@ import { describe, expect, it } from 'vitest'
 
 import type { Cta, Phone, SiteSettings } from '@/lib/content'
 
-import { bookingAction, bookingLink, directionsUrl, primaryPhone, resolveCta } from './actions'
+import {
+  bookingAction,
+  bookingLink,
+  directionsUrl,
+  mobileBarActions,
+  primaryPhone,
+  resolveCta,
+} from './actions'
 
 const phone = (key: Phone['key'], e164: string, display = ''): Phone => ({ key, e164, display })
 
@@ -94,6 +101,55 @@ describe('bookingAction', () => {
         ?.label,
     ).toBe('Обадете се')
     expect(bookingAction(settings, undefined, 'fb')?.label).toBe('fb')
+  })
+})
+
+describe('mobileBarActions', () => {
+  const labels = {
+    call: 'call',
+    directions: 'dir',
+    book: 'book',
+    viber: 'viber',
+    whatsapp: 'wa',
+    email: 'mail',
+  }
+  const full = {
+    ...settings,
+    email: 'hello@example.bg',
+    socials: [{ platform: 'viber' as const, url: 'viber://chat?number=%2B359888123456' }],
+  }
+  const kinds = (...args: Parameters<typeof mobileBarActions>) =>
+    mobileBarActions(...args).map((a) => a.kind)
+  const external = { href: 'https://book.example', external: true, label: 'Book' }
+
+  it('returns call, directions and an external booking', () => {
+    expect(
+      kinds(full, { showDirections: true, secondaryAction: 'booking' }, external, labels),
+    ).toEqual(['call', 'directions', 'booking'])
+  })
+
+  it('drops a booking that only repeats the call', () => {
+    const byPhone = bookingAction(full, null, 'x')
+    expect(
+      kinds(full, { showDirections: true, secondaryAction: 'booking' }, byPhone, labels),
+    ).toEqual(['call', 'directions'])
+  })
+
+  it('supports email and messengers, and hides directions when disabled', () => {
+    expect(kinds(full, { showDirections: false, secondaryAction: 'email' }, null, labels)).toEqual([
+      'call',
+      'email',
+    ])
+    const viber = mobileBarActions(
+      full,
+      { showDirections: false, secondaryAction: 'viber' },
+      null,
+      labels,
+    )
+    expect(viber[1]).toMatchObject({ kind: 'message', label: 'viber', external: true })
+    expect(
+      kinds(full, { showDirections: false, secondaryAction: 'whatsapp' }, null, labels),
+    ).toEqual(['call'])
   })
 })
 
