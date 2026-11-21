@@ -84,6 +84,12 @@ Measured 2026-11-21 on workers.dev (Free plan), static-only config, Next 16.4.6,
 | `/admin/structure` deep link, same | **512 ms (cold), then 18–22 ms CPU** | over 10 ms |
 | `/admin` + `/admin/*` after the fix (`generateStaticParams → [{ tool: [] }]`, `dynamicParams = false`, rewrite `/admin/:path+ → /admin`) | HIT, 1–2 ms CPU (5–6 ms cold); deep link keeps its URL and the Studio boots in the browser | 10 ms |
 
+| Server Action (trivial: one `fetch` POST to httpbin), JS client (`Next-Action` header, RSC response) | 5–9 ms CPU, median 6 (n=22; 54 ms on a cold isolate) | 10 ms |
+| Same action, no-JS form POST (full HTML re-render of the page) | **9–26 ms CPU, median 11–12** (n=28) | over 10 ms |
+| Page rendered per request (styleguide demos, not prerendered; no longer possible under ADR-012) | 31–68 ms CPU (n=30) | over 10 ms |
+
+Server Action numbers come from a second spike session on the same day (same worker, same versions; no 1102 seen, all outcomes `ok`, but Free allows only occasional overruns). For T08.2: keep the contact action lean (Zod + Turnstile siteverify + Resend fetch, no `<Tailwind>` email rendering) and re-measure it; the no-JS fallback POST is the expensive path, because Next re-renders the whole page after the action.
+
 Decisions: **proxy.ts works** on OpenNext (ADR-004 confirmed). **Studio stays embedded** (ADR-010 confirmed) with the three static settings above, now written into ARCHITECTURE §5.4 and T03.1. Not measured (no code yet): Server Action and draft-mode CPU (T08.2 / T04.5). The Studio stops at Sanity's "Connect this Studio to your project" screen until the workers.dev origin is added to CORS (see Needs Silvena).
 
 ## Needs Silvena
