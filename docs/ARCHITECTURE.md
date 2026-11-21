@@ -356,7 +356,6 @@ Consumers: next-intl routing, both Sanity i18n plugins (`supportedLanguages` / `
 | `NEXT_PUBLIC_SITE_URL` | build, public | CI vars | Canonical origin (`https://www.client.bg`) |
 | `NEXT_PUBLIC_SANITY_PROJECT_ID` | build, public | CI vars | |
 | `NEXT_PUBLIC_SANITY_DATASET` | build, public | CI vars | `production` / `development` |
-| `NEXT_PUBLIC_SANITY_API_VERSION` | build, public | CI vars | Date string, e.g. `2026-11-01` |
 | `NEXT_PUBLIC_SANITY_STUDIO_URL` | build, public | CI vars | `/admin` or `https://x.sanity.studio` (stega + links) |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | build, public | CI vars | Test key `1x00000000000000000000AA` locally/CI |
 | `NEXT_PUBLIC_ANALYTICS` | build, public | CI vars | `none` \| `cloudflare` \| `umami` \| `ga4` |

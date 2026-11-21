@@ -12,9 +12,6 @@ const publicShape = {
   NEXT_PUBLIC_ENV: z.enum(['production', 'preview', 'development']).default('development'),
   NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().min(1),
   NEXT_PUBLIC_SANITY_DATASET: z.string().min(1),
-  NEXT_PUBLIC_SANITY_API_VERSION: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'expected a date string like 2026-11-01'),
   NEXT_PUBLIC_SANITY_STUDIO_URL: z.string().min(1).default('/admin'),
   NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().min(1),
   NEXT_PUBLIC_ANALYTICS: z.enum(['none', 'cloudflare', 'umami', 'ga4']).default('none'),
@@ -37,7 +34,6 @@ export const readPublicEnv = createEnvReader('public', publicShape, () => ({
   NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV,
   NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
   NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET,
-  NEXT_PUBLIC_SANITY_API_VERSION: process.env.NEXT_PUBLIC_SANITY_API_VERSION,
   NEXT_PUBLIC_SANITY_STUDIO_URL: process.env.NEXT_PUBLIC_SANITY_STUDIO_URL,
   NEXT_PUBLIC_TURNSTILE_SITE_KEY:
     process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ||
