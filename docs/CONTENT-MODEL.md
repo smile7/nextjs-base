@@ -57,7 +57,10 @@ Blocks: `normal` only, lists, strong/em, `link`. Used inside tiles, team bios, F
 | ogImage | imageWithAlt | 1200×630 crop via hotspot. Fallback: hero/cover image → settings default. |
 | noIndex | boolean | default false |
 | canonicalOverride | url | rarely used |
-(In [F] parents the same object with `internationalizedArray*` fields: `seoI18n`.)
+(In [F] parents the same object with `internationalizedArray*` fields: `seoI18n`. Not built in v1: no [F] document has its own SEO; `siteSettings.seoDefaults` covers the site-wide defaults.)
+
+### `phone` (array item of `siteSettings.phones`)
+`key` (`primary | secondary`), `e164` (E.164 regex `^\+[1-9]\d{6,14}$`), `display` (string, required), `label` [F] (optional). A `link` with `kind: tel` dials the phone with the matching `phoneKey`; `kind: email` uses `siteSettings.email`.
 
 ### `address`
 `street` [F] (e.g. «ж.к. Възраждане, ул. „Плиска" 54»), `city` [F], `postalCode` [—], `region` [F, optional], `countryCode` [—] (ISO 3166-1 alpha-2, default `BG`).

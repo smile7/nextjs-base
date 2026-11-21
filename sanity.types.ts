@@ -15,23 +15,14 @@
 export declare const internalGroqTypeReferenceTo: unique symbol
 
 // Source: schema.json
-export type InternationalizedArrayTextValue = {
-  _type: 'internationalizedArrayTextValue'
-  value?: string
-  language?: string
+export type BookingConfig = {
+  _type: 'bookingConfig'
+  mode?: 'phone' | 'externalUrl'
+  provider?: 'superdoc' | 'other'
+  url?: string
+  label?: InternationalizedArrayString
+  note?: InternationalizedArrayString
 }
-
-export type InternationalizedArrayStringValue = {
-  _type: 'internationalizedArrayStringValue'
-  value?: string
-  language?: string
-}
-
-export type InternationalizedArrayText = Array<
-  {
-    _key: string
-  } & InternationalizedArrayTextValue
->
 
 export type InternationalizedArrayString = Array<
   {
@@ -39,21 +30,126 @@ export type InternationalizedArrayString = Array<
   } & InternationalizedArrayStringValue
 >
 
-export type TranslationMetadata = {
-  _id: string
-  _type: 'translation.metadata'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  translations?: InternationalizedArrayReference
-  schemaTypes?: Array<string>
+export type LegalEntity = {
+  _type: 'legalEntity'
+  legalName?: string
+  uic?: string
+  vatNumber?: string
+  registeredAddress?: Address
+  representative?: string
+  professionalBody?: InternationalizedArrayString
+  registration?: InternationalizedArrayString
+  supervisoryAuthority?: InternationalizedArrayString
 }
 
-export type InternationalizedArrayReference = Array<
-  {
-    _key: string
-  } & InternationalizedArrayReferenceValue
->
+export type Address = {
+  _type: 'address'
+  street?: InternationalizedArrayString
+  city?: InternationalizedArrayString
+  postalCode?: string
+  region?: InternationalizedArrayString
+  countryCode?: string
+}
+
+export type SocialLink = {
+  _type: 'socialLink'
+  platform?:
+    | 'facebook'
+    | 'instagram'
+    | 'tiktok'
+    | 'youtube'
+    | 'linkedin'
+    | 'viber'
+    | 'whatsapp'
+    | 'googleBusiness'
+    | 'other'
+  url?: string
+  label?: InternationalizedArrayString
+}
+
+export type SpecialHours = {
+  _type: 'specialHours'
+  label?: InternationalizedArrayString
+  date?: string
+  endDate?: string
+  closed?: boolean
+  opens?: string
+  closes?: string
+}
+
+export type OpeningHoursSpec = {
+  _type: 'openingHoursSpec'
+  days?: Array<string>
+  opens?: string
+  closes?: string
+  note?: InternationalizedArrayString
+}
+
+export type Phone = {
+  _type: 'phone'
+  key?: 'primary' | 'secondary'
+  e164?: string
+  display?: string
+  label?: InternationalizedArrayString
+}
+
+export type Geo = {
+  _type: 'geo'
+  lat?: number
+  lng?: number
+}
+
+export type Seo = {
+  _type: 'seo'
+  title?: string
+  description?: string
+  ogImage?: ImageWithAlt
+  noIndex?: boolean
+  canonicalOverride?: string
+}
+
+export type SanityImageAssetReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+}
+
+export type ImageWithAlt = {
+  _type: 'imageWithAlt'
+  asset?: SanityImageAssetReference
+  media?: unknown
+  hotspot?: SanityImageHotspot
+  crop?: SanityImageCrop
+  alt?: InternationalizedArrayString
+  decorative?: boolean
+  caption?: InternationalizedArrayString
+  credit?: string
+}
+
+export type CtaInline = {
+  _type: 'ctaInline'
+  label?: string
+  action?: 'link' | 'call' | 'booking' | 'directions'
+  link?: Link
+  style?: 'primary' | 'secondary' | 'outline' | 'ghost'
+}
+
+export type CtaI18n = {
+  _type: 'ctaI18n'
+  label?: InternationalizedArrayString
+  action?: 'link' | 'call' | 'booking' | 'directions'
+  link?: Link
+  style?: 'primary' | 'secondary' | 'outline' | 'ghost'
+}
+
+export type Cta = {
+  _type: 'cta'
+  label?: string
+  action?: 'link' | 'call' | 'booking' | 'directions'
+  link?: Link
+  style?: 'primary' | 'secondary' | 'outline' | 'ghost'
+}
 
 export type PageReference = {
   _ref: string
@@ -82,6 +178,134 @@ export type LegalPageReference = {
   _weak?: boolean
   [internalGroqTypeReferenceTo]?: 'legalPage'
 }
+
+export type Link = {
+  _type: 'link'
+  kind?: 'internal' | 'external' | 'tel' | 'email' | 'anchor'
+  systemRoute?: 'home' | 'services' | 'about' | 'gallery' | 'blog' | 'contact'
+  internal?: PageReference | ServiceReference | ArticleReference | LegalPageReference
+  href?: string
+  phoneKey?: 'primary' | 'secondary'
+  anchor?: string
+  openInNewTab?: boolean
+}
+
+export type Callout = {
+  _type: 'callout'
+  tone?: 'info' | 'tip' | 'warning'
+  text?: string
+}
+
+export type RichTextSimple = Array<{
+  children?: Array<{
+    marks?: Array<string>
+    text?: string
+    _type: 'span'
+    _key: string
+  }>
+  style?: 'normal'
+  listItem?: 'bullet' | 'number'
+  markDefs?: Array<
+    {
+      _key: string
+    } & Link
+  >
+  level?: number
+  _type: 'block'
+  _key: string
+}>
+
+export type RichText = Array<
+  | {
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'normal' | 'h2' | 'h3' | 'h4' | 'blockquote'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<
+        {
+          _key: string
+        } & Link
+      >
+      level?: number
+      _type: 'block'
+      _key: string
+    }
+  | ({
+      _key: string
+    } & ImageWithAlt)
+  | ({
+      _key: string
+    } & Callout)
+  | ({
+      _key: string
+    } & CtaInline)
+>
+
+export type SanityImageCrop = {
+  _type: 'sanity.imageCrop'
+  top?: number
+  bottom?: number
+  left?: number
+  right?: number
+}
+
+export type SanityImageHotspot = {
+  _type: 'sanity.imageHotspot'
+  x?: number
+  y?: number
+  height?: number
+  width?: number
+}
+
+export type InternationalizedArrayRichTextSimpleValue = {
+  _type: 'internationalizedArrayRichTextSimpleValue'
+  value?: RichTextSimple
+  language?: string
+}
+
+export type InternationalizedArrayTextValue = {
+  _type: 'internationalizedArrayTextValue'
+  value?: string
+  language?: string
+}
+
+export type InternationalizedArrayStringValue = {
+  _type: 'internationalizedArrayStringValue'
+  value?: string
+  language?: string
+}
+
+export type InternationalizedArrayRichTextSimple = Array<
+  {
+    _key: string
+  } & InternationalizedArrayRichTextSimpleValue
+>
+
+export type InternationalizedArrayText = Array<
+  {
+    _key: string
+  } & InternationalizedArrayTextValue
+>
+
+export type TranslationMetadata = {
+  _id: string
+  _type: 'translation.metadata'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  translations?: InternationalizedArrayReference
+  schemaTypes?: Array<string>
+}
+
+export type InternationalizedArrayReference = Array<
+  {
+    _key: string
+  } & InternationalizedArrayReferenceValue
+>
 
 export type InternationalizedArrayReferenceValue = {
   _type: 'internationalizedArrayReferenceValue'
@@ -167,22 +391,6 @@ export type SanityImageMetadata = {
   isOpaque?: boolean
 }
 
-export type SanityImageHotspot = {
-  _type: 'sanity.imageHotspot'
-  x?: number
-  y?: number
-  height?: number
-  width?: number
-}
-
-export type SanityImageCrop = {
-  _type: 'sanity.imageCrop'
-  top?: number
-  bottom?: number
-  left?: number
-  right?: number
-}
-
 export type SanityFileAsset = {
   _id: string
   _type: 'sanity.fileAsset'
@@ -249,16 +457,38 @@ export type Slug = {
 }
 
 export type AllSanitySchemaTypes =
-  | InternationalizedArrayTextValue
-  | InternationalizedArrayStringValue
-  | InternationalizedArrayText
+  | BookingConfig
   | InternationalizedArrayString
-  | TranslationMetadata
-  | InternationalizedArrayReference
+  | LegalEntity
+  | Address
+  | SocialLink
+  | SpecialHours
+  | OpeningHoursSpec
+  | Phone
+  | Geo
+  | Seo
+  | SanityImageAssetReference
+  | ImageWithAlt
+  | CtaInline
+  | CtaI18n
+  | Cta
   | PageReference
   | ServiceReference
   | ArticleReference
   | LegalPageReference
+  | Link
+  | Callout
+  | RichTextSimple
+  | RichText
+  | SanityImageCrop
+  | SanityImageHotspot
+  | InternationalizedArrayRichTextSimpleValue
+  | InternationalizedArrayTextValue
+  | InternationalizedArrayStringValue
+  | InternationalizedArrayRichTextSimple
+  | InternationalizedArrayText
+  | TranslationMetadata
+  | InternationalizedArrayReference
   | InternationalizedArrayReferenceValue
   | LegalPage
   | Article
@@ -268,8 +498,6 @@ export type AllSanitySchemaTypes =
   | SanityImagePalette
   | SanityImageDimensions
   | SanityImageMetadata
-  | SanityImageHotspot
-  | SanityImageCrop
   | SanityFileAsset
   | SanityAssetSourceData
   | SanityImageAsset
