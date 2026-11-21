@@ -19,7 +19,7 @@
 
 ### T02.2 — Locale root layout, not-found, catch-all
 **Steps**
-1. Remove `src/app/layout.tsx` and `src/app/page.tsx`. `src/app/[locale]/layout.tsx` is the root layout: validates the locale (`hasLocale` → `notFound()`), `setRequestLocale`, `<html lang={locale}>` (`bg`/`en`), font variables on `<html>`, `NextIntlClientProvider` (pass only the namespaces client components need), `MotionProvider`, `generateStaticParams` for locales, base `generateMetadata` (`metadataBase`).
+1. Remove `src/app/layout.tsx` and `src/app/page.tsx`. `src/app/[locale]/layout.tsx` is the root layout: validates the locale (`hasLocale` → `notFound()`), `<html lang={locale}>` (no `setRequestLocale`: `request.ts` reads `next/root-params`, ARCHITECTURE §7.2) (`bg`/`en`), font variables on `<html>`, `NextIntlClientProvider` (pass only the namespaces client components need), `MotionProvider`, `generateStaticParams` for locales, base `generateMetadata` (`metadataBase`).
 2. `src/app/[locale]/not-found.tsx` (localized, with links home/contact), `src/app/[locale]/[...rest]/page.tsx` → `notFound()`. A root-level 404 for paths outside locales: rely on the proxy redirect. Optionally use the experimental `global-not-found.js` only if needed and note it.
 3. `src/app/admin/layout.tsx`: its own root layout (`<html lang="en">`), no site providers.
 4. Move `/styleguide` under `[locale]`.

@@ -1,5 +1,12 @@
 {
   "LanguageSwitcher": {
     "label": "Language"
+  },
+  "NotFound": {
+    "code": "404",
+    "title": "This page doesn’t exist",
+    "description": "The address may be mistyped, or the page has moved. Start from the home page, or get in touch if you’re looking for something specific.",
+    "home": "Go to the home page",
+    "contact": "Contact us"
   }
 }

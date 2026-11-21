@@ -2,7 +2,7 @@
 
 **Goal:** all v1 routes in both locales, fully content-driven, statically generated, with basic metadata (full SEO in Phase 10).
 **Read first:** `docs/ARCHITECTURE.md` §4–5, §7 (pathnames), `docs/PRD.md` (pages), `docs/SEO.md` (buildMetadata rules), `.cursor/rules/i18n.mdc`.
-**Every route:** `await params`; validate the locale; `setRequestLocale(locale)`; fetch via `@/lib/content`; `notFound()` on null; `generateStaticParams`; `generateMetadata` via `buildMetadata` (stega off); alternates from translations; JSON-LD slot.
+**Every route:** `await params`; validate the locale (no `setRequestLocale`, see ARCHITECTURE §7.2); fetch via `@/lib/content`; `notFound()` on null; `generateStaticParams`; `generateMetadata` via `buildMetadata` (stega off); alternates from translations; JSON-LD slot.
 
 ---
 

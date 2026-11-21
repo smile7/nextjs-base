@@ -38,7 +38,9 @@ type ButtonProps = ButtonPrimitive.Props &
   }
 
 /**
- * For links, pass `render={<Link href="…" />}` (or `<a>`) together with `nativeButton={false}`.
+ * For links, put `cn(buttonVariants())` on a `Link` / `<a>` instead (`cn` resolves the border
+ * classes the variants override). Base UI's Button adds
+ * `role="button"` to non-button elements, so screen readers would announce a link as a button.
  * The `call` variant prepends a phone icon; pass the human-formatted number as children.
  */
 function Button({

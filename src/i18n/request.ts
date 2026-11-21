@@ -1,3 +1,4 @@
+import * as rootParams from 'next/root-params'
 import { hasLocale, type Messages } from 'next-intl'
 import { getRequestConfig } from 'next-intl/server'
 
@@ -11,8 +12,9 @@ const messageLoaders: Record<Locale, () => Promise<{ default: Messages }>> = {
   en: () => import('../../messages/en.json'),
 }
 
-export default getRequestConfig(async ({ locale, requestLocale }) => {
-  const requested = locale ?? (await requestLocale)
+// Route handlers and Server Actions can't read root params: pass `locale` explicitly there.
+export default getRequestConfig(async ({ locale }) => {
+  const requested = locale ?? (await rootParams.locale())
   const resolved = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale
 
   return {
