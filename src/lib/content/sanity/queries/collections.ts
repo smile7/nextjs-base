@@ -1,6 +1,12 @@
 import { defineQuery } from 'next-sanity'
 
-import { faqItemFields, galleryItemFields, teamMemberFields, testimonialFields } from '../fragments'
+import {
+  faqItemFields,
+  galleryConsentFilter,
+  galleryItemFields,
+  teamMemberFields,
+  testimonialFields,
+} from '../fragments'
 
 export const teamQuery = defineQuery(
   `*[_type == "teamMember"] | order(orderRank){ ${teamMemberFields} }`,
@@ -12,7 +18,7 @@ export const faqQuery = defineQuery(
 )
 
 export const galleryQuery = defineQuery(
-  `*[_type == "galleryItem" && ($album == null || album == $album)]
+  `*[_type == "galleryItem" && ${galleryConsentFilter} && ($album == null || album == $album)]
     | order(orderRank)[0...$limit]{ ${galleryItemFields} }`,
 )
 

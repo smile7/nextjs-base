@@ -119,6 +119,12 @@ export const faqItemFields = /* groq */ `
   category
 `
 
+/**
+ * Patient photos only with signed consent on file. Studio blocks publishing without it; the query
+ * enforces it too, so a schema change or an API write can't put a patient photo on the site.
+ */
+export const galleryConsentFilter = /* groq */ `(showsPatient != true || consentOnFile == true)`
+
 export const galleryItemFields = /* groq */ `
   _id,
   album,
@@ -201,8 +207,10 @@ export const sectionsField = /* groq */ `
     _type == "section.gallery" => {
       heading, showLinkToGallery, limit,
       "items": select(
-        count(items) > 0 => items[]->{ ${galleryItemFields} },
-        *[_type == "galleryItem" && (!defined(^.album) || album == ^.album)]
+        count(items) > 0 => items[
+          @->showsPatient != true || @->consentOnFile == true
+        ]->{ ${galleryItemFields} },
+        *[_type == "galleryItem" && ${galleryConsentFilter} && (!defined(^.album) || album == ^.album)]
           | order(orderRank)[0...24]{ ${galleryItemFields} }
       )
     },
