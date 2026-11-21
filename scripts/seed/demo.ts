@@ -64,7 +64,7 @@ const cta = (
   options: { link?: Link; style?: Cta['style'] } = {},
 ): Cta => ({ _type: 'cta', label, action, style: options.style ?? 'primary', link: options.link })
 
-const id = (type: string, key: string) => `${seedPrefix}${type}.${key}`
+const id = (type: string, key: string) => `${seedPrefix}${type}-${key}`
 
 const demoDetails: LegalDetails = {
   legalName: { bg: 'Демо Дентал ЕООД', en: 'Demo Dental EOOD' },

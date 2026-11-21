@@ -1,5 +1,5 @@
 /**
- * Seeds a dataset with deterministic `seed.*` documents.
+ * Seeds a dataset with deterministic `seed-*` documents.
  *
  *   pnpm seed                         demo BG/EN content into `development` (re-runs replace it)
  *   pnpm seed --client --dataset production
@@ -42,7 +42,7 @@ const fail = (message: string): never => {
 }
 
 if (values.reset && values.client) {
-  fail('refusing --reset with --client; client seed keeps seed.* ids and reset would delete edited content')
+  fail('refusing --reset with --client; client seed keeps seed-* ids and reset would delete edited content')
 }
 
 if (!values.force) {
@@ -86,8 +86,8 @@ async function uploadImages(): Promise<SeedImages> {
 
 async function reset() {
   const ids = await client.fetch<string[]>(
-    `*[_id in path($published) || _id in path($drafts)]._id`,
-    { published: `${seedPrefix}**`, drafts: `drafts.${seedPrefix}**` },
+    `*[string::startsWith(_id, $published) || string::startsWith(_id, $drafts)]._id`,
+    { published: seedPrefix, drafts: `drafts.${seedPrefix}` },
   )
   if (ids.length === 0) return
   const transaction = client.transaction()

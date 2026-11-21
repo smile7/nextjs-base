@@ -75,7 +75,9 @@ describe.each([
   it('uses unique, prefixed ids (singletons keep their fixed id)', () => {
     expect(ids.size).toBe(docs.length)
     for (const id of ids)
-      expect(id.startsWith('seed.') || ['siteSettings', 'navigation'].includes(id)).toBe(true)
+      expect(
+        (id.startsWith('seed-') && !id.includes('.')) || ['siteSettings', 'navigation'].includes(id),
+      ).toBe(true)
   })
 
   it('only writes fields the schema defines (catches renamed or removed fields)', () => {

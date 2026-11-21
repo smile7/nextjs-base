@@ -21,7 +21,11 @@ export type SeedImages = Readonly<Record<string, string>>
 /** Document as written by the seed: Sanity adds the system fields. */
 export type SeedDoc<T> = Omit<T, '_createdAt' | '_updatedAt' | '_rev'>
 
-export const seedPrefix = 'seed.'
+/**
+ * Dash-separated on purpose: Sanity treats ids containing `.` as private paths, so tokenless
+ * (published, CDN) reads, which is how the site builds, would not see dotted seed documents.
+ */
+export const seedPrefix = 'seed-'
 
 const localizedRows = <T, K extends string>(type: K, values: Localized<T>) =>
   locales.map((language) => ({
@@ -110,9 +114,9 @@ export const image = (images: SeedImages, name: string, alt: Localized) => {
 
 type RoutableDoc = Article | LegalPage | Page | Service
 
-/** `seed.page.home.bg`: one document per routable item and language (CONTENT-MODEL §8). */
+/** `seed-page-home-bg`: one document per routable item and language (CONTENT-MODEL §8). */
 export const routableId = (type: RoutableDoc['_type'], key: string, locale: Locale) =>
-  `${seedPrefix}${type}.${key}.${locale}`
+  `${seedPrefix}${type}-${key}-${locale}`
 
 /**
  * One document per language plus the `translation.metadata` document that links them, in the
@@ -133,7 +137,7 @@ export const routable = <T extends RoutableDoc>(
       }) as SeedDoc<T>,
   ),
   {
-    _id: `${seedPrefix}meta.${type}.${key}`,
+    _id: `${seedPrefix}meta-${type}-${key}`,
     _type: 'translation.metadata',
     schemaTypes: [type],
     translations: locales.map((language) => ({
