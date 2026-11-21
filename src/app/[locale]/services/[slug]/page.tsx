@@ -13,6 +13,7 @@ import { Text } from '@/components/primitives/Text'
 import { faqSchemaFromSection } from '@/components/sections/faq-schema'
 import { SectionRenderer } from '@/components/sections/SectionRenderer'
 import { JsonLd } from '@/components/seo/JsonLd'
+import { bookingCtaBand } from '@/components/site/booking-cta'
 import { Breadcrumbs } from '@/components/site/Breadcrumbs'
 import { SetPageTranslations } from '@/components/site/PageTranslations'
 import { badgeVariants } from '@/components/ui/badge'
@@ -24,7 +25,6 @@ import {
   getStaticParams,
   RichText,
   withoutStega,
-  type CtaBandSection,
   type FaqSection,
 } from '@/lib/content'
 import { buildAlternates } from '@/lib/seo/alternates'
@@ -55,12 +55,13 @@ export async function generateMetadata({
 export default async function ServicePage({ params }: PageProps<'/[locale]/services/[slug]'>) {
   const { locale, slug } = await params
   if (!hasLocale(routing.locales, locale)) notFound()
-  const [service, settings, servicesPage, t, tCrumbs] = await Promise.all([
+  const [service, settings, servicesPage, t, tCrumbs, tCta] = await Promise.all([
     getServiceBySlug(slug, locale),
     getSiteSettings(locale),
     getPageByKey('services', locale),
     getTranslations('Services'),
     getTranslations('Breadcrumbs'),
+    getTranslations('BookingCta'),
   ])
   if (!service || !settings) notFound()
 
@@ -83,27 +84,11 @@ export default async function ServicePage({ params }: PageProps<'/[locale]/servi
           emitSchema: true,
         }
       : null
-  const cta: CtaBandSection = {
-    type: 'ctaBand',
-    key: 'service-cta',
-    tone: 'brand',
-    spacing: 'default',
-    heading: t('ctaHeading'),
-    // Booking by phone resolves to the same `tel:` link as Call, so it would only repeat it.
-    ctas: [
-      ...(settings.booking.mode === 'externalUrl'
-        ? [
-            {
-              label: t('book'),
-              action: 'booking' as const,
-              style: 'secondary' as const,
-              link: null,
-            },
-          ]
-        : []),
-      { label: t('call'), action: 'call', style: 'primary', link: null },
-    ],
-  }
+  const cta = bookingCtaBand(settings, {
+    heading: tCta('heading'),
+    book: tCta('book'),
+    call: tCta('call'),
+  })
   const faqSchema = faq ? faqSchemaFromSection(faq) : null
 
   return (
@@ -115,7 +100,7 @@ export default async function ServicePage({ params }: PageProps<'/[locale]/servi
             label={tCrumbs('label')}
             items={[
               { label: tCrumbs('home'), href: '/' },
-              { label: servicesPage?.title ?? t('all'), href: '/services' },
+              { label: servicesPage?.title ?? tCrumbs('services'), href: '/services' },
               { label: service.title },
             ]}
           />

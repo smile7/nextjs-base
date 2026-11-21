@@ -76,6 +76,7 @@ const cmsParents: Partial<Record<string, Href>> = {
   '/[slug]': '/',
   '/services/[slug]': '/services',
   '/blog/[slug]': '/blog',
+  '/blog/page/[n]': '/blog',
   '/legal/[slug]': '/',
 }
 

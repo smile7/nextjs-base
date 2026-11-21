@@ -20,10 +20,19 @@ export type CmsPageProps = {
   fallback?: Href
   /** Wraps the rendered sections (e.g. the services audience filter). */
   wrapSections?: (sections: ReactNode) => ReactNode
+  /** Rendered after the sections (e.g. the blog list). */
+  children?: ReactNode
 }
 
 /** A page-builder page: `h1` (hero or title band), sections, FAQ JSON-LD. */
-export function CmsPage({ page, locale, site, fallback = '/', wrapSections }: CmsPageProps) {
+export function CmsPage({
+  page,
+  locale,
+  site,
+  fallback = '/',
+  wrapSections,
+  children,
+}: CmsPageProps) {
   const faq = page.sections.find(
     (section): section is FaqSection => section.type === 'faq' && section.emitSchema,
   )
@@ -35,6 +44,7 @@ export function CmsPage({ page, locale, site, fallback = '/', wrapSections }: Cm
       <SetPageTranslations translations={page.translations} fallback={fallback} />
       {pageUsesHeroH1(page.sections) ? null : <PageHeader title={page.title} intro={page.intro} />}
       {wrapSections ? wrapSections(sections) : sections}
+      {children}
       {faqSchema ? <JsonLd data={faqSchema} /> : null}
     </>
   )

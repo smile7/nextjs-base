@@ -106,7 +106,9 @@
   },
   "Breadcrumbs": {
     "label": "Breadcrumb",
-    "home": "Home"
+    "home": "Home",
+    "services": "Services",
+    "blog": "Blog"
   },
   "Services": {
     "filterLabel": "Show services for",
@@ -114,9 +116,25 @@
     "children": "For children",
     "adults": "For adults",
     "faqHeading": "Frequently asked questions",
-    "relatedHeading": "More services",
-    "ctaHeading": "Book an appointment",
+    "relatedHeading": "More services"
+  },
+  "BookingCta": {
+    "heading": "Book an appointment",
     "book": "Book a visit",
     "call": "Call us"
+  },
+  "Blog": {
+    "listHeading": "Articles",
+    "pageTitle": "{title} – page {page}",
+    "paginationLabel": "Blog pages",
+    "newer": "Newer articles",
+    "older": "Older articles",
+    "pageOf": "Page {page} of {pages}",
+    "updated": "Updated",
+    "readingTime": "{minutes} min read",
+    "aboutAuthor": "About the author",
+    "reviewedBy": "Medically reviewed by {name}",
+    "related": "More articles",
+    "empty": "Our first articles are coming soon."
   }
 }

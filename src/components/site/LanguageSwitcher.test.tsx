@@ -65,11 +65,25 @@ describe('LanguageSwitcher', () => {
     expect(en).toHaveAttribute('href', '/en')
   })
 
-  it('fills dynamic params on static routes', () => {
+  it('fills dynamic params from the page translations (blog page 2 exists in both locales)', () => {
+    route.pathname = '/bg/blog/stranica/2'
+    route.params = { locale: 'bg', n: '2' }
+    const page2 = { pathname: '/blog/page/[n]', params: { n: '2' } } as const
+    renderWithIntl(
+      <PageTranslationsProvider>
+        <LanguageSwitcher />
+        <SetPageTranslations translations={{ bg: page2, en: page2 }} fallback="/blog" />
+      </PageTranslationsProvider>,
+    )
+    expect(links().en).toHaveAttribute('href', '/en/blog/page/2')
+  })
+
+  it('links a blog list page to the other locale’s blog until its page count is known', () => {
     route.pathname = '/bg/blog/stranica/2'
     route.params = { locale: 'bg', n: '2' }
     renderWithIntl(<LanguageSwitcher />)
-    expect(links().en).toHaveAttribute('href', '/en/blog/page/2')
+    expect(links().bg).toHaveAttribute('href', '/bg/blog/stranica/2')
+    expect(links().en).toHaveAttribute('href', '/en/blog')
   })
 
   it('uses the translated slug of a CMS page', () => {

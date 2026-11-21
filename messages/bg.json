@@ -106,7 +106,9 @@
   },
   "Breadcrumbs": {
     "label": "Навигационна пътека",
-    "home": "Начало"
+    "home": "Начало",
+    "services": "Услуги",
+    "blog": "Блог"
   },
   "Services": {
     "filterLabel": "Покажи услугите за",
@@ -114,9 +116,25 @@
     "children": "За деца",
     "adults": "За възрастни",
     "faqHeading": "Често задавани въпроси",
-    "relatedHeading": "Още услуги",
-    "ctaHeading": "Запишете час",
+    "relatedHeading": "Още услуги"
+  },
+  "BookingCta": {
+    "heading": "Запишете час",
     "book": "Запишете час",
     "call": "Обадете се"
+  },
+  "Blog": {
+    "listHeading": "Статии",
+    "pageTitle": "{title} – страница {page}",
+    "paginationLabel": "Страници на блога",
+    "newer": "По-нови статии",
+    "older": "По-стари статии",
+    "pageOf": "Страница {page} от {pages}",
+    "updated": "Обновено",
+    "readingTime": "{minutes} мин четене",
+    "aboutAuthor": "За автора",
+    "reviewedBy": "Медицински преглед: {name}",
+    "related": "Още статии",
+    "empty": "Скоро ще публикуваме първите статии."
   }
 }
