@@ -70,7 +70,10 @@ export async function SiteHeader({ brandName, nav, phone, menu }: SiteHeaderProp
           {phone ? (
             <a
               href={phone.href}
-              className={cn(buttonVariants({ variant: 'call', size: 'sm' }), 'hidden md:inline-flex')}
+              className={cn(
+                buttonVariants({ variant: 'call', size: 'sm' }),
+                'hidden md:inline-flex',
+              )}
             >
               <PhoneIcon aria-hidden="true" strokeWidth={2} />
               <span className="sr-only">{t('call')}</span>

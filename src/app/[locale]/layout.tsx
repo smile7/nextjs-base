@@ -2,14 +2,15 @@ import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
-import { getMessages } from 'next-intl/server'
+import { getMessages, getTranslations } from 'next-intl/server'
 
 import { MotionProvider } from '@/components/motion/MotionProvider'
+import { MobileNav } from '@/components/site/MobileNav'
 import { SiteHeader } from '@/components/site/SiteHeader'
 import { fontVariables } from '@/config/fonts'
 import { getNavigation, getSiteSettings } from '@/lib/content'
 import { PreviewTools } from '@/lib/content/preview'
-import { primaryPhone } from '@/lib/site/actions'
+import { bookingAction, primaryPhone } from '@/lib/site/actions'
 import { readPublicEnv } from '@/env'
 import { routing } from '@/i18n/routing'
 import '@/styles/globals.css'
@@ -28,25 +29,34 @@ export function generateMetadata(): Metadata {
 export default async function LocaleLayout({ children, params }: LayoutProps<'/[locale]'>) {
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) notFound()
-  const [messages, draft, settings, navigation] = await Promise.all([
+  const [messages, draft, settings, navigation, t] = await Promise.all([
     getMessages(),
     draftMode(),
     getSiteSettings(locale),
     getNavigation(locale),
+    getTranslations('MobileNav'),
   ])
+  const nav = navigation?.header ?? []
+  const phone = settings ? primaryPhone(settings) : null
+  const booking = settings ? bookingAction(settings, navigation?.headerCta, t('book')) : null
 
   return (
     <html lang={locale} className={fontVariables}>
       <body>
         {/* Client components get only the namespaces they use. */}
         <NextIntlClientProvider
-          messages={{ LanguageSwitcher: messages.LanguageSwitcher, Header: messages.Header }}
+          messages={{
+            LanguageSwitcher: messages.LanguageSwitcher,
+            Header: messages.Header,
+            MobileNav: messages.MobileNav,
+          }}
         >
           {settings ? (
             <SiteHeader
               brandName={settings.brandName}
-              nav={navigation?.header ?? []}
-              phone={primaryPhone(settings)}
+              nav={nav}
+              phone={phone}
+              menu={<MobileNav nav={nav} phone={phone} booking={booking} />}
             />
           ) : null}
           <MotionProvider>{children}</MotionProvider>

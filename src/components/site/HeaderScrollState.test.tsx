@@ -35,9 +35,7 @@ function setup() {
   )
   const header = view.container.querySelector('header')!
   const fire = (isIntersecting: boolean, top: number) =>
-    act(() =>
-      callback?.([{ isIntersecting, boundingClientRect: { top } as DOMRectReadOnly }]),
-    )
+    act(() => callback?.([{ isIntersecting, boundingClientRect: { top } as DOMRectReadOnly }]))
   return { ...view, header, fire }
 }
 

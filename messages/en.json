@@ -20,5 +20,13 @@
     "nav": "Main navigation",
     "call": "Call",
     "opensInNewTab": "(opens in a new tab)"
+  },
+  "MobileNav": {
+    "open": "Menu",
+    "close": "Close menu",
+    "title": "Menu",
+    "nav": "Main navigation",
+    "call": "Call",
+    "book": "Book a visit"
   }
 }
