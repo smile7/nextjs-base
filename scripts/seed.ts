@@ -2,10 +2,11 @@
  * Seeds a dataset with deterministic `seed.*` documents.
  *
  *   pnpm seed                         demo BG/EN content into `development` (re-runs replace it)
- *   pnpm seed --dataset staging       another dataset
  *   pnpm seed --client --dataset production
  *                                     a real client's structure as drafts; never overwrites
- *   pnpm seed --reset                 delete every seed document first
+ *   pnpm seed --reset                 delete every seed document first (development only)
+ *
+ * Demo mode and --reset require the `development` dataset unless --force. --reset cannot be used with --client.
  *
  * Needs NEXT_PUBLIC_SANITY_PROJECT_ID and a SANITY_WRITE_TOKEN (Editor robot token) in `.env.local`.
  */
@@ -21,7 +22,7 @@ import { seedPrefix, type SeedImages } from './seed/helpers'
 try {
   process.loadEnvFile('.env.local')
 } catch {
-  // CI and one-off runs pass the variables directly.
+  // Variables can be set in the shell instead.
 }
 
 const { values } = parseArgs({
@@ -29,6 +30,7 @@ const { values } = parseArgs({
     dataset: { type: 'string', default: 'development' },
     client: { type: 'boolean', default: false },
     reset: { type: 'boolean', default: false },
+    force: { type: 'boolean', default: false },
   },
 })
 const mode: SeedMode = values.client ? 'client' : 'demo'
@@ -39,8 +41,20 @@ const fail = (message: string): never => {
   process.exit(1)
 }
 
-if (mode === 'demo' && dataset === 'production') {
-  fail('refusing to write demo content into production; use --client')
+if (values.reset && values.client) {
+  fail('refusing --reset with --client; client seed keeps seed.* ids and reset would delete edited content')
+}
+
+if (!values.force) {
+  if (mode === 'demo' && dataset === 'production') {
+    fail('refusing to write demo content into production; use --client')
+  }
+  if (mode === 'demo' && dataset !== 'development') {
+    fail(`refusing to write demo content into "${dataset}"; use development dataset or --force`)
+  }
+  if (values.reset && dataset !== 'development') {
+    fail(`refusing to reset seed documents in "${dataset}"; use development dataset or --force`)
+  }
 }
 const token = process.env.SANITY_WRITE_TOKEN || fail('SANITY_WRITE_TOKEN is not set')
 

@@ -303,7 +303,7 @@ Missing translations → "Not yet in <language>" per language, across page/servi
 ---
 
 ## 8. Seed content (`seed/`, `pnpm seed` → `development` dataset)
-- Deterministic `_id`s (`seed.page.home.bg`, metadata `seed.meta.page.home`; singletons keep `siteSettings` / `navigation`), idempotent (`createOrReplace`). `--reset` deletes `seed.**` and `drafts.seed.**` only. Demo content is refused for `production`.
+- Deterministic `_id`s (`seed.page.home.bg`, metadata `seed.meta.page.home`; singletons keep `siteSettings` / `navigation`), idempotent (`createOrReplace`). `--reset` deletes `seed.**` and `drafts.seed.**` only (not combinable with `--client`). Demo seed and `--reset` are allowed only on the `development` dataset unless `--force`; demo content is refused for `production` (use `--client`).
 - Demo brand "Demo Dental" with plausible BG/EN content for every section and type, images from `seed/images/` (generated placeholders labelled "placeholder"; Sanity dedupes re-uploads by hash).
 - Legal pages from the `LEGAL-GDPR.md` templates with `[[placeholders]]` (filled with demo company details in demo mode).
 - For a real client, `pnpm seed --client --dataset production` creates only the structure (system pages with standard empty sections, empty settings, legal templates with placeholders, system-route navigation) **as drafts, create-only**: a document is skipped if its published or draft version exists, so re-running never overwrites a client's edits. Translation metadata is published, as the plugin does.
