@@ -13,15 +13,14 @@ export type SectionRendererProps = {
 }
 
 export async function SectionRenderer({ sections, locale, site }: SectionRendererProps) {
-  const hasHeroFirst = sections[0]?.type === 'hero'
-
   const bands = await Promise.all(
     sections.map(async (section, index) => {
       const type = section.type satisfies SectionType
       const Component = registryEntry(type)
       if (!Component) return null
 
-      const imagePriority = hasHeroFirst ? index <= 1 : index === 0
+      // Only the page's first image is preloaded; sections that use it render a single image.
+      const imagePriority = index === 0
 
       const props: SectionComponentProps = {
         section,

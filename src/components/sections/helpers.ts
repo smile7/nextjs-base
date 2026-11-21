@@ -10,12 +10,13 @@ export function pageUsesHeroH1(sections: readonly Section[]) {
   return sections[0]?.type === 'hero'
 }
 
-/** Semantic level for the section's primary heading (hero heading, FAQ title, …). */
+/**
+ * Semantic level for the section's primary heading (hero heading, FAQ title, …). A leading hero
+ * owns the page's only `h1`; otherwise the page renders `page.title` as the `h1`, so every
+ * section heading is an `h2`.
+ */
 export function sectionHeadingLevel(index: number, sections: readonly Section[]): HeadingLevel {
-  if (pageUsesHeroH1(sections)) {
-    return index === 0 ? 'h1' : 'h2'
-  }
-  return index === 0 ? 'h1' : 'h2'
+  return index === 0 && pageUsesHeroH1(sections) ? 'h1' : 'h2'
 }
 
 /** One level down from the section title (tile buttons, accordion items wrapped in headings). */

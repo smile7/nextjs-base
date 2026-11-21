@@ -1,8 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
-import Home from '@/app/[locale]/page'
-
 import { PageShell } from './PageShell'
 
 function renderShell() {
@@ -20,7 +18,7 @@ function renderShell() {
         </footer>
       }
     >
-      <Home />
+      <p>Page content</p>
     </PageShell>,
   )
 }

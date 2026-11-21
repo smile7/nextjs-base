@@ -8,6 +8,8 @@ import { Link, usePathname } from '@/i18n/navigation'
 import type { Href, PageTranslations } from '@/lib/i18n/translations'
 import { cn } from '@/lib/utils'
 
+import { usePageTranslations } from './PageTranslations'
+
 export type LanguageSwitcherProps = {
   /** CMS pages: the published translations. Omit on static routes (every locale exists). */
   translations?: PageTranslations
@@ -25,17 +27,27 @@ export function LanguageSwitcher({
   const currentLocale = useLocale()
   const pathname = usePathname()
   const params = useParams()
+  const page = usePageTranslations()
+  const pageTranslations = translations ?? page?.translations
+  const pageFallback = translations ? fallback : (page?.fallback ?? fallback)
+  const route = currentRoute(pathname, params)
+  const cmsParent = cmsParents[pathname]
 
   return (
     <nav aria-label={t('label')} className={className}>
       <ul className="flex items-center gap-1">
         {locales.map((locale) => {
-          const translated = translations ? translations[locale] : currentRoute(pathname, params)
           const isCurrent = locale === currentLocale
+          let translated: Href | undefined
+          if (pageTranslations) translated = pageTranslations[locale]
+          // CMS slugs differ per locale; until the page's translations arrive (hydration), link
+          // other locales to the parent page rather than to a slug that may not exist there.
+          else if (cmsParent && !isCurrent) translated = cmsParent
+          else translated = route
           return (
             <li key={locale}>
               <Link
-                href={translated ?? fallback}
+                href={translated ?? pageFallback}
                 locale={locale}
                 hrefLang={localeMeta[locale].hreflang}
                 lang={localeMeta[locale].hreflang}
@@ -58,6 +70,13 @@ export function LanguageSwitcher({
       </ul>
     </nav>
   )
+}
+
+const cmsParents: Partial<Record<string, Href>> = {
+  '/[slug]': '/',
+  '/services/[slug]': '/services',
+  '/blog/[slug]': '/blog',
+  '/legal/[slug]': '/',
 }
 
 const DYNAMIC_SEGMENT = /\[([^\]]+)\]/g

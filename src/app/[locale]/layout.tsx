@@ -9,6 +9,7 @@ import { AnnouncementBanner } from '@/components/site/AnnouncementBanner'
 import { MobileActionBar } from '@/components/site/MobileActionBar'
 import { MobileNav } from '@/components/site/MobileNav'
 import { PageShell } from '@/components/site/PageShell'
+import { PageTranslationsProvider } from '@/components/site/PageTranslations'
 import { SiteFooter } from '@/components/site/SiteFooter'
 import { SiteHeader } from '@/components/site/SiteHeader'
 import { fontVariables } from '@/config/fonts'
@@ -83,42 +84,44 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             Sections: messages.Sections,
           }}
         >
-          <PageShell
-            skipLabel={t('SkipLink.label')}
-            header={
-              settings ? (
+          <PageTranslationsProvider>
+            <PageShell
+              skipLabel={t('SkipLink.label')}
+              header={
+                settings ? (
+                  <>
+                    {announcement ? (
+                      <AnnouncementBanner
+                        announcement={announcement}
+                        settings={settings}
+                        homePath={getPathname({ locale, href: '/' })}
+                      />
+                    ) : null}
+                    <SiteHeader
+                      brandName={settings.brandName}
+                      nav={nav}
+                      phone={phone}
+                      menu={<MobileNav nav={nav} phone={phone} booking={booking} />}
+                    />
+                  </>
+                ) : null
+              }
+              footer={
                 <>
-                  {announcement ? (
-                    <AnnouncementBanner
-                      announcement={announcement}
+                  {settings ? (
+                    <SiteFooter
+                      locale={locale}
                       settings={settings}
-                      homePath={getPathname({ locale, href: '/' })}
+                      columns={navigation?.footerColumns ?? []}
                     />
                   ) : null}
-                  <SiteHeader
-                    brandName={settings.brandName}
-                    nav={nav}
-                    phone={phone}
-                    menu={<MobileNav nav={nav} phone={phone} booking={booking} />}
-                  />
+                  {barActions.length > 0 ? <MobileActionBar actions={barActions} /> : null}
                 </>
-              ) : null
-            }
-            footer={
-              <>
-                {settings ? (
-                  <SiteFooter
-                    locale={locale}
-                    settings={settings}
-                    columns={navigation?.footerColumns ?? []}
-                  />
-                ) : null}
-                {barActions.length > 0 ? <MobileActionBar actions={barActions} /> : null}
-              </>
-            }
-          >
-            <MotionProvider>{children}</MotionProvider>
-          </PageShell>
+              }
+            >
+              <MotionProvider>{children}</MotionProvider>
+            </PageShell>
+          </PageTranslationsProvider>
         </NextIntlClientProvider>
         {draft.isEnabled && <PreviewTools />}
       </body>
