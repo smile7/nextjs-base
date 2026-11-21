@@ -6,7 +6,8 @@
  *                                     a real client's structure as drafts; never overwrites
  *   pnpm seed --reset                 delete every seed document first (development only)
  *
- * Demo mode and --reset require the `development` dataset unless --force. --reset cannot be used with --client.
+ * Demo mode and --reset require the `development` dataset unless --force; demo mode is refused on
+ * `production` even with --force. --reset cannot be used with --client.
  *
  * Needs NEXT_PUBLIC_SANITY_PROJECT_ID and a SANITY_WRITE_TOKEN (Editor robot token) in `.env.local`.
  */
@@ -45,10 +46,11 @@ if (values.reset && values.client) {
   fail('refusing --reset with --client; client seed keeps seed-* ids and reset would delete edited content')
 }
 
+// --force never unlocks demo content in production.
+if (mode === 'demo' && dataset === 'production') {
+  fail('refusing to write demo content into production; use --client')
+}
 if (!values.force) {
-  if (mode === 'demo' && dataset === 'production') {
-    fail('refusing to write demo content into production; use --client')
-  }
   if (mode === 'demo' && dataset !== 'development') {
     fail(`refusing to write demo content into "${dataset}"; use development dataset or --force`)
   }
