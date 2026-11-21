@@ -70,6 +70,26 @@
   "SkipLink": {
     "label": "Към основното съдържание"
   },
+  "Sections": {
+    "opensInNewTab": "(отваря се в нов раздел)",
+    "readMore": "Научете повече",
+    "tileExpand": "Покажи подробности",
+    "tileCollapse": "Скрий подробности",
+    "galleryAll": "Всички",
+    "galleryPrev": "Предишна снимка",
+    "galleryNext": "Следваща снимка",
+    "galleryClose": "Затвори",
+    "galleryCounter": "{current} / {total}",
+    "testimonialsPrev": "Предишен отзив",
+    "testimonialsNext": "Следващ отзив",
+    "ratingStars": "{rating} от 5",
+    "hoursClosed": "Затворено",
+    "hoursSpecial": "Специално работно време",
+    "contactMapPlaceholder": "Картата ще се зареди тук",
+    "blogRead": "Прочетете",
+    "teamBioExpand": "Покажи биография",
+    "teamBioCollapse": "Скрий биография"
+  },
   "Error": {
     "title": "Нещо се обърка",
     "description": "Страницата не успя да се зареди. Опитайте отново след малко или се върнете към началото.",

@@ -30,6 +30,6 @@ export type SectionComponentProps<T extends Section = Section> = {
 
 export type SectionComponent<T extends Section = Section> = (
   props: SectionComponentProps<T>,
-) => ReactNode
+) => ReactNode | Promise<ReactNode>
 
 export type SectionRegistry = Record<SectionType, SectionComponent | null>

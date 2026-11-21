@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 import type { Section, SectionType } from '@/lib/content'
 
 import { SectionErrorBoundary } from './SectionErrorBoundary'
@@ -10,33 +12,54 @@ export type SectionRendererProps = {
   site: SectionSiteContext
 }
 
-export function SectionRenderer({ sections, locale, site }: SectionRendererProps) {
+export async function SectionRenderer({ sections, locale, site }: SectionRendererProps) {
   const hasHeroFirst = sections[0]?.type === 'hero'
 
-  return (
-    <>
-      {sections.map((section, index) => {
-        const type = section.type satisfies SectionType
-        const Component = registryEntry(type)
-        if (!Component) return null
+  const bands = await Promise.all(
+    sections.map(async (section, index) => {
+      const type = section.type satisfies SectionType
+      const Component = registryEntry(type)
+      if (!Component) return null
 
-        const imagePriority = hasHeroFirst ? index <= 1 : index === 0
+      const imagePriority = hasHeroFirst ? index <= 1 : index === 0
 
-        const props: SectionComponentProps = {
-          section,
-          index,
-          sections,
-          locale,
-          site,
-          imagePriority,
+      const props: SectionComponentProps = {
+        section,
+        index,
+        sections,
+        locale,
+        site,
+        imagePriority,
+      }
+
+      let content: ReactNode
+      try {
+        content = await Component(props)
+      } catch (error) {
+        if (process.env.NODE_ENV === 'production') {
+          content = null
+        } else {
+          const message = error instanceof Error ? error.message : String(error)
+          content = (
+            <div
+              role="alert"
+              data-section-type={type}
+              data-section-key={section.key}
+              className="mx-auto max-w-content border-2 border-dashed border-danger px-5 py-8 text-danger"
+            >
+              {message}
+            </div>
+          )
         }
+      }
 
-        return (
-          <SectionErrorBoundary key={section.key} sectionKey={section.key} sectionType={type}>
-            <Component {...props} />
-          </SectionErrorBoundary>
-        )
-      })}
-    </>
+      return (
+        <SectionErrorBoundary key={section.key} sectionKey={section.key} sectionType={type}>
+          {content}
+        </SectionErrorBoundary>
+      )
+    }),
   )
+
+  return <>{bands}</>
 }

@@ -5,10 +5,13 @@ import { Container } from '@/components/primitives/Container'
 import { Heading } from '@/components/primitives/Heading'
 import { Text } from '@/components/primitives/Text'
 import { ComponentsDemo } from '@/components/styleguide/ComponentsDemo'
+import { SectionsDemo } from '@/components/styleguide/SectionsDemo'
 import { MotionDemo } from '@/components/styleguide/MotionDemo'
 import { PaletteDemo } from '@/components/styleguide/PaletteDemo'
 import { ScalesDemo } from '@/components/styleguide/ScalesDemo'
 import { TypeDemo } from '@/components/styleguide/TypeDemo'
+import { locales, type Locale } from '@/config/i18n'
+import { hasLocale } from 'next-intl'
 import { readPublicEnv } from '@/env'
 
 export const metadata: Metadata = {
@@ -17,7 +20,12 @@ export const metadata: Metadata = {
 }
 
 /** Internal sign-off surface. 404 unless NEXT_PUBLIC_ENABLE_STYLEGUIDE=true. */
-export default function StyleguidePage() {
+export default async function StyleguidePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
   const { NEXT_PUBLIC_ENABLE_STYLEGUIDE } = readPublicEnv('NEXT_PUBLIC_ENABLE_STYLEGUIDE')
   if (!NEXT_PUBLIC_ENABLE_STYLEGUIDE) notFound()
 
@@ -28,8 +36,7 @@ export default function StyleguidePage() {
           Styleguide
         </Heading>
         <Text tone="muted" className="mt-2 max-w-(--container-prose)">
-          Tokens, type, components and motion for review. Header states arrive in Phase 05, page
-          sections in Phase 06.
+          Tokens, type, components, sections and motion for review.
         </Text>
       </Container>
       <PaletteDemo />
@@ -37,6 +44,7 @@ export default function StyleguidePage() {
       <ScalesDemo />
       <ComponentsDemo />
       <MotionDemo />
+      <SectionsDemo locale={hasLocale(locales, locale) ? (locale as Locale) : 'bg'} />
     </>
   )
 }

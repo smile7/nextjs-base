@@ -5,13 +5,12 @@ import type { CtaBandSection, HeroSection, Section } from '@/lib/content'
 
 import { fixtureSite } from './__fixtures__/site'
 import { SectionRenderer } from './SectionRenderer'
-import { sectionRegistry } from './registry'
 import type { SectionComponentProps } from './types'
 
 const base = { tone: 'base' as const, spacing: 'default' as const }
 
-function crashingSection(type: Section['type']) {
-  return function Crashing(props: SectionComponentProps) {
+function crashing(type: string, mode: 'sync' | 'async') {
+  const body = (props: SectionComponentProps) => {
     if (props.section.key === 'bad') throw new Error('boom')
     const label =
       props.section.type === 'hero'
@@ -21,19 +20,20 @@ function crashingSection(type: Section['type']) {
           : props.section.key
     return <div data-section={type}>{label}</div>
   }
+  return mode === 'async' ? async (props: SectionComponentProps) => body(props) : body
 }
 
-describe('SectionRenderer', () => {
-  it('renders a mixed fixture list and swallows production errors', () => {
-    const saved = {
-      hero: sectionRegistry.hero,
-      faq: sectionRegistry.faq,
-      ctaBand: sectionRegistry.ctaBand,
-    }
-    sectionRegistry.hero = crashingSection('hero')
-    sectionRegistry.faq = crashingSection('faq')
-    sectionRegistry.ctaBand = crashingSection('ctaBand')
+vi.mock('./registry', () => ({
+  registryEntry: (type: string) => {
+    if (type === 'hero') return crashing('hero', 'async')
+    if (type === 'faq') return crashing('faq', 'sync')
+    if (type === 'ctaBand') return crashing('ctaBand', 'async')
+    return null
+  },
+}))
 
+describe('SectionRenderer', () => {
+  it('renders a mixed fixture list and swallows production errors', async () => {
     const sections: Section[] = [
       {
         ...base,
@@ -62,17 +62,16 @@ describe('SectionRenderer', () => {
 
     vi.stubEnv('NODE_ENV', 'production')
     const { container } = render(
-      <SectionRenderer sections={sections} locale="bg" site={fixtureSite} />,
+      await SectionRenderer({ sections, locale: 'bg', site: fixtureSite }),
     )
     expect(screen.getByText('Welcome')).toBeInTheDocument()
     expect(screen.getByText('Call us')).toBeInTheDocument()
     expect(container.querySelector('[data-section="faq"]')).toBeNull()
 
     vi.stubEnv('NODE_ENV', 'development')
-    render(<SectionRenderer sections={sections} locale="bg" site={fixtureSite} />)
+    render(await SectionRenderer({ sections, locale: 'bg', site: fixtureSite }))
     expect(screen.getByRole('alert')).toHaveAttribute('data-section-type', 'faq')
 
     vi.unstubAllEnvs()
-    Object.assign(sectionRegistry, saved)
   })
 })

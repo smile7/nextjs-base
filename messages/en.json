@@ -70,6 +70,26 @@
   "SkipLink": {
     "label": "Skip to main content"
   },
+  "Sections": {
+    "opensInNewTab": "(opens in a new tab)",
+    "readMore": "Read more",
+    "tileExpand": "Show details",
+    "tileCollapse": "Hide details",
+    "galleryAll": "All",
+    "galleryPrev": "Previous photo",
+    "galleryNext": "Next photo",
+    "galleryClose": "Close",
+    "galleryCounter": "{current} / {total}",
+    "testimonialsPrev": "Previous review",
+    "testimonialsNext": "Next review",
+    "ratingStars": "{rating} out of 5",
+    "hoursClosed": "Closed",
+    "hoursSpecial": "Special opening hours",
+    "contactMapPlaceholder": "Map loads here",
+    "blogRead": "Read",
+    "teamBioExpand": "Show bio",
+    "teamBioCollapse": "Hide bio"
+  },
   "Error": {
     "title": "Something went wrong",
     "description": "This page could not load. Try again in a moment or go back to the home page.",
