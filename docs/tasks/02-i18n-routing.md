@@ -24,7 +24,7 @@
 3. `src/app/admin/layout.tsx`: its own root layout (`<html lang="en">`), no site providers.
 4. Move `/styleguide` under `[locale]`.
 **AC:** View source shows `<html lang="bg">` on `/bg` and `lang="en"` on `/en`; `/bg/nonexistent` shows the BG 404 with status 404.
-**Done check:** `pnpm e2e e2e/i18n.spec.ts` (status codes + lang attribute).
+**Done check:** against `pnpm dev`: `curl -I localhost:3000/bg/nonexistent` gives 404; `curl -s localhost:3000/bg | rg '<html lang="bg"'` and the same for `/en`.
 
 ### T02.3 — Alternates helper and LanguageSwitcher
 **Steps**
@@ -39,7 +39,7 @@
 **AC:** Unit tests for both locales, including edge cases (closed days, midnight).
 **Done check:** `pnpm test src/lib/i18n`.
 
-### T02.5 — i18n e2e and "add a language" doc check — e2e part SKIPPED (ADR-011)
-**Steps:** e2e: switcher keyboard flow, the cookie remembers the choice, alternates in `<head>`. Then temporarily add `de` to `locales` in a branch, verify the type errors guide you to everything needed (messages, pathnames, Sanity language list), and document the exact steps in `docs/ARCHITECTURE.md` §7 "Adding a language". Revert.
+### T02.5 — Switcher checks and "add a language" doc check
+**Steps:** Vitest render test for `LanguageSwitcher` (one link per locale, `aria-current`, `hreflang` + `lang`, fallback link for a missing translation). Manual check that the next-intl cookie remembers the choice and that the alternates appear in `<head>` (`curl -s localhost:3000/bg | rg hreflang`). Then temporarily add `de` to `locales` in a branch, verify the type errors guide you to everything needed (messages, pathnames, Sanity language list), and document the exact steps in `docs/ARCHITECTURE.md` §7 "Adding a language". Revert.
 **AC:** The checklist "Adding a language" is accurate and ≤ 6 steps.
-**Done check:** e2e green; doc updated.
+**Done check:** `pnpm test`; manual cookie check noted in PROGRESS; doc updated.

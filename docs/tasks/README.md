@@ -9,7 +9,7 @@ Task format
 - **Acceptance criteria (AC):** what must be true. Verify every AC before claiming done.
 - **Done check:** commands/observations that prove it.
 
-> **ADR-011 (no Playwright) overrides the task files.** Skip every e2e / Playwright / axe-in-browser / `pnpm shots` step, AC and Done check. Replace with a Vitest test when jsdom can cover the behavior, otherwise note a manual check in PROGRESS. Fully skipped: **T01.7** (screenshot script) and **T11.2** (visual regression). Partly skipped: **T02.5** (e2e part), **T11.1** (automated suite; the manual screen-reader pass stays).
+> **ADR-011 (no Playwright).** The task files no longer contain e2e, Playwright, axe-in-browser or `pnpm shots` steps; those checks were rewritten as Vitest tests (where jsdom can cover the behavior) or manual checks noted in PROGRESS. Don't add browser tests back. Skipped: **T01.7** (screenshot script) and **T11.2** (visual regression).
 
 Phase order and gates
 

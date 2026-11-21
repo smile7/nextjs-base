@@ -13,7 +13,7 @@
 3. Pin exact versions from ARCHITECTURE §1 (`next`, `react`, `react-dom`, `typescript@6.0.3`, `eslint@9.39.x`, `eslint-config-next@16.4.6`, Tailwind 4.3.5). Add `"packageManager": "pnpm@12.21.0"`, `"engines": { "node": ">=24 <25" }` and `.nvmrc` (`24`).
 4. `tsconfig.json`: `strict: true`, `noUncheckedIndexedAccess: true`, `noImplicitOverride: true`, `verbatimModuleSyntax: true`, `paths: { "@/*": ["./src/*"] }`.
 5. Delete the demo page content. Leave a minimal `src/app/page.tsx` placeholder (it will be replaced by `[locale]` in Phase 02).
-6. `.gitignore`: add `.open-next`, `.wrangler`, `.dev.vars`, `.env*.local`, `.screenshots`, `test-results`, `playwright-report`.
+6. `.gitignore`: add `.open-next`, `.wrangler`, `.dev.vars`, `.env*.local`.
 **Files:** `package.json`, `pnpm-lock.yaml`, `tsconfig.json`, `next.config.ts`, `postcss.config.mjs`, `src/app/*`, `.nvmrc`, `.gitignore`, `AGENTS.md` (append only).
 **AC:** `pnpm dev` serves the placeholder; `pnpm build` succeeds; versions match the table exactly; our AGENTS.md content is preserved.
 **Done check:** `pnpm build && node -e "const p=require('./package.json');console.log(p.dependencies.next,p.devDependencies.typescript)"` prints `16.4.6 6.0.3`.
@@ -24,12 +24,11 @@
 1. `eslint.config.mjs`: `eslint-config-next` (core-web-vitals + typescript), `eslint-plugin-jsx-a11y` strict rules, `eslint-config-prettier` last. Rules: `no-restricted-imports` placeholder for the content boundary (filled in T04.6), `react/jsx-no-literals` **warn** in `src/components/**` (allow `aria-hidden` symbols, punctuation), `@typescript-eslint/no-explicit-any: error`.
 2. Prettier 3.10 + `prettier-plugin-tailwindcss` (`tailwindStylesheet: ./src/styles/globals.css`), `.prettierrc`, `.prettierignore` (generated files).
 3. Vitest 5: `vitest.config.ts` (jsdom for `*.test.tsx`, node for `*.test.ts`), `@vitejs/plugin-react`, path alias, `src/test/setup.ts`. One sample test.
-4. Playwright 1.65: `playwright.config.ts` with projects `mobile` (Pixel 7), `tablet` (iPad Mini), `desktop` (1280×800). `webServer` runs `pnpm preview` in CI and `pnpm dev` locally (env `E2E_TARGET`). `@axe-core/playwright` helper `expectNoA11yViolations(page)`.
-5. Scripts (note: call `pnpm run deploy`, since `pnpm deploy` is a pnpm built-in): `dev`, `build`, `start`, `lint`, `lint:fix`, `format`, `typecheck` (`tsc --noEmit`), `test`, `test:watch`, `e2e`, `check` (= lint + typecheck + test), `shots` (placeholder until T01.7), `preview`, `deploy`, `upload`, `cf-typegen`, `typegen` (placeholder until T03.1).
-6. Optional pre-commit: `simple-git-hooks` + `lint-staged` (prettier + eslint on staged files).
-**Files:** `eslint.config.mjs`, `.prettierrc`, `.prettierignore`, `vitest.config.ts`, `playwright.config.ts`, `e2e/helpers/a11y.ts`, `e2e/smoke.spec.ts`, `src/test/setup.ts`, `package.json`.
-**AC:** `pnpm check` passes; `pnpm e2e` runs 1 smoke test on 3 projects; formatting sorts Tailwind classes.
-**Done check:** `pnpm check && pnpm e2e`.
+4. Scripts (note: call `pnpm run deploy`, since `pnpm deploy` is a pnpm built-in): `dev`, `build`, `start`, `lint`, `lint:fix`, `format`, `typecheck` (`tsc --noEmit`), `test`, `test:watch`, `check` (= lint + typecheck + test), `preview`, `deploy`, `upload`, `cf-typegen`, `typegen` (placeholder until T03.1).
+5. Optional pre-commit: `simple-git-hooks` + `lint-staged` (prettier + eslint on staged files).
+**Files:** `eslint.config.mjs`, `.prettierrc`, `.prettierignore`, `vitest.config.ts`, `src/test/setup.ts`, `package.json`.
+**AC:** `pnpm check` passes; formatting sorts Tailwind classes.
+**Done check:** `pnpm check`.
 
 ### T00.3 — Cloudflare / OpenNext configuration
 **Context:** ARCHITECTURE §6. Start with the **ISR profile** files, and also commit the Static-profile variants in `infra/`.
@@ -59,7 +58,7 @@
 ### T00.5 — CI/CD workflows
 **Context:** ARCHITECTURE §11, ADR-008.
 **Steps**
-1. `.github/workflows/ci.yml`: on PR + push to main. Steps: checkout, pnpm/action-setup, setup-node (from `.nvmrc`, pnpm cache), `pnpm install --frozen-lockfile`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, Playwright install (chromium + webkit) + `pnpm e2e` with `E2E_TARGET=preview` (workerd). Upload the Playwright report on failure.
+1. `.github/workflows/ci.yml`: on PR + push to main. Steps: checkout, pnpm/action-setup, setup-node (from `.nvmrc`, pnpm cache), `pnpm install --frozen-lockfile`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm contrast`, `pnpm build` (Turnstile test keys in the job env).
 2. `.github/workflows/deploy.yml`: on push to main → `pnpm run deploy` (env: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, all `NEXT_PUBLIC_*` from repo variables). On PR (same repo only) → `pnpm upload` + comment the preview URL. Add `repository_dispatch: types: [sanity-publish]` → deploy (Static profile).
 3. Concurrency groups (cancel in-progress on the same ref).
 4. `renovate.json` (or Dependabot): weekly, group minor/patch, no automerge for next/opennext/wrangler/sanity majors.

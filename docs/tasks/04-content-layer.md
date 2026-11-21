@@ -33,7 +33,7 @@
 ### T04.5 — Draft mode, PreviewTools, Presentation
 **Steps:** `/api/draft-mode/enable` (`defineEnableDraftMode`), `/api/draft-mode/disable` (redirect back, safe-redirect same-origin only). `src/lib/content/preview.tsx` (`PreviewTools`: `<VisualEditing />` + "Exit preview" button hidden in Presentation). Render it in the `[locale]` layout only when draft mode is on. `src/sanity/presentation/resolve.ts`: `locations` for page/service/article/legalPage using the **same** pathnames (import from `src/i18n/pathnames.ts`, no duplication), `mainDocuments` for each route pattern. Add `presentationTool` to the Studio.
 **AC:** In Presentation, clicking any visible text focuses the field; drafts show without publishing; metadata and JSON-LD never contain stega characters (test: `stegaClean(x) === x` on rendered `<head>`).
-**Done check:** manual Presentation test on preview; e2e that checks `<head>` for zero-width characters when draft mode is on (using a test token in CI is optional; locally required).
+**Done check:** manual Presentation test on preview; unit test that the metadata and JSON-LD builders return stega-clean values for stega-encoded input; manual check of the page source in draft mode for zero-width characters in `<head>`.
 
 ### T04.6 — Boundary enforcement
 **Steps:** ESLint `no-restricted-imports`: `@/lib/content/sanity/*`, `next-sanity`, `@sanity/*` and `sanity.types` are forbidden outside `src/lib/content/**`, `src/sanity/**`, `src/app/admin/**`, `src/app/api/**`, `scripts/**`, `sanity.*.ts`. `scripts/check-boundaries.ts` double-checks via the import graph (simple regex scan is enough) and runs in `pnpm check`.

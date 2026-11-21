@@ -1,0 +1,15 @@
+---
+description: Cloudflare Workers / OpenNext runtime constraints. Apply to server code, config and route handlers.
+globs: src/app/api/**,src/actions/**,src/proxy.ts,src/middleware.ts,next.config.ts,open-next.config.ts,wrangler.jsonc,infra/**,src/lib/**/*.server.ts
+alwaysApply: false
+---
+# Cloudflare Workers runtime
+
+- The site runs on Workers via `@opennextjs/cloudflare` (Node.js compat). Don't add `export const runtime = 'edge'` to routes (unsupported by OpenNext).
+- CPU budget: assume the Free plan's 10 ms per request. Avoid heavy work at request time: no per-request OG images, no large markdown/PT transforms in actions, no `<Tailwind>` in emails, no big JSON parsing in hot paths. Prefer static generation and tagged caching.
+- Bindings via `getCloudflareContext()` (async variant in SSG/route contexts per OpenNext docs). Env vars/secrets also appear in `process.env`. Typed by `cloudflare-env.d.ts` (`pnpm cf-typegen` after editing `wrangler.jsonc`).
+- No filesystem writes, no native Node addons, no long-lived connections. `fetch` to public hosts only (`global_fetch_strictly_public`).
+- Revalidation: `revalidateTag(tag, { expire: 0 })` from the webhook only. Don't use `revalidatePath` broadly.
+- Keep the Worker small and fast to start (limits in ARCHITECTURE §1: 1 s startup; for size, verify the current limit with the Cloudflare docs MCP, since older docs still say 3 MiB compressed on Free). Check the `wrangler deploy --dry-run` size output after adding dependencies, and never import Studio code into site routes.
+- Local parity: test in workerd with `pnpm preview` before claiming server-side work done.
+- Use the Cloudflare MCP servers (docs/bindings/observability) to look up current limits and read logs (`wrangler tail`).

@@ -37,25 +37,22 @@
 2. Restyle via tokens: sizes ≥ 44×44 px touch targets (WCAG 2.5.8 minimum is 24, our target is 44), visible focus ring (`--color-ring`, 2px + offset), `Button` variants `primary | secondary | ghost | link | call` (call = phone CTA style), and `asChild`-equivalent for links via `render`.
 3. Keep the component files editable (it's shadcn), but don't add business logic there.
 **Files:** `src/components/ui/*`.
-**AC:** All components keyboard-operable; dialogs/sheets trap focus and restore it; `axe` clean in the styleguide.
-**Done check:** `pnpm e2e e2e/styleguide.spec.ts` (axe + keyboard on dialog/sheet/accordion).
+**AC:** All components keyboard-operable; dialogs/sheets trap focus and restore it; no issues in a manual accessibility check of the styleguide (Lighthouse accessibility audit + keyboard).
+**Done check:** Vitest render tests for the keyboard behavior jsdom can cover (dialog/sheet open and close on Escape, accordion toggles); manual keyboard pass on `/styleguide` (focus trap and focus return), noted in PROGRESS.
 
 ### T01.5 — Motion foundation
 **Steps:** `MotionProvider` (client): `LazyMotion features={domAnimation} strict` + `MotionConfig reducedMotion="user"`. `Reveal` (fade/translate on enter, `once`, uses `m.div` from `motion/react-m`, durations from tokens; renders children statically when reduced motion is on). `motion` tokens mirrored in `src/components/motion/tokens.ts` (read from the same values as the CSS). Prefer CSS transitions for simple hover/press. Motion is for enter and layout transitions only.
 **Files:** `src/components/motion/{MotionProvider,Reveal,tokens}.tsx`.
-**AC:** With `prefers-reduced-motion: reduce` (Playwright `reducedMotion: 'reduce'`) there is no transform animation; motion JS < 20 kB gz added to the first load (check the bundle analyzer / `next-bundle-optimizer` skill).
-**Done check:** e2e test with reduced motion; bundle note in PROGRESS.
+**AC:** With `prefers-reduced-motion: reduce` there is no transform animation; motion JS < 20 kB gz added to the first load (check the bundle analyzer / `next-bundle-optimizer` skill).
+**Done check:** Vitest render test for `Reveal` with `matchMedia` mocked to reduced motion (renders static children); bundle note in PROGRESS.
 
 ### T01.6 — /styleguide page
-**Steps:** One page showing: palette swatches with token names and contrast ratios, type scale (BG + EN sample text), spacing/radius/shadow scales, buttons (all variants/states incl. disabled/loading), form controls with error states, cards, accordion, dialog/sheet triggers, the header in both states, motion samples, and (from Phase 06) every section with seed-like data. Gate it with `NEXT_PUBLIC_ENABLE_STYLEGUIDE` and set `robots: noindex`. It's also the **visual regression surface**.
+**Steps:** One page showing: palette swatches with token names and contrast ratios, type scale (BG + EN sample text), spacing/radius/shadow scales, buttons (all variants/states incl. disabled/loading), form controls with error states, cards, accordion, dialog/sheet triggers, the header in both states, motion samples, and (from Phase 06) every section with seed-like data. Gate it with `NEXT_PUBLIC_ENABLE_STYLEGUIDE` and set `robots: noindex`.
 **Files:** `src/app/styleguide/page.tsx` (moved later), `src/components/styleguide/*`.
 **AC:** Renders at 360/768/1280 without horizontal scroll; noindex meta present; 404 when disabled.
-**Done check:** `pnpm shots` (after T01.7) → review the images.
+**Done check:** Vitest test for the 404-when-disabled and noindex behavior; manual review at 360/768/1280 in the browser.
 
 ### T01.7 — Screenshot script — SKIPPED (ADR-011)
-**Steps:** `scripts/shots.ts` (Playwright library, not test runner): reads the route list from `scripts/shots.config.ts` (default: `/bg`, `/en`, `/bg/styleguide`, later the main pages), viewports 360×800, 768×1024, 1280×800, full-page, `reducedMotion: 'reduce'`, waits for fonts (`document.fonts.ready`) and network idle, writes `.screenshots/<date>/<route>-<w>.png` + an `index.html` contact sheet. Option `--base-url` (default `http://localhost:3000`). Script: `"shots": "tsx scripts/shots.ts"`.
-**Files:** `scripts/shots.ts`, `scripts/shots.config.ts`, `package.json`.
-**AC:** One command produces all screenshots + a contact sheet in < 60 s locally.
-**Done check:** `pnpm dev & pnpm shots` → open `.screenshots/<date>/index.html`.
+Dropped with Playwright. No replacement; visual review is manual.
 
-**Phase gate:** Silvena reviews the styleguide screenshots (font pairing, palette, button style, radius) before Phase 05.
+**Phase gate:** Silvena reviews the styleguide (font pairing, palette, button style, radius) before Phase 05.
