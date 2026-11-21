@@ -59,7 +59,7 @@ export async function SiteFooter({ locale, settings, columns }: SiteFooterProps)
                 href={formatPhone(phone.e164).href}
                 className={`${linkClass} inline-flex items-center gap-2`}
               >
-                <PhoneIcon aria-hidden="true" className="size-4" />
+                <PhoneIcon aria-hidden="true" className="size-4 shrink-0" />
                 <span className="whitespace-nowrap">{phone.display}</span>
                 {phone.label ? <span className="text-fg-muted">({phone.label})</span> : null}
               </a>
@@ -69,7 +69,7 @@ export async function SiteFooter({ locale, settings, columns }: SiteFooterProps)
                 href={`mailto:${settings.email}`}
                 className={`${linkClass} inline-flex items-center gap-2`}
               >
-                <MailIcon aria-hidden="true" className="size-4" />
+                <MailIcon aria-hidden="true" className="size-4 shrink-0" />
                 {settings.email}
               </a>
             ) : null}

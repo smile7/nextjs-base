@@ -201,6 +201,8 @@ Behavior and accessibility (Disclosure pattern, not a modal)
 | consent | ConsentProvider, CookieBanner, CookiePreferences | |
 | motion | MotionProvider, Reveal, motion presets | |
 
+**Landmarks (every page, from `PageShell`):** skip link "to main content" (first focusable) → announcement `region` → `banner` (header with the primary `navigation` and the language `navigation`) → the single `main#main` (`tabIndex={-1}`; pages, `not-found` and `error` render inside it and never add their own `<main>`) → `contentinfo` (footer navigation and legal navigation) → the mobile quick-actions `navigation` (fixed, below `md`).
+
 States every interactive component must show in the styleguide: default, hover, focus-visible, active, disabled, loading (where relevant), error (form), open/closed (disclosure).
 
 ---

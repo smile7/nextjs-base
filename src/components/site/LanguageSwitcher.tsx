@@ -60,8 +60,16 @@ export function LanguageSwitcher({
   )
 }
 
-/** On static routes the internal pathname + current params describe the page in every locale. */
-function currentRoute(pathname: string, params: ReturnType<typeof useParams>): Href {
+const DYNAMIC_SEGMENT = /\[([^\]]+)\]/g
+
+/**
+ * On static routes the internal pathname + current params describe the page in every locale.
+ * Unknown URLs (404) can match a dynamic pattern like `/[slug]` without its param; those return
+ * `undefined`, so the link goes to the fallback.
+ */
+function currentRoute(pathname: string, params: ReturnType<typeof useParams>): Href | undefined {
+  const names = Array.from(pathname.matchAll(DYNAMIC_SEGMENT), (match) => match[1])
+  if (names.some((name) => name === undefined || params[name] === undefined)) return undefined
   // @ts-expect-error -- `pathname` and `params` come from the same matched route, so they always
   // fit together; next-intl can only check that pairing for literal pathnames.
   return { pathname, params }

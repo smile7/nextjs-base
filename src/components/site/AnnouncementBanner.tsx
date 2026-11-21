@@ -39,28 +39,26 @@ export async function AnnouncementBanner({
   const target = announcement.link ? resolveCta(announcement.link, settings) : null
 
   return (
-    <>
-      <AnnouncementDismiss
-        id={BANNER_ID}
-        state={state}
-        label={t('label')}
-        dismissible={announcement.dismissible}
-        className={toneClass[announcement.tone]}
-      >
-        <p>
-          {announcement.message}
-          {announcement.link && target ? (
-            <>
-              {' '}
-              <NavLink
-                link={{ ...target, label: announcement.link.label }}
-                className="font-semibold whitespace-nowrap underline underline-offset-2"
-              />
-            </>
-          ) : null}
-        </p>
-      </AnnouncementDismiss>
-      <script dangerouslySetInnerHTML={{ __html: bannerScript(BANNER_ID, state) }} />
-    </>
+    <AnnouncementDismiss
+      id={BANNER_ID}
+      state={state}
+      label={t('label')}
+      dismissible={announcement.dismissible}
+      script={bannerScript(BANNER_ID, state)}
+      className={toneClass[announcement.tone]}
+    >
+      <p>
+        {announcement.message}
+        {announcement.link && target ? (
+          <>
+            {' '}
+            <NavLink
+              link={{ ...target, label: announcement.link.label }}
+              className="font-semibold whitespace-nowrap underline underline-offset-2"
+            />
+          </>
+        ) : null}
+      </p>
+    </AnnouncementDismiss>
   )
 }

@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { alternates: buildAlternates(await getLocale(), inAllLocales('/')) }
 }
 
-/** Placeholder until Phase 07. */
+/** Placeholder until Phase 07. The layout provides `<main>`. */
 export default function Home() {
-  return <main id="main" />
+  return null
 }

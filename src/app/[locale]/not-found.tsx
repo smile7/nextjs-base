@@ -13,7 +13,7 @@ export default async function NotFound() {
   const t = await getTranslations('NotFound')
 
   return (
-    <main id="main">
+    <>
       {/* Segment-level not-found files can't export metadata; React hoists this into <head>. */}
       <title>{t('title')}</title>
       <Section tone="soft" labelledBy="not-found-title">
@@ -39,6 +39,6 @@ export default async function NotFound() {
           </Stack>
         </Container>
       </Section>
-    </main>
+    </>
   )
 }

@@ -66,5 +66,14 @@
       "googleBusiness": "Google profile",
       "other": "Website"
     }
+  },
+  "SkipLink": {
+    "label": "Skip to main content"
+  },
+  "Error": {
+    "title": "Something went wrong",
+    "description": "This page could not load. Try again in a moment or go back to the home page.",
+    "retry": "Try again",
+    "home": "Go to the home page"
   }
 }

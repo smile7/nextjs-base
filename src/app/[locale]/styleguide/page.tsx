@@ -22,7 +22,7 @@ export default function StyleguidePage() {
   if (!NEXT_PUBLIC_ENABLE_STYLEGUIDE) notFound()
 
   return (
-    <main>
+    <>
       <Container className="pt-12">
         <Heading as="h1" size="step-4">
           Styleguide
@@ -37,6 +37,6 @@ export default function StyleguidePage() {
       <ScalesDemo />
       <ComponentsDemo />
       <MotionDemo />
-    </main>
+    </>
   )
 }

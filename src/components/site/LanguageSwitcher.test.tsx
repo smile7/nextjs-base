@@ -55,6 +55,15 @@ describe('LanguageSwitcher', () => {
     expect(en).toHaveAttribute('href', '/en/services')
   })
 
+  it('falls back to home on an unknown URL instead of throwing (404 via the catch-all)', () => {
+    route.pathname = '/bg/nqma-takava'
+    route.params = { locale: 'bg', rest: 'nqma-takava' }
+    renderWithIntl(<LanguageSwitcher />)
+    const { bg, en } = links()
+    expect(bg).toHaveAttribute('href', '/bg')
+    expect(en).toHaveAttribute('href', '/en')
+  })
+
   it('fills dynamic params on static routes', () => {
     route.pathname = '/bg/blog/stranica/2'
     route.params = { locale: 'bg', n: '2' }
