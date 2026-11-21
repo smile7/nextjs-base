@@ -170,8 +170,8 @@ We're starting client <name>. Follow docs/NEW-CLIENT.md step by step. Tell me wh
 | 07 Pages | All routes, both locales | Click through everything |
 | 08 Contact | Form → email, map, booking CTAs | Send a real message |
 | 09 Consent/legal | Banner only when needed, analytics adapters, legal templates | Check with GA4 on and off |
-| 10 SEO/perf | JSON-LD, sitemap, `llms.txt`, OG, Lighthouse ≥ 95 | Read the LHCI report |
-| 11 QA/launch | Manual a11y pass, CSP, backups, editor guide, `new-client`, v1.0.0 | Fresh-clone test |
+| 10 SEO/perf | JSON-LD, sitemap, `llms.txt`, OG, Lighthouse ≥ 95, redirects | Read the manual Lighthouse scores |
+| 11 QA/launch | CSP, editor guide, launch check, `new-client`, v1.0.0 | Fresh-clone test |
 
 Realistic effort: about 75 focused chats. Phases 00–04 are the foundation, so don't rush them. The spike in T00.4 decides two important ADRs.
 

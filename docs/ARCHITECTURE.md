@@ -43,7 +43,6 @@ Install with exact versions (`pnpm add -E`). Upgrade deliberately, one PR per ma
 | | react-email | 6.11.16 | **v6 merged all components here.** `@react-email/components` is deprecated. Import from `react-email`. |
 | SEO | schema-dts | 2.1.0 | Typed JSON-LD. |
 | Tests | vitest | 5.1.1 | + @vitejs/plugin-react 6.3.0, jsdom 31.0.1, @testing-library/react 16.3.3 |
-| | @lhci/cli | 0.16.1 | Lighthouse CI budgets. |
 | Lint/format | eslint | **9.39.x** | **Not 10.** `eslint-plugin-jsx-a11y` 6.10.2 (bundled by `eslint-config-next`) peers on ESLint ≤ 9. |
 | | eslint-config-next | 16.4.6 | Flat config; `next lint` was removed in Next 16, so run the ESLint CLI. |
 | | eslint-config-prettier / prettier / prettier-plugin-tailwindcss | 10.1.8 / 3.10.1 / 0.8.1 | |
@@ -109,7 +108,7 @@ Principles:
 ├── .cursor/rules/*.mdc            # scoped agent rules
 ├── .cursor/mcp.json               # project MCP servers (see README)
 ├── .agents/skills/  .claude/skills/   # installed skills (npx skills)
-├── .github/workflows/{ci.yml,deploy.yml,backup.yml}
+├── .github/workflows/{ci.yml,deploy.yml}
 ├── docs/                          # this plan; keep it up to date
 ├── messages/{bg,en}.json          # UI strings only
 ├── public/
@@ -370,7 +369,7 @@ Consumers: next-intl routing, both Sanity i18n plugins (`supportedLanguages` / `
 | `CONTACT_FROM_EMAIL` | runtime var | wrangler `vars` | e.g. `Website <noreply@mail.client.bg>` |
 | `CONTACT_TO_EMAIL` | runtime var | wrangler `vars` | Overrides `siteSettings.contactForm.recipient` (keeps the inbox out of the public dataset if preferred) |
 | `CONTACT_DRY_RUN` | runtime var | `.dev.vars` | `true` skips the Resend call (local testing only; never in production) |
-| `SANITY_WRITE_TOKEN` | local/CI only | `.env.local`, GH secret | Seed script, backups. **Never** deployed to the Worker. |
+| `SANITY_WRITE_TOKEN` | local only | `.env.local` | Seed script. **Never** deployed to the Worker or stored in CI. |
 | `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` | CI only | GH secrets | Deploys |
 | GitHub fine-grained PAT (`contents:write`, one repo) | Sanity webhook only | Sanity webhook header | Triggers `repository_dispatch` on publish (§6.2). Not an env var; never in the repo. |
 
@@ -389,8 +388,7 @@ Local: `.env.local` for `next dev`, `.dev.vars` for `pnpm preview` (workerd). Ad
 - `ci.yml` (PRs and main): pnpm install (frozen) → lint → typecheck → unit tests → `next build`. Nothing else (ADR-011, ADR-012). The token contrast check runs as a unit test (`scripts/check-contrast.test.ts`); from T03.1 `pnpm typecheck` regenerates Sanity types first, so stale query types fail the typecheck.
 - `deploy.yml`: production (`pnpm run deploy` = `opennextjs-cloudflare build && opennextjs-cloudflare deploy`) on push to `main`, on `repository_dispatch: [sanity-publish]` (publish webhook, §6.2) and on a daily schedule. On PR → `opennextjs-cloudflare upload` (new version + preview URL, comment on the PR).
 - No Renovate/Dependabot (ADR-012). Upgrade dependencies deliberately, one PR per platform major, and re-run the T00.4 deploy check after upgrading Next, OpenNext, Wrangler or Sanity.
-- `backup.yml`: weekly `sanity dataset export production` → artifact (90-day retention). Optionally push to a private backup repo. This matters because Free has no backup/restore SLA and the client is an Administrator.
-- Lighthouse CI on the PR preview URL with budgets (see `SEO.md` §8).
+- No backup workflow and no Lighthouse CI (ADR-012, brochure scope). Content export is manual (`pnpm sanity dataset export production production-YYYY-MM-DD.tar.gz`); Sanity Free has no restore SLA, so export before risky bulk edits, migrations and handover. Performance budgets (`SEO.md` §8) are checked with a manual Lighthouse run.
 
 ---
 

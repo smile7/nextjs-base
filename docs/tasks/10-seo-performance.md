@@ -1,6 +1,6 @@
 # Phase 10 — SEO/AEO and performance
 
-**Goal:** complete metadata, structured data, sitemaps, `llms.txt`, OG images, and Lighthouse ≥ 95 in all categories on mobile, with CWV budgets enforced in CI.
+**Goal:** complete metadata, structured data, sitemaps, `llms.txt`, OG images, and Lighthouse ≥ 95 in all categories on mobile, checked by a manual Lighthouse run (no Lighthouse CI, ADR-012 brochure scope).
 **Read first:** `docs/SEO.md` (all), `.cursor/rules/seo.mdc`, `docs/ARCHITECTURE.md` §6.5–6.6.
 
 ---
@@ -25,11 +25,11 @@
 **AC:** The OG image renders Bulgarian text correctly; there are no runtime `ImageResponse` calls in the worker (verify via the build output: route is static).
 **Done check:** open the generated images; check with a share debugger (e.g. opengraph.xyz) on preview.
 
-### T10.5 — Performance pass, Lighthouse CI, redirects
+### T10.5 — Performance pass and redirects
 **Steps**
 1. Audit with the `next-bundle-optimizer` skill + `@next/bundle-analyzer`: client JS on the home page ≤ budget in SEO.md §8, no Sanity/Studio code in site bundles, Motion lazy features only, `lucide-react` tree-shaken, images sized (`sizes`) and `priority` only on LCP.
-2. `lighthouserc.json` with the lab budgets from SEO.md §8 exactly (Perf ≥ 95, A11y 100, BP ≥ 95, SEO 100, LCP ≤ 1.8 s, CLS ≤ 0.02, TBT ≤ 150 ms, first-load JS ≤ 110 KB gzip, page weight ≤ 900 KB) for `/bg`, `/en`, a service, an article and contact. Add a CI job `lhci` on PRs against the preview URL (`@lhci/cli autorun`, `--collect.url=<preview>`), mobile emulation, 3 runs median.
+2. Manual Lighthouse run (Chrome DevTools or PageSpeed Insights, mobile) on the preview URL for `/bg`, `/en`, a service, an article and contact, against the SEO.md §8 lab budgets (Perf ≥ 95, A11y 100, BP ≥ 95, SEO 100, LCP ≤ 1.8 s, CLS ≤ 0.02, TBT ≤ 150 ms, first-load JS ≤ 110 KB gzip, page weight ≤ 900 KB). No Lighthouse CI (ADR-012, brochure scope).
 3. Redirects: `next.config.ts` `redirects()` from a `src/config/redirects.ts` list (for migrations from the client's old site: old URLs → new, 308), plus `www` ↔ apex handled at the Cloudflare level (document in NEW-CLIENT). Trailing slash policy consistent.
 4. Fix everything below target and record the before/after in PROGRESS.
-**AC:** LHCI green on preview for all 5 URLs; no Sanity package in the client bundle for public routes.
-**Done check:** LHCI report link in PROGRESS.
+**AC:** The manual Lighthouse run meets the budgets on preview for all 5 URLs; no Sanity package in the client bundle for public routes; the redirects list works (308).
+**Done check:** before/after scores per URL in PROGRESS.

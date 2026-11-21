@@ -92,7 +92,7 @@ Techniques (required)
 - CLS: fixed header + spacer, `width`/`height` or `aspect-ratio` on all media, reserved space for the banner (it renders server-side, so no late insertion), Turnstile container with a fixed min-height, map placeholder with a fixed aspect ratio.
 - INP: leaf client components only. No large hydration islands. Motion via LazyMotion. Event handlers do minimal work.
 - Third parties: analytics script `defer`/`afterInteractive` (Umami/CF beacon ≈ 1–2 KB). Turnstile loads only when the form is near the viewport. Maps only on click. No Google Fonts requests (next/font self-hosts).
-- Measurement: `useReportWebVitals` → `track('web_vital', …)` when the provider supports custom events (Umami). Lighthouse CI on preview URLs (`lighthouserc.json` with the budgets above). The `next-bundle-optimizer` skill audits JS.
+- Measurement: `useReportWebVitals` → `track('web_vital', …)` when the provider supports custom events (Umami). A manual Lighthouse run (mobile) on preview URLs against the budgets above (no Lighthouse CI, ADR-012). The `next-bundle-optimizer` skill audits JS.
 
 ## 9. Redirects and migrations
 - If a client has an old site: crawl the old URLs (Screaming Frog or a sitemap) → a `redirects` list in `src/config/redirects.ts` → `next.config.ts` `redirects()` (308). Keep for ≥ 1 year.

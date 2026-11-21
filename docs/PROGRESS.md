@@ -27,7 +27,7 @@ Legend: [ ] todo · [~] in progress · [x] done · [!] blocked · [-] skipped
 ## Phase 10 — SEO/AEO and performance
 - [ ] T10.1 · [ ] T10.2 · [ ] T10.3 · [ ] T10.4 · [ ] T10.5
 ## Phase 11 — QA, launch, template packaging
-- [ ] T11.1 · [-] T11.2 · [ ] T11.3 · [ ] T11.4 · [ ] T11.5 · [ ] T11.6 · [ ] T11.7
+- [-] T11.1 · [-] T11.2 · [ ] T11.3 · [-] T11.4 · [ ] T11.5 · [ ] T11.6 · [ ] T11.7
 
 ## Task notes
 
@@ -98,6 +98,7 @@ Things only you can do (accounts, secrets, decisions). The agent moved on to the
 - **Sanity CORS for the demo worker:** in sanity.io/manage → project `r4igcqj7` → API → CORS origins, add `https://site-starter-demo.silvena-miteva-007.workers.dev` **with credentials** (or click "Register Studio" / "Add CORS origin" on `/admin`). Until then the embedded Studio shows the connect screen. Also add `http://localhost:3000` and `http://localhost:8787` for T03.1.
 - **GitHub repo + secrets (T00.5 Done check):** the repo has no GitHub remote yet. Needed: a GitHub repo, secrets `CLOUDFLARE_API_TOKEN` (Workers Scripts:Edit, Account Settings:Read) and `CLOUDFLARE_ACCOUNT_ID`, then a test PR for green CI + preview URL comment.
 - **ADR-012 (2026-11-21) applied.** Static only, no card. Removed: ISR profile (`infra/isr/`), R2/D1/DO, `/api/revalidate` + `SANITY_REVALIDATE_SECRET`, cache purge vars, Renovate, the CI contrast step (now a unit test). Review DECISIONS ADR-012 — it replaces the same-day ADR-012 draft in place rather than adding ADR-013, because you named it ADR-012.
+- **ADR-012 amendment (2026-11-21): brochure scope.** Plan trimmed at your request. Skipped T11.1 (site-wide a11y/keyboard/screen-reader pass) and T11.4 (backup workflow + restore drill); T11.2 was already skipped. T10.5 lost Lighthouse CI (`lighthouserc.json`, `lhci` job, `@lhci/cli` pin) and keeps the bundle audit, a manual Lighthouse run and redirects. T04.4 had no `/api/revalidate` or cache-profile parts left; the only cache-profile remnant was T11.7's `new-client` ("bindings per profile", `open-next.config.ts` profile), now removed. `backup.yml`, the restore runbook and the `SANITY_WRITE_TOKEN` GitHub secret are gone from ARCHITECTURE/NEW-CLIENT/PRD; export is manual (`pnpm sanity dataset export production production-YYYY-MM-DD.tar.gz`, NEW-CLIENT §10). Blog (T07.4, BlogTeaser) kept. **Risk you accepted:** no automated backup on Sanity Free (no restore SLA), so export before bulk edits and at handover.
 
 ## Follow-ups
 - With e2e gone, consider Vitest render tests for `Reveal` (reduced-motion branch, mocking `matchMedia`) and the `ContrastTable` math, so the T01.5/T01.6 behavior keeps some automated coverage.

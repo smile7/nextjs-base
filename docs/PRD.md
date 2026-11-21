@@ -29,8 +29,8 @@ First client: **Rumi Dent** (Руми Дент), a dental practice in Ruse, Bulg
 - Cookie consent, only shown when a non-essential category is enabled. Cookieless analytics by default; GA4 Consent Mode v2 optional.
 - Full SEO/AEO kit: metadata, hreflang, sitemap, robots, OG, JSON-LD, llms.txt.
 - Embedded Sanity Studio at `/admin` with Presentation (visual editing) and draft mode.
-- Cloudflare Workers Free hosting, static only (every page prerendered; publish triggers a rebuild, ADR-012), CI/CD, backups.
-- Quality gates: lint, types, unit (incl. token contrast), build, Lighthouse CI, manual a11y + visual review (no e2e: ADR-011).
+- Cloudflare Workers Free hosting, static only (every page prerendered; publish triggers a rebuild, ADR-012), CI/CD. Content export is manual (no backup workflow).
+- Quality gates: lint, types, unit (incl. token contrast), build in CI; manual Lighthouse, a11y and visual review (no e2e: ADR-011; no Lighthouse CI: ADR-012).
 
 ### Non-goals (v1), but design for them
 | Future feature | How v1 prepares |
@@ -136,14 +136,14 @@ Each section: editable in the Studio, renders responsively from 320 px, passes a
 See `docs/SEO.md`. AC: metadata on every route in both locales, canonical + hreflang, sitemap with alternates, robots env-aware (preview = disallow all), JSON-LD validated by unit tests and Rich Results Test at launch, `llms.txt` generated from content, OG image on every page (1200×630).
 
 ### F-14 Quality, accessibility, performance
-- WCAG 2.2 AA: axe has zero serious/critical issues on all templates in both locales. Keyboard-only walkthrough passes (checklist in `tasks/11-qa-launch.md`).
-- Lighthouse CI budgets (mobile): Performance ≥ 95, A11y 100, Best Practices ≥ 95, SEO 100 on home, services, article and contact.
+- WCAG 2.2 AA: each UI task passes a manual Lighthouse accessibility audit + keyboard check; at launch, the keyboard-only walkthrough and screen-reader spot check in `NEW-CLIENT.md` §9 pass.
+- Lighthouse budgets (mobile, manual run): Performance ≥ 95, A11y 100, Best Practices ≥ 95, SEO 100 on home, services, article and contact.
 - JS budget: ≤ 110 KB gzip first-load JS on home (excluding the Studio route).
 - Tests: Vitest (units, render tests). No Playwright/e2e (ADR-011); a11y and key interactions are checked manually.
 
 ### F-15 Operations
 - CI on every PR. Preview deployments. Production deploy on main.
-- Weekly content backup artifact. Restore runbook in `NEW-CLIENT.md`.
+- No automated backups (ADR-012, brochure scope): manual `sanity dataset export` at handover and before risky bulk edits (`NEW-CLIENT.md` §10).
 - Error visibility: Cloudflare Workers logs/observability enabled (`observability.enabled = true` in wrangler).
 
 ## 6. Constraints

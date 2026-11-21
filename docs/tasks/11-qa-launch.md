@@ -5,10 +5,8 @@
 
 ---
 
-### T11.1 — Manual accessibility and keyboard pass
-**Steps:** On every template page in both locales: Lighthouse accessibility audit, keyboard journeys (menu, tiles, FAQ, lightbox, form, consent), 200% zoom/reflow at 320 CSS px (no horizontal scroll: WCAG 1.4.10), `prefers-reduced-motion`, forced colors sanity check, target size checks for the action bar. Screen-reader pass with VoiceOver (iOS Safari) and NVDA or Narrator. Findings in PROGRESS.
-**AC:** No open WCAG 2.2 AA issues; all journeys work on a phone, a tablet and desktop (Chrome + Safari).
-**Done check:** findings and fixes logged in PROGRESS.
+### T11.1 — Manual accessibility and keyboard pass — SKIPPED (ADR-012, brochure scope)
+No site-wide pass. WCAG 2.2 AA is still required: each UI task does its own manual check (Lighthouse accessibility audit + keyboard), and NEW-CLIENT §9 keeps the launch keyboard and screen-reader spot check.
 
 ### T11.2 — Visual regression baselines — SKIPPED (ADR-011)
 Dropped with Playwright. No replacement; visual review is manual.
@@ -18,10 +16,8 @@ Dropped with Playwright. No replacement; visual review is manual.
 **AC:** Observatory grade ≥ A on preview (with Report-Only noted); no CSP violations in the browser console on a manual walk-through of every page journey.
 **Done check:** walk-through notes + Observatory result in PROGRESS.
 
-### T11.4 — Backup workflow and restore drill
-**Steps:** `.github/workflows/backup.yml` per ARCHITECTURE §11 (weekly cron + manual; `npx sanity@<pinned> dataset export production backup.tar.gz` using `SANITY_WRITE_TOKEN` or a read token with export permission; upload artifact with 90-day retention). Restore runbook in NEW-CLIENT (import into a new dataset `restore-YYYYMMDD`, verify, then switch the env var or `--replace`). Perform one drill on the sandbox.
-**AC:** The drill succeeds and its timing is recorded; the runbook matches what was done.
-**Done check:** artifact link + drill notes in PROGRESS.
+### T11.4 — Backup workflow and restore drill — SKIPPED (ADR-012, brochure scope)
+No `backup.yml` and no drill. Manual export when needed: `pnpm sanity dataset export production production-YYYY-MM-DD.tar.gz` (NEW-CLIENT §10).
 
 ### T11.5 — Editor guide and handover pack
 **Steps:** `docs/handover/EDITOR-GUIDE.bg.md` (Bulgarian, non-technical, with screenshots): logging in, editing pages and sections, Presentation (preview + click-to-edit), translations workflow (create EN from BG, AI-assisted translation via Sanity MCP/agent by the developer, review), images (alt text, hotspot, child photo consent), announcements (holiday hours), publishing and what happens after (live in about 3–5 min after Publish; drafts never go live), what not to do. `docs/handover/OWNERSHIP.bg.md`: accounts the client owns (Cloudflare, Sanity, Resend, domain, GitHub optional), roles, billing expectations ($0; Cloudflare Free with no payment card, ADR-012; Sanity Growth only if roles or scheduling are wanted), DSR procedure (T09.4).
@@ -35,7 +31,7 @@ Dropped with Playwright. No replacement; visual review is manual.
 
 ### T11.7 — Template packaging and v1.0.0
 **Steps**
-1. `scripts/new-client.ts` (interactive, `@clack/prompts`): asks the NEW-CLIENT §2 questions, writes `src/config/site.ts`, `.env.local`, `.dev.vars`, `wrangler.jsonc` (worker name, bindings per profile), `open-next.config.ts` (profile), resets `docs/PROGRESS.md` to a client copy, removes demo seed images if requested, and prints the next manual steps. It's idempotent and has a `--dry-run`.
+1. `scripts/new-client.ts` (interactive, `@clack/prompts`): asks the NEW-CLIENT §2 questions, writes `src/config/site.ts`, `.env.local`, `.dev.vars`, the worker name in `wrangler.jsonc` (no bindings to add, ADR-012), resets `docs/PROGRESS.md` to a client copy, removes demo seed images if requested, and prints the next manual steps. It's idempotent and has a `--dry-run`.
 2. Theme presets: `src/styles/presets/{neutral,rumi-dent}.css` (tokens only); `new-client` copies the chosen one into `tokens.css`.
 3. Mark the GitHub repo as a **template repository**. Document "Use this template" → private repo in the client's or Silvena's org (NEW-CLIENT §2), and the upstream-sync strategy (NEW-CLIENT: `git remote add template …`, cherry-pick or merge tagged releases).
 4. `CHANGELOG.md` v1.0.0, tag `v1.0.0`, and a release note listing the pinned versions and known limitations (from PROGRESS follow-ups).

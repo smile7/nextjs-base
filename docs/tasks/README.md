@@ -13,6 +13,8 @@ Task format
 
 > **ADR-012 (static only).** No ISR, R2, D1, Durable Objects, cache tags, `/api/revalidate` or Renovate. Every page is prerendered; a Sanity publish triggers a GitHub rebuild + deploy. No Cloudflare feature that needs a payment card. Task files were rewritten accordingly (T00.3–T00.5, T04.1/T04.3/T04.4/T04.7, T05.4, T07.1).
 
+> **ADR-012 amendment (brochure scope).** Skipped: **T11.1** (site-wide a11y/keyboard pass; per-task manual checks stay) and **T11.4** (backup workflow + restore drill; manual `sanity dataset export` instead). **T10.5** has no Lighthouse CI, only a manual Lighthouse run plus redirects. The blog stays.
+
 Phase order and gates
 
 | Phase | File | Gate at the end |
@@ -27,7 +29,7 @@ Phase order and gates
 | 07 | `07-routes-pages.md` | All routes in both locales (manual check) |
 | 08 | `08-contact-integrations.md` | Form sends real email from preview |
 | 09 | `09-consent-analytics-legal.md` | Banner logic correct with GA4 on/off |
-| 10 | `10-seo-performance.md` | Lighthouse budgets green on preview |
+| 10 | `10-seo-performance.md` | Manual Lighthouse run within budgets on preview |
 | 11 | `11-qa-launch.md` | Template v1.0.0 tagged |
 
 Dependencies: phases run in order. Inside a phase, tasks run in numeric order unless marked "parallel-safe".

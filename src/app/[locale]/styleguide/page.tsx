@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-/** Internal sign-off and visual regression surface. 404 unless NEXT_PUBLIC_ENABLE_STYLEGUIDE=true. */
+/** Internal sign-off surface. 404 unless NEXT_PUBLIC_ENABLE_STYLEGUIDE=true. */
 export default function StyleguidePage() {
   const { NEXT_PUBLIC_ENABLE_STYLEGUIDE } = readPublicEnv('NEXT_PUBLIC_ENABLE_STYLEGUIDE')
   if (!NEXT_PUBLIC_ENABLE_STYLEGUIDE) notFound()

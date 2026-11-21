@@ -23,7 +23,7 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 ## 3. Sanity
 - [ ] [D] `pnpm sanity login`, then confirm `sanity.cli.ts` has the project ID and dataset.
 - [ ] [D] Create datasets: `production`, `development` (both public on Free).
-- [ ] [D] API → Tokens: `SANITY_API_READ_TOKEN` (Viewer) for the site, `SANITY_WRITE_TOKEN` (Editor) for seeding/backups, kept local + GH secret only.
+- [ ] [D] API → Tokens: `SANITY_API_READ_TOKEN` (Viewer) for the site, `SANITY_WRITE_TOKEN` (Editor) for seeding, kept in `.env.local` only.
 - [ ] [D] API → CORS origins (with credentials): `http://localhost:3000`, the preview URL pattern (`https://*.<account>.workers.dev`), `https://<domain>`, `https://www.<domain>`.
 - [ ] [D] `pnpm seed --client --dataset production` → structure: system pages (home/services/about/gallery/blog/contact) with default sections, empty settings, legal templates.
 - [ ] [D] Optional: `pnpm sanity deploy` → `<slug>.sanity.studio` (hosted Studio as a backup entry point).
@@ -33,7 +33,7 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 - [ ] [D] `wrangler login` (or an API token scoped to the client account), then check `account_id`.
 - [ ] [D] Turnstile: add a widget (managed mode) for `<domain>` + `localhost`, giving the site key + secret.
 - [ ] [D] Secrets: `wrangler secret put SANITY_API_READ_TOKEN`, `RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`. Vars in `wrangler.jsonc`: `CONTACT_FROM_EMAIL`, `CONTACT_TO_EMAIL`.
-- [ ] [D] GitHub repo secrets: `CLOUDFLARE_API_TOKEN` (Workers Scripts:Edit, Account Settings:Read, Workers Routes, Zone DNS), `CLOUDFLARE_ACCOUNT_ID`, `SANITY_WRITE_TOKEN` (backup), plus build vars (`NEXT_PUBLIC_*`) as repository **variables**.
+- [ ] [D] GitHub repo secrets: `CLOUDFLARE_API_TOKEN` (Workers Scripts:Edit, Account Settings:Read, Workers Routes, Zone DNS), `CLOUDFLARE_ACCOUNT_ID`, plus build vars (`NEXT_PUBLIC_*`) as repository **variables**.
 - [ ] [D] First deploy: push to `main` → check the workers.dev URL works.
 - [ ] [D] Observability: `"observability": { "enabled": true }` in wrangler. Check the logs appear.
 
@@ -65,7 +65,7 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 - [ ] [D] Old site? Redirect map in `src/config/redirects.ts` (SEO.md §9).
 
 ## 9. Launch QA (run `pnpm launch-check --url https://<domain>` from T11.6, then the manual items below)
-- [ ] `pnpm check`, Lighthouse CI budgets green on the production URL.
+- [ ] `pnpm check`, manual Lighthouse run (mobile) within the SEO.md §8 budgets on the production URL.
 - [ ] Manual: iPhone Safari + Android Chrome (call, directions, menu, tiles, form, map, language switch), keyboard-only walkthrough, screen-reader spot check (VoiceOver/TalkBack) of the home + contact pages.
 - [ ] SEO: view-source canonical/hreflang, Rich Results Test (home, article), sitemap reachable, robots correct, `llms.txt` content correct.
 - [ ] Legal checklist (LEGAL-GDPR.md §10).
@@ -75,13 +75,8 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 ## 10. Handover
 - [ ] [D] 30-minute Studio training for the client (record it): editing texts, hours/special hours, adding an article, translating, gallery consent flags, Presentation preview, announcements.
 - [ ] [D] Write a one-page "How to edit your site" in the client's language (BG) and add it as a Studio dashboard/help link (optional).
-- [ ] [D] Confirm the weekly backup workflow ran. Do a test restore into `development` (`sanity dataset import`).
+- [ ] [D] Export the content once at handover (no automated backups, ADR-012): `pnpm sanity dataset export production production-YYYY-MM-DD.tar.gz`, stored in the client's vault.
 - [ ] [D] Calendar reminders: dependency review monthly (`pnpm outdated`, merge template upgrades), publish-webhook PAT rotation, DMARC tighten in 4 weeks, GSC check in 2 weeks.
-
-## Restore runbook
-1. Download the latest `backup.yml` artifact (`production-YYYY-MM-DD.tar.gz`).
-2. `pnpm sanity dataset import production-YYYY-MM-DD.tar.gz development --replace` → verify in the Studio (switch dataset) → if OK, `… production --replace`.
-3. Redeploy: re-run the latest `deploy.yml` run in GitHub Actions (or push an empty commit to `main`).
 
 ## Upstream changes (template ↔ client repos)
 - The template repo is the source of truth for components and infra. Client repos add the template as a remote: `git remote add template git@github.com:<you>/site-starter.git`.
