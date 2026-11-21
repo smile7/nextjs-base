@@ -225,8 +225,11 @@ Behaviour:
 - A Studio hosted on `*.sanity.studio` previews the site in a cross-site iframe. next-sanity sets CHIPS-partitioned cookies. Firefox strict ETP may still block it. Document this for the client ("use Chrome or Safari for Presentation").
 
 ### 5.4 Studio hosting
-- **Embedded**: `src/app/admin/[[...tool]]/page.tsx` renders `<NextStudio config={config} />` (`next-sanity/studio`) with `export const dynamic = 'force-static'` and re-exports `metadata` / `viewport` from `next-sanity/studio`. It has its own root layout `src/app/admin/layout.tsx`.
-- **Hosted (fallback / optional)**: `pnpm sanity deploy` → `https://<client>.sanity.studio` from the same `sanity.config.ts`. If the Phase 00 spike shows the Studio inflating Worker size or startup time unacceptably, `/admin` becomes a redirect to the hosted Studio (ADR-010 placeholder).
+- **Embedded (default, ADR-010 confirmed by T00.4)**: `src/app/admin/[[...tool]]/page.tsx` renders `<NextStudio config={config} />` (`next-sanity/studio`; the config module starts with `'use client'`) and re-exports `metadata` / `viewport` from `next-sanity/studio`. It has its own root layout `src/app/admin/layout.tsx`. Three settings keep it static and under the 10 ms CPU limit (measured in T00.4: without them every `/admin` request rendered on the Worker at ~18–20 ms CPU, 512 ms on a cold isolate):
+  - `export const dynamic = 'force-static'`, `export const dynamicParams = false` and `generateStaticParams() { return [{ tool: [] }] }`, so `/admin` itself is prerendered (without it Next only emits the `/admin/[[...tool]]` shell and OpenNext has no cache entry for `/admin`);
+  - a `next.config.ts` rewrite `{ source: '/admin/:path+', destination: '/admin' }`, so deep links (`/admin/structure/...`) get the same static shell and the Studio's client router reads the URL.
+  The Studio adds ~13 MiB to the Worker upload (6.4 → 19.1 MiB raw, 1.4 → 4.3 MiB gzip; the Free limit is 64 MiB uncompressed) and startup stays at ~350–440 ms (limit 1 s).
+- **Hosted (optional)**: `pnpm sanity deploy` → `https://<client>.sanity.studio` from the same `sanity.config.ts`. Use it if the Worker ever gets close to the size or startup limit; `/admin` then becomes a redirect.
 
 ---
 

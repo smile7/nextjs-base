@@ -23,7 +23,7 @@ Format: Context → Decision → Consequences → Status. To change a decision, 
 ## ADR-004 `proxy.ts` for next-intl, with a fallback
 - **Context:** Next 16 renamed middleware → proxy (Node runtime). OpenNext Cloudflare supports Node middleware experimentally since 1.20.3 (maintainers confirm it is supported in the latest releases, Nov 2026). Edge `middleware.ts` still works but is deprecated.
 - **Decision:** Use `src/proxy.ts`. The spike T00.4 deploys it. If it fails or adds unacceptable size/latency, switch to `src/middleware.ts` (same code) and record ADR-004b.
-- **Status:** Accepted, pending the spike.
+- **Status:** Accepted, confirmed by T00.4 (2026-11-21): on workers.dev `/` → 307 `/bg`, `/bg/proba/statichna` is rewritten to the internal route (200), `/bg/spike/static` redirects to the localized path, prerendered pages cost 1–2 ms CPU including the proxy.
 
 ## ADR-005 Sanity CDN image loader instead of Cloudflare Images for CMS images
 - **Decision:** A custom `next/image` loader → `cdn.sanity.io` with `auto=format`, width and quality. Hotspot → `object-position`. Local assets only use the `IMAGES` binding.
@@ -48,8 +48,9 @@ Format: Context → Decision → Consequences → Status. To change a decision, 
 - **Decision:** Pin TS 6.0.3 and ESLint 9.39.x. Re-evaluate monthly.
 - **Status:** Accepted.
 
-## ADR-010 Studio location (placeholder)
+## ADR-010 Studio location
 - Embedded `/admin` by default. If the spike shows the Studio bloats the Worker (size/startup), host it at `<client>.sanity.studio` and make `/admin` a redirect.
+- **Status:** Accepted, confirmed by T00.4 (2026-11-21): embedded. Worker upload 19.1 MiB raw with the Studio vs 6.4 MiB without (Free limit 64 MiB uncompressed), startup ~350–440 ms (limit 1 s). Condition: `/admin` must be fully static (ARCHITECTURE §5.4: `generateStaticParams → [{ tool: [] }]`, `dynamicParams = false`, `/admin/:path+ → /admin` rewrite); otherwise each Studio request renders on the Worker at ~18–20 ms CPU, above the Free 10 ms limit.
 
 ## ADR-011 No Playwright: no e2e tests, no screenshot script
 - **Context:** The owner decided (2026-11-21) to drop Playwright entirely.

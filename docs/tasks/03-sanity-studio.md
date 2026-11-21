@@ -10,11 +10,11 @@
 **Steps**
 1. Install `sanity`, `next-sanity`, `@sanity/image-url`, `@sanity/vision`, `styled-components` (exact versions from ARCHITECTURE §1).
 2. `src/sanity/env.ts` (projectId, dataset, apiVersion `2026-11-01` as a constant, studioUrl `/admin`). `sanity.config.ts` (root; `basePath: '/admin'`, `name`, `title`, plugins via `src/sanity/plugins.ts`, schema from `src/sanity/schemaTypes`). `sanity.cli.ts` (`api`, `studioHost`, `typegen: { path: './src/**/*.{ts,tsx}', schema: 'schema.json', generates: 'sanity.types.ts', overloadClientMethods: true }`).
-3. `src/app/admin/[[...tool]]/page.tsx` + `layout.tsx` per ARCHITECTURE §5.4. Exclude `/admin` from the proxy matcher.
+3. `src/app/admin/[[...tool]]/page.tsx` + `layout.tsx` per ARCHITECTURE §5.4, **including** `force-static`, `dynamicParams = false`, `generateStaticParams() → [{ tool: [] }]` and the `/admin/:path+ → /admin` rewrite in `next.config.ts` (T00.4: without them the Studio renders per request above the 10 ms CPU limit). Exclude `/admin` from the proxy matcher.
 4. CORS origins with credentials: `http://localhost:3000`, `http://localhost:8787`, the preview worker URL. Document this in NEW-CLIENT (already listed, so verify it).
 5. Scripts: `"typegen": "sanity schema extract --path schema.json && sanity typegen generate"`, `"studio:deploy": "sanity deploy"`.
-6. Apply the T00.4 decision: if the Studio is hosted, `/admin` becomes a redirect to `https://<host>.sanity.studio`.
-**AC:** `/admin` loads the Studio locally and on the preview worker; `pnpm typegen` runs (empty schema OK).
+6. T00.4 decision: the Studio stays embedded (ADR-010).
+**AC:** `/admin` loads the Studio locally and on the preview worker; `pnpm preview` + `curl -sI /admin/structure` shows `x-opennext-cache: HIT`; `pnpm typegen` runs (empty schema OK).
 **Done check:** open `/admin`, log in, see the empty desk.
 
 ### T03.2 — i18n plugins

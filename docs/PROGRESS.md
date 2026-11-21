@@ -5,7 +5,7 @@ Tick tasks as they are completed (the agent updates this at the end of each task
 Legend: [ ] todo · [~] in progress · [x] done · [!] blocked · [-] skipped
 
 ## Phase 00 — Repo, toolchain, Cloudflare spike
-- [x] T00.1 · [x] T00.2 · [x] T00.3 · [ ] T00.4 · [~] T00.5 · [x] T00.6 · [~] T00.7
+- [x] T00.1 · [x] T00.2 · [x] T00.3 · [x] T00.4 · [~] T00.5 · [x] T00.6 · [~] T00.7
 ## Phase 01 — Design tokens, primitives, styleguide
 - [x] T01.1 · [x] T01.2 · [x] T01.3 · [x] T01.4 · [x] T01.5 · [x] T01.6 · [-] T01.7
 ## Phase 02 — i18n and routing
@@ -36,7 +36,7 @@ Phases 00–01 were run in one batch chat at the owner's request (no per-task Pl
 - **T00.1:** Scaffolded with `create-next-app@16.4.6` in a temp dir (`--turbopack` no longer exists, Turbopack is the default; the scaffold refuses names starting with `_`). The scaffold now wires Tailwind via the `@tailwindcss/turbopack` loader in `next.config.ts`; we use `@tailwindcss/postcss` + `postcss.config.mjs` instead, as ARCHITECTURE §1 and the Next 16 CSS guide specify. Pinned `@types/node@24.19.2`, `@types/react(-dom)@19.3.0`. Demo SVGs dropped.
 - **T00.2:** ESLint flat config (next core-web-vitals + typescript, jsx-a11y strict rules, `react/jsx-no-literals` warn in `src/components/**`, prettier last); `pnpm lint` runs with `--max-warnings 0`, so literal-string warnings fail `pnpm check`. Vitest 5 uses two inline projects (`node` for `*.test.ts`, `dom`/jsdom for `*.test.tsx`) and Vite's `resolve.tsconfigPaths`. `globals.css` moved to `src/styles/` now because Prettier's `tailwindStylesheet` points there. `package.json` is `"type": "module"`. pnpm 12 blocks build scripts: `esbuild` allowed in `pnpm-workspace.yaml`. Playwright was set up here and later removed (ADR-011). Optional pre-commit hooks skipped. `preview`/`deploy`/`upload`/`cf-typegen` scripts work from T00.3.
 - **T00.3:** Built first with ISR + Static variants, then reduced to **static only** by ADR-012 (2026-11-21): root `wrangler.jsonc` (`ASSETS`, `IMAGES`, `WORKER_SELF_REFERENCE`, observability) + `open-next.config.ts` (`staticAssetsIncrementalCache`, `enableCacheInterception`); `infra/` deleted. Nothing to create on the Cloudflare account, so the former step 6 (R2/D1) is gone and the task is done. `pnpm preview` serves 200 in workerd; `pnpm cf-typegen` writes `cloudflare-env.d.ts` (committed, regenerate after binding or `.dev.vars` changes). `compatibility_date` is `2026-11-18` (the pinned workerd build date) rather than "today", because a later date fails locally. pnpm `allowBuilds` also allows `workerd`. **Local tooling note:** the global `pnpm` 9 in `~/Library/pnpm` fails in this repo ("packages field missing"); run `source ~/.nvm/nvm.sh && nvm use 24` first (pnpm 12.21.0).
-- **T00.4:** skipped in the batch run (needs the Cloudflare sandbox account). Rewritten as a short deploy check by ADR-012 (size vs the Free limit, pages load, proxy.ts, embedded Studio).
+- **T00.4 (2026-11-21):** deployed once with `opennextjs-cloudflare deploy` to `https://site-starter-demo.silvena-miteva-007.workers.dev` (your Cloudflare account, Free plan, OAuth login already present). Spike: next-intl `proxy.ts` with a 2-locale stub, prerendered `[locale]` home + one localized path, embedded Studio (empty schema, project `r4igcqj7`, dataset `production`). Results in "Spike results" below. Spike code removed (`git grep "(spike)"` only finds docs), the temporary `next-intl`/`sanity`/`next-sanity`/`styled-components` installs were reverted (T02.1 and T03.1 add them again). The worker on workers.dev still serves the spike build until the next deploy.
 - **T00.5 (partial):** `ci.yml` and `deploy.yml` are written and pass `@action-validator/cli` schema validation. **ADR-012 (2026-11-21):** `renovate.json` deleted; CI is exactly lint → typecheck → unit tests → build (the token contrast check moved into a unit test, `scripts/check-contrast.test.ts`; `pnpm contrast` stays for the readable report); `deploy.yml` also runs daily (01:15 UTC) and on `workflow_dispatch`, and production no longer cancels a running deploy (only PR previews cancel). Original notes: Actions pinned to current majors (checkout v7, setup-node v7, pnpm/action-setup v6, upload-artifact v7, github-script v9). CI runs lint, typecheck, unit tests, contrast and `next build` with Turnstile test keys (no e2e since ADR-011). The preview job greps the `*.workers.dev` URL from the `opennextjs-cloudflare upload` output and upserts one PR comment. Renovate enforces the ADR-009 caps and requires dashboard approval for platform majors. The `pnpm typegen` + `git diff` CI step is added in T03.1. **Open (needs GitHub repo + Cloudflare secrets):** the Done check (test PR with green CI and a preview URL comment).
 - **T00.6:** `readPublicEnv(...keys)` (`src/env.ts`) and `readServerEnv(...keys)` (`src/env.server.ts`, `server-only`) validate **only the requested keys** with Zod (`src/lib/env/reader.ts`), so missing Sanity/Resend config doesn't break pages that don't use it yet. Errors list every missing/invalid key. `next.config.ts` validates `BUILD_REQUIRED_PUBLIC_ENV` (`NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_ENV`): `NEXT_PUBLIC_SITE_URL= pnpm build` fails with "NEXT_PUBLIC_SITE_URL: missing". In `next dev` only, `SITE_URL` defaults to `http://localhost:3000` and Turnstile falls back to the test keys. Verified a client component importing `env.server` fails the build. Deviation: the task's single `serverEnv`/`clientEnv` objects became per-key reader functions (same intent, lazy by design).
 - **T00.7 (partial):** Skills installed with the README §3 commands and committed (`.agents/skills/`, `.claude/skills/` symlinks, `skills-lock.json`): frontend-design, web-design-guidelines, vercel-react-best-practices, next-dev-loop, next-bundle-optimizer, 5 Sanity skills, 4 Cloudflare skills (`npx skills ls` shows all 15). `CHANGELOG.md`, `LICENSE` (proprietary, holder name left generic) and `.editorconfig` added. `.cursor/mcp.json`, `.mcp.json` (identical: shadcn, next-devtools, sanity, cloudflare-docs/bindings/observability) and the 8 `.cursor/rules/*.mdc` were copied in from the planning pack and committed on 2026-11-21 (Playwright/`pnpm shots` lines in 3 rules updated for ADR-011). **Open:** confirm each MCP server starts. OAuth needed later: `sanity`, `cloudflare-bindings`, `cloudflare-observability`.
@@ -61,11 +61,28 @@ Phases 00–01 were run in one batch chat at the owner's request (no per-task Pl
 | `.cursor/rules/*.mdc` | Committed (8 rules) |
 
 ## Spike results (T00.4)
-_To be filled (T00.4): proxy.ts OK?, Worker upload size (raw/gzip) vs the Free limit, startup time, pages load (`/` → `/bg`, localized rewrite, prerendered page, `/admin`)._
+Measured 2026-11-21 on workers.dev (Free plan), static-only config, Next 16.4.6, OpenNext 1.20.17, Wrangler 4.165.0. CPU from `wrangler tail --format json` (`cpuTime`, ms).
+
+| Item | Result | Free limit |
+| --- | --- | --- |
+| Worker upload, with embedded Studio | **19,552 KiB raw / 4,447 KiB gzip** | 64 MiB uncompressed (no compressed limit, docs checked 2026-11-21) → fits, 30 % used |
+| Worker upload, without Studio | 6,576 KiB raw / 1,409 KiB gzip | |
+| Worker startup time | 346–436 ms (3 deploys) | 1 s |
+| `/` | 307 → `/bg`, 0–1 ms CPU | |
+| `/bg`, `/en` (prerendered) | 200, `x-opennext-cache: HIT`, 1–3 ms CPU (29 ms on the first request of a cold isolate) | 10 ms |
+| `/bg/proba/statichna` (localized rewrite) | 200, 1–2 ms CPU; `/bg/spike/static` → 307 to the localized path | |
+| unknown `/bg/nope` | 404, 4 ms CPU | |
+| `/admin` with only `force-static` | 200 but **MISS, rendered per request: 17–19 ms CPU** | over 10 ms |
+| `/admin/structure` deep link, same | **512 ms (cold), then 18–22 ms CPU** | over 10 ms |
+| `/admin` + `/admin/*` after the fix (`generateStaticParams → [{ tool: [] }]`, `dynamicParams = false`, rewrite `/admin/:path+ → /admin`) | HIT, 1–2 ms CPU (5–6 ms cold); deep link keeps its URL and the Studio boots in the browser | 10 ms |
+
+Decisions: **proxy.ts works** on OpenNext (ADR-004 confirmed). **Studio stays embedded** (ADR-010 confirmed) with the three static settings above, now written into ARCHITECTURE §5.4 and T03.1. Not measured (no code yet): Server Action and draft-mode CPU (T08.2 / T04.5). The Studio stops at Sanity's "Connect this Studio to your project" screen until the workers.dev origin is added to CORS (see Needs Silvena).
 
 ## Needs Silvena
 Things only you can do (accounts, secrets, decisions). The agent moved on to the next task each time.
 
+- **Sanity CORS for the demo worker:** in sanity.io/manage → project `r4igcqj7` → API → CORS origins, add `https://site-starter-demo.silvena-miteva-007.workers.dev` **with credentials** (or click "Register Studio" / "Add CORS origin" on `/admin`). Until then the embedded Studio shows the connect screen. Also add `http://localhost:3000` and `http://localhost:8787` for T03.1.
+- **GitHub repo + secrets (T00.5 Done check):** the repo has no GitHub remote yet. Needed: a GitHub repo, secrets `CLOUDFLARE_API_TOKEN` (Workers Scripts:Edit, Account Settings:Read) and `CLOUDFLARE_ACCOUNT_ID`, then a test PR for green CI + preview URL comment.
 - **ADR-012 (2026-11-21) applied.** Static only, no card. Removed: ISR profile (`infra/isr/`), R2/D1/DO, `/api/revalidate` + `SANITY_REVALIDATE_SECRET`, cache purge vars, Renovate, the CI contrast step (now a unit test). Review DECISIONS ADR-012 — it replaces the same-day ADR-012 draft in place rather than adding ADR-013, because you named it ADR-012.
 
 ## Follow-ups
