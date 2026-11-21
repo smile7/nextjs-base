@@ -284,7 +284,7 @@ Renderer contract: the content layer maps each section to a discriminated union 
 Settings
   ├─ Site settings (singleton)
   └─ Navigation (singleton)
-Pages            → by language (BG | EN), "Missing translations"
+Pages            → by language (BG | EN)
 Services         → Categories (orderable), Services by language (orderable)
 Team             → orderable
 FAQ              → orderable, filter by category
@@ -293,6 +293,7 @@ Blog             → Articles by language (newest first)
 Testimonials
 Announcements    → Active / Scheduled / Past
 Legal            → by language
+Missing translations → "Not yet in <language>" per language, across page/service/article/legalPage
 ```
 - Document actions: singletons → no delete/duplicate/unpublish. `legalPage` → no delete (unpublish only).
 - New-document templates: language-specific ("Page (BG)", "Page (EN)") via the document-internationalization plugin.

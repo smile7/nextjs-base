@@ -5,6 +5,7 @@ import { structureTool } from 'sanity/structure'
 
 import { apiVersion } from './env'
 import { defaultLanguage, routableTypes, studioLanguages } from './i18n'
+import { structure } from './structure'
 
 // Dynamic import so production builds drop Vision: a static import adds ~13 MiB to the Worker
 // even when the plugin is disabled.
@@ -14,7 +15,7 @@ const devPlugins: PluginOptions[] =
     : []
 
 export const plugins: PluginOptions[] = [
-  structureTool(),
+  structureTool({ structure }),
   documentInternationalization({
     supportedLanguages: studioLanguages,
     schemaTypes: [...routableTypes],
