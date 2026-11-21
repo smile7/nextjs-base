@@ -37,7 +37,7 @@ export async function SiteHeader({ brandName, nav, phone, menu }: SiteHeaderProp
       <HeaderScrollState targetId={HEADER_ID} />
       <header
         id={HEADER_ID}
-        className="group/header sticky top-0 z-40 h-(--header-h-mobile) bg-bg transition-[background-color,box-shadow] duration-(--duration-base) ease-standard data-compact:bg-bg/95 data-compact:shadow-sm data-compact:backdrop-blur-md md:-top-(--header-shrink) md:flex md:h-(--header-h-expanded) md:items-end"
+        className="group/header sticky top-0 print:hidden z-40 h-(--header-h-mobile) bg-bg transition-[background-color,box-shadow] duration-(--duration-base) ease-standard data-compact:bg-bg/95 data-compact:shadow-sm data-compact:backdrop-blur-md md:-top-(--header-shrink) md:flex md:h-(--header-h-expanded) md:items-end"
       >
         <Container
           width="wide"

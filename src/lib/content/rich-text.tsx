@@ -10,6 +10,7 @@ import { Heading, type HeadingLevel } from '@/components/primitives/Heading'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
+import { headingAnchor } from './anchors'
 import type {
   RichTextCalloutBlock,
   RichTextCtaBlock,
@@ -37,10 +38,23 @@ function ExternalLink({ value, children }: { value: RichTextLinkMark; children: 
   )
 }
 
-function components(headingOffset: number): PortableTextComponents {
+function components(headingOffset: number, anchorHeadings: boolean): PortableTextComponents {
   const heading = (level: number) =>
-    function RichTextHeading({ children }: { children?: ReactNode }) {
-      return <Heading as={shift(level, headingOffset)}>{children}</Heading>
+    function RichTextHeading({
+      children,
+      value,
+    }: {
+      children?: ReactNode
+      value: { _key?: string }
+    }) {
+      return (
+        <Heading
+          as={shift(level, headingOffset)}
+          id={anchorHeadings && value._key ? headingAnchor(value._key) : undefined}
+        >
+          {children}
+        </Heading>
+      )
     }
   return {
     block: { h2: heading(2), h3: heading(3), h4: heading(4) },
@@ -101,14 +115,16 @@ type RichTextProps = {
   value: RichTextValue
   /** Levels to push CMS headings down, e.g. 1 when the body sits under a section h2. */
   headingOffset?: number
+  /** Give headings stable ids (for an in-page table of contents, e.g. `LegalPage.toc`). */
+  anchorHeadings?: boolean
 }
 
 /** Renders content-layer rich text. Wrap it in `<Prose>` for long-form typography. */
-export function RichText({ value, headingOffset = 0 }: RichTextProps) {
+export function RichText({ value, headingOffset = 0, anchorHeadings = false }: RichTextProps) {
   return (
     <PortableText
       value={value as unknown as Parameters<typeof PortableText>[0]['value']}
-      components={components(headingOffset)}
+      components={components(headingOffset, anchorHeadings)}
     />
   )
 }

@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server'
 import type { Announcement } from '@/lib/content'
 import { resolveCta, type ActionSettings } from '@/lib/site/actions'
 import { bannerScript, dismissKey, type BannerState } from '@/lib/site/announcement'
+import { cn } from '@/lib/utils'
 
 import { AnnouncementDismiss } from './AnnouncementDismiss'
 import { NavLink } from './NavLink'
@@ -45,7 +46,7 @@ export async function AnnouncementBanner({
       label={t('label')}
       dismissible={announcement.dismissible}
       script={bannerScript(BANNER_ID, state)}
-      className={toneClass[announcement.tone]}
+      className={cn(toneClass[announcement.tone], 'print:hidden')}
     >
       <p>
         {announcement.message}

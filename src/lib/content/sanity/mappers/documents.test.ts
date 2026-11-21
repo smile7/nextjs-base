@@ -102,4 +102,37 @@ describe('mapLegalPage', () => {
     })
     expect(mapLegalPage(fixture<LegalPageQueryRow>({ ...row, kind: null }), 'en')).toBeNull()
   })
+
+  it('builds the h2 table of contents and collects unreplaced placeholders', () => {
+    const block = (key: string, style: string, text: string) => ({
+      _type: 'block',
+      _key: key,
+      style,
+      markDefs: [],
+      children: [{ _type: 'span', _key: `${key}s`, text, marks: [] }],
+    })
+    const page = mapLegalPage(
+      fixture<LegalPageQueryRow>({
+        _id: 'l1',
+        kind: 'privacy',
+        title: 'Privacy [[CLINIC_NAME]]',
+        slug: 'privacy',
+        body: [
+          block('a', 'h2', 'Who we are'),
+          block('b', 'normal', 'Contact [[DPO_EMAIL]] or [[CLINIC_NAME]].'),
+          block('c', 'h3', 'Not in the TOC'),
+          block('d', 'h2', 'Your rights'),
+        ],
+        lastUpdated: null,
+        showCookieTable: null,
+        translations: null,
+      }),
+      'en',
+    )
+    expect(page?.toc).toEqual([
+      { id: 'h-a', text: 'Who we are' },
+      { id: 'h-d', text: 'Your rights' },
+    ])
+    expect(page?.placeholders).toEqual(['[[CLINIC_NAME]]', '[[DPO_EMAIL]]'])
+  })
 })

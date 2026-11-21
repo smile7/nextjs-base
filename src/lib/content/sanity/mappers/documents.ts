@@ -15,6 +15,7 @@ import {
   mapTeamMember,
 } from './collections'
 import { mapSections } from './sections'
+import { headingAnchor } from '../../anchors'
 import { clean, mapRichText, mapSeo, mapTranslations } from './shared'
 
 const WORDS_PER_MINUTE = 200
@@ -89,5 +90,26 @@ export function mapLegalPage(row: LegalPageQueryRow | null, locale: Locale): Leg
     ...(row.lastUpdated ? { lastUpdated: clean(row.lastUpdated) } : {}),
     showCookieTable: Boolean(row.showCookieTable),
     translations: mapTranslations(row.translations, { _type: 'legalPage', slug: row.slug }, locale),
+    toc: (row.body ?? []).flatMap((block) =>
+      block._type === 'block' && block.style === 'h2'
+        ? [{ id: headingAnchor(clean(block._key)), text: blockText(block) }]
+        : [],
+    ),
+    placeholders: findPlaceholders([row.title, ...(row.body ?? []).map(blockText)]),
   }
+}
+
+type TextBlock = { _type: string; children?: unknown }
+
+const blockText = (block: TextBlock) =>
+  Array.isArray(block.children)
+    ? block.children.map((child: { text?: unknown }) => clean(String(child.text ?? ''))).join('')
+    : ''
+
+/** Same pattern as the Studio's publish validation (`placeholdersIn`). */
+const PLACEHOLDER = /\[\[[^\]]*\]\]/g
+
+/** Unique `[[…]]` template fields, in order of appearance. */
+export function findPlaceholders(texts: string[]): string[] {
+  return [...new Set(texts.flatMap((text) => clean(text).match(PLACEHOLDER) ?? []))]
 }

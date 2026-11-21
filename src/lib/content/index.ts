@@ -8,7 +8,9 @@ import 'server-only'
 import { cache } from 'react'
 
 import { defaultLocale, locales, type Locale } from '@/config/i18n'
+import { readPublicEnv } from '@/env'
 
+import { assertLegalPagePublishable } from './legal'
 import { sanityFetch } from './sanity/fetch'
 import {
   mapArticleSummary,
@@ -176,7 +178,9 @@ export const getLegalPage = cache(async (slug: string, locale: Locale) => {
     query: legalPageQuery,
     params: { ...i18nParams(locale), slug },
   })
-  return mapLegalPage(row, locale) ?? missing(`legal page ${slug} (${locale})`)
+  const page = mapLegalPage(row, locale)
+  if (!page) return missing(`legal page ${slug} (${locale})`)
+  return assertLegalPagePublishable(page, readPublicEnv('NEXT_PUBLIC_ENV').NEXT_PUBLIC_ENV)
 })
 
 export const getTeam = cache(async (locale: Locale) => {

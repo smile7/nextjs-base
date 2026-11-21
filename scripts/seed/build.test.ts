@@ -3,7 +3,10 @@ import { resolve } from 'node:path'
 
 import { describe, expect, it } from 'vitest'
 
-import { locales } from '../../src/config/i18n'
+import { locales, type Locale } from '../../src/config/i18n'
+import { assertLegalPagePublishable } from '../../src/lib/content/legal'
+import type { LegalPageQueryRow } from '../../src/lib/content/sanity/query-types'
+import { mapLegalPage } from '../../src/lib/content/sanity/mappers/documents'
 import { reservedSlugs } from '../../src/lib/slug'
 import { SLUG_LIKE, placeholdersIn, sectionProblems } from '../../src/sanity/lib/validation'
 import { buildSeed, type SeedDocument } from './build'
@@ -76,7 +79,8 @@ describe.each([
     expect(ids.size).toBe(docs.length)
     for (const id of ids)
       expect(
-        (id.startsWith('seed-') && !id.includes('.')) || ['siteSettings', 'navigation'].includes(id),
+        (id.startsWith('seed-') && !id.includes('.')) ||
+          ['siteSettings', 'navigation'].includes(id),
       ).toBe(true)
   })
 
@@ -151,6 +155,17 @@ describe('client seed', () => {
     }
     for (const doc of routable(client).filter((d) => d._type === 'legalPage')) {
       expect(placeholdersIn(doc.body).length, doc._id).toBeGreaterThan(0)
+    }
+  })
+
+  it('fails the production legal guard until the placeholders are replaced', () => {
+    for (const doc of routable(client).filter((d) => d._type === 'legalPage')) {
+      const slug = doc.slug as { current: string }
+      const row = { ...doc, slug: slug.current, translations: null } as unknown as LegalPageQueryRow
+      const page = mapLegalPage(row, doc.language as Locale)
+      expect(page?.placeholders.length, doc._id).toBeGreaterThan(0)
+      expect(() => assertLegalPagePublishable(page!, 'production'), doc._id).toThrow(/placeholders/)
+      expect(assertLegalPagePublishable(page!, 'preview')).toBe(page)
     }
   })
 

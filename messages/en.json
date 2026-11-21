@@ -136,5 +136,10 @@
     "reviewedBy": "Medically reviewed by {name}",
     "related": "More articles",
     "empty": "Our first articles are coming soon."
+  },
+  "Legal": {
+    "lastUpdated": "Last updated: <date></date>",
+    "tocLabel": "Contents",
+    "placeholderWarning": "Draft: this text still has unreplaced fields. Fill them in the Studio — the page can't be published to production like this."
   }
 }

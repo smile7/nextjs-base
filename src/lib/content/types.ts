@@ -255,6 +255,10 @@ export type LegalPage = {
   lastUpdated?: string
   showCookieTable: boolean
   translations: Translations
+  /** The body's h2s; `id` matches the anchor `<RichText anchorHeadings>` renders. */
+  toc: { id: string; text: string }[]
+  /** Unreplaced template fields (`[[…]]`) in the title or body. Must be empty in production. */
+  placeholders: string[]
 }
 
 // --- Sections ------------------------------------------------------------------------------
