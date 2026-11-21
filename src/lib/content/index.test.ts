@@ -90,6 +90,32 @@ describe('content API', () => {
     })
   })
 
+  it('gives each [slug] route the slugs of one locale', async () => {
+    mocks.sanityFetch.mockResolvedValue([
+      { slug: 'first-visit', language: 'en' },
+      { slug: 'parvo-poseshtenie', language: 'bg' },
+    ])
+
+    await expect(content.getStaticParams('legalPage', 'bg')).resolves.toEqual([
+      { slug: 'parvo-poseshtenie' },
+    ])
+  })
+
+  it('prerenders blog pages 2…N, page 1 being /blog', async () => {
+    mocks.sanityFetch.mockResolvedValue({ items: [], total: 19 })
+    await expect(content.getArticlePageParams('bg')).resolves.toEqual([{ n: '2' }, { n: '3' }])
+    expect(lastCall()).toMatchObject({ stega: false, perspective: 'published' })
+
+    mocks.sanityFetch.mockResolvedValue({ items: [], total: 0 })
+    await expect(content.getArticlePageParams('en')).resolves.toEqual([])
+  })
+
+  it('reads sitemap entries published and stega-free', async () => {
+    mocks.sanityFetch.mockResolvedValue([])
+    await expect(content.getSitemapEntries()).resolves.toEqual([])
+    expect(lastCall()).toMatchObject({ stega: false, perspective: 'published' })
+  })
+
   it('strips stega from nested content for metadata and JSON-LD', () => {
     const marker = '\u200b\u200c\u200d\ufeff'.repeat(8)
     const seo = {

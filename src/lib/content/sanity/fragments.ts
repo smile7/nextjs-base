@@ -9,7 +9,7 @@ export const i18n = (field: string) =>
   `coalesce(${field}[language == $locale][0].value, ${field}[language == $fallback][0].value)`
 
 /** What a link needs to build the localized href of a routable document. */
-const routeFields = /* groq */ `_type, title, "slug": slug.current, pageKey, hasDetailPage`
+export const routeFields = /* groq */ `_type, title, "slug": slug.current, pageKey, hasDetailPage`
 
 /**
  * A reference resolved to its version in `$locale`: the document itself when it is in that

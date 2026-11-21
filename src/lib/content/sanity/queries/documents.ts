@@ -4,6 +4,7 @@ import {
   articleSummaryFields,
   faqItemFields,
   richTextBlock,
+  routeFields,
   sectionsField,
   seoFields,
   serviceSummaryFields,
@@ -89,3 +90,14 @@ export const staticSlugsQuery = defineQuery(`*[
   && ($type != "page" || !defined(pageKey))
   && ($type != "service" || hasDetailPage == true)
 ]{ "slug": slug.current, language }`)
+
+/**
+ * Every published, indexable URL: system pages, generic pages, services with a detail page,
+ * articles and legal pages (`noIndex` and `hideFromSitemap` excluded).
+ */
+export const sitemapQuery = defineQuery(`*[
+  _type in ["page", "service", "article", "legalPage"] && defined(language)
+  && seo.noIndex != true && hideFromSitemap != true
+  && (_type != "service" || hasDetailPage == true)
+  && (defined(pageKey) || defined(slug.current))
+]{ ${routeFields}, language, _updatedAt, ${translationsField} }`)

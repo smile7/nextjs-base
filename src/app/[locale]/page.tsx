@@ -5,6 +5,9 @@ import { LanguageSwitcher } from '@/components/site/LanguageSwitcher'
 import { inAllLocales } from '@/lib/i18n/translations'
 import { buildAlternates } from '@/lib/seo/alternates'
 
+// Static only (ADR-012): locales come from the layout's generateStaticParams; others 404.
+export const dynamicParams = false
+
 export async function generateMetadata(): Promise<Metadata> {
   return { alternates: buildAlternates(await getLocale(), inAllLocales('/')) }
 }

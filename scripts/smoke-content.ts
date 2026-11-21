@@ -94,3 +94,11 @@ for (const type of ['page', 'service', 'article', 'legalPage'] as const) {
   const slugs = await content.getStaticSlugs(type)
   console.log(`\nstatic ${type}: ${slugs.map((s) => `${s.locale}/${s.slug}`).join(', ') || '—'}`)
 }
+
+const sitemap = await content.getSitemapEntries()
+console.log(`\nsitemap (${sitemap.length}):`)
+for (const entry of sitemap) {
+  console.log(
+    `  ${entry.path}  ${entry.lastModified}  alternates: ${Object.keys(entry.translations).join(', ')}`,
+  )
+}

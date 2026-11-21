@@ -2,8 +2,9 @@
  * CMS-agnostic domain models (content-layer rule). Pages and components only see these.
  * Nothing here may mention Sanity shapes (`_type`, `_ref`, Portable Text internals).
  */
+import type { Locale } from '@/config/i18n'
 import type { ContentIcon } from '@/config/icons'
-import type { PageTranslations } from '@/lib/i18n/translations'
+import type { Href, PageTranslations } from '@/lib/i18n/translations'
 
 /** Locale → internal href of the same document in that locale. Missing = not translated. */
 export type Translations = PageTranslations
@@ -402,5 +403,16 @@ export type Page = {
   seo: Seo
   hideFromNav: boolean
   hideFromSitemap: boolean
+  translations: Translations
+}
+
+/** One indexable URL for the sitemap. `translations` lists only alternates that are indexable too. */
+export type SitemapEntry = {
+  locale: Locale
+  href: Href
+  /** Localized path, e.g. `/bg/uslugi/plombi`. */
+  path: string
+  /** ISO date-time of the last publish. */
+  lastModified: string
   translations: Translations
 }

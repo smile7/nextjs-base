@@ -22,6 +22,7 @@ import {
 import { mapArticle, mapLegalPage, mapPage, mapService } from './sanity/mappers/documents'
 import { mapAnnouncement, mapNavigation, mapSiteSettings } from './sanity/mappers/settings'
 import { clean, mapTranslations } from './sanity/mappers/shared'
+import { mapSitemapEntries } from './sanity/mappers/sitemap'
 import { faqQuery, galleryQuery, teamQuery, testimonialsQuery } from './sanity/queries/collections'
 import {
   articleBySlugQuery,
@@ -31,6 +32,7 @@ import {
   pageBySlugQuery,
   serviceBySlugQuery,
   servicesQuery,
+  sitemapQuery,
   staticSlugsQuery,
   translationsQuery,
 } from './sanity/queries/documents'
@@ -48,6 +50,7 @@ import type {
   ServiceBySlugQueryResult,
   ServicesQueryResult,
   SiteSettingsQueryResult,
+  SitemapQueryResult,
   StaticSlugsQueryResult,
   TeamQueryResult,
   TestimonialsQueryResult,
@@ -154,9 +157,12 @@ const fetchArticles = cache(
   },
 )
 
+/** Articles per blog list page; `getArticlePageParams` must page the same way. */
+export const ARTICLES_PAGE_SIZE = 9
+
 /** Newest first. `page` is 1-based. */
 export const getArticles = (locale: Locale, options: { page?: number; pageSize?: number } = {}) =>
-  fetchArticles(locale, options.page ?? 1, options.pageSize ?? 9)
+  fetchArticles(locale, options.page ?? 1, options.pageSize ?? ARTICLES_PAGE_SIZE)
 
 export const getArticleBySlug = cache(async (slug: string, locale: Locale) => {
   const row = await sanityFetch<ArticleBySlugQueryResult>({
@@ -251,4 +257,35 @@ export const getStaticSlugs = cache(async (type: StaticSlugType) => {
     const locale = locales.find((l) => l === language)
     return locale && slug ? [{ locale, slug }] : []
   })
+})
+
+/**
+ * `generateStaticParams` for a `[slug]` route. Next calls it once per locale (from the `[locale]`
+ * layout's params); pair it with `export const dynamicParams = false`.
+ */
+export async function getStaticParams(type: StaticSlugType, locale: Locale) {
+  const slugs = await getStaticSlugs(type)
+  return slugs.filter((entry) => entry.locale === locale).map(({ slug }) => ({ slug }))
+}
+
+/** `generateStaticParams` for `/blog/page/[n]`: pages 2…N (page 1 is `/blog`). */
+export async function getArticlePageParams(locale: Locale, pageSize = ARTICLES_PAGE_SIZE) {
+  const { total } = await sanityFetch<ArticlesQueryResult>({
+    query: articlesQuery,
+    params: { ...i18nParams(locale), start: 0, end: 0 },
+    stega: false,
+    perspective: 'published',
+  })
+  const pages = Math.ceil(total / pageSize)
+  return Array.from({ length: Math.max(0, pages - 1) }, (_, i) => ({ n: String(i + 2) }))
+}
+
+/** Every indexable URL in every locale, with `lastModified` and hreflang alternates. */
+export const getSitemapEntries = cache(async () => {
+  const rows = await sanityFetch<SitemapQueryResult>({
+    query: sitemapQuery,
+    stega: false,
+    perspective: 'published',
+  })
+  return mapSitemapEntries(rows)
 })
