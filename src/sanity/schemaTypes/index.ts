@@ -1,5 +1,11 @@
 import type { SchemaTypeDefinition } from 'sanity'
 
+import { announcementType } from './collections/announcement'
+import { faqItemType } from './collections/faqItem'
+import { galleryItemType } from './collections/galleryItem'
+import { serviceCategoryType } from './collections/serviceCategory'
+import { teamMemberType } from './collections/teamMember'
+import { testimonialType } from './collections/testimonial'
 import { articleType } from './documents/article'
 import { legalPageType } from './documents/legalPage'
 import { pageType } from './documents/page'
@@ -44,7 +50,21 @@ const singletons = [siteSettingsType, navigationType]
 
 const documents = [pageType, serviceType, articleType, legalPageType]
 
-export const schemaTypes: SchemaTypeDefinition[] = [...singletons, ...documents, ...objects]
+const collections = [
+  serviceCategoryType,
+  teamMemberType,
+  faqItemType,
+  galleryItemType,
+  testimonialType,
+  announcementType,
+]
+
+export const schemaTypes: SchemaTypeDefinition[] = [
+  ...singletons,
+  ...documents,
+  ...collections,
+  ...objects,
+]
 
 /** Fixed-id documents, registered in `sanity.config.ts` `document.singletons` (document id = type name). */
 export const singletonTypes = singletons.map((type) => type.name)

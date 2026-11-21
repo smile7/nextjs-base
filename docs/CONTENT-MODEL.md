@@ -215,7 +215,7 @@ Slug uniqueness per language: custom `isUnique` that queries `!defined(*[_type =
 | nameLatin | string | — | optional (EN pages use it if present) |
 | honorific | internationalizedArrayString | F | e.g. «д-р» / "Dr." |
 | role | internationalizedArrayString | F | required ("Pediatric dentist") |
-| specialties | internationalizedArrayString (array) | F | optional chips |
+| specialties | array of `specialty` objects (`label`: internationalizedArrayString) | F | optional chips; wrapped in an object because Sanity doesn't allow arrays directly inside arrays |
 | bioShort | internationalizedArrayText | F | required, ≤ 300 |
 | bio | internationalizedArrayRichTextSimple | F | optional |
 | photo | imageWithAlt | F(alt) | required (real photo) |

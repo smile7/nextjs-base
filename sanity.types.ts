@@ -239,6 +239,157 @@ export type RichText = Array<
     } & CtaInline)
 >
 
+export type Announcement = {
+  _id: string
+  _type: 'announcement'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  message?: InternationalizedArrayString
+  link?: CtaI18n
+  tone?: 'info' | 'promo' | 'warning'
+  startsAt?: string
+  endsAt?: string
+  dismissible?: boolean
+  pages?: 'all' | 'home'
+}
+
+export type InternationalizedArrayString = Array<
+  {
+    _key: string
+  } & InternationalizedArrayStringValue
+>
+
+export type Testimonial = {
+  _id: string
+  _type: 'testimonial'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  quote?: InternationalizedArrayText
+  authorName?: string
+  rating?: 1 | 2 | 3 | 4 | 5
+  date?: string
+  source?: 'manual'
+  sourceUrl?: string
+  consentOnFile?: boolean
+  featured?: boolean
+}
+
+export type InternationalizedArrayText = Array<
+  {
+    _key: string
+  } & InternationalizedArrayTextValue
+>
+
+export type GalleryItemReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'galleryItem'
+}
+
+export type GalleryItem = {
+  _id: string
+  _type: 'galleryItem'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  image?: ImageWithAlt
+  album?: 'clinic' | 'team' | 'patients' | 'events' | 'other'
+  showsPatient?: boolean
+  consentOnFile?: boolean
+  consentReference?: string
+  pairWith?: GalleryItemReference
+  orderRank?: string
+}
+
+export type FaqItem = {
+  _id: string
+  _type: 'faqItem'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  question?: InternationalizedArrayString
+  answer?: InternationalizedArrayRichTextSimple
+  category?: 'general' | 'firstVisit' | 'children' | 'adults' | 'prices' | 'emergencies'
+  orderRank?: string
+}
+
+export type InternationalizedArrayRichTextSimple = Array<
+  {
+    _key: string
+  } & InternationalizedArrayRichTextSimpleValue
+>
+
+export type ServiceCategoryReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'serviceCategory'
+}
+
+export type TeamMember = {
+  _id: string
+  _type: 'teamMember'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name?: string
+  nameLatin?: string
+  honorific?: InternationalizedArrayString
+  role?: InternationalizedArrayString
+  specialties?: Array<{
+    label?: InternationalizedArrayString
+    _type: 'specialty'
+    _key: string
+  }>
+  bioShort?: InternationalizedArrayText
+  bio?: InternationalizedArrayRichTextSimple
+  photo?: ImageWithAlt
+  featured?: boolean
+  categories?: Array<
+    {
+      _key: string
+    } & ServiceCategoryReference
+  >
+  credentials?: Array<{
+    label?: InternationalizedArrayString
+    year?: number
+    _type: 'credential'
+    _key: string
+  }>
+  sameAs?: Array<string>
+  slug?: Slug
+  orderRank?: string
+}
+
+export type Slug = {
+  _type: 'slug'
+  current?: string
+  source?: string
+}
+
+export type ServiceCategory = {
+  _id: string
+  _type: 'serviceCategory'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title?: InternationalizedArrayString
+  slug?: InternationalizedArraySlug
+  description?: InternationalizedArrayText
+  audience?: 'children' | 'adults' | 'everyone'
+  tone?: 'soft' | 'brand' | 'accent'
+  orderRank?: string
+}
+
+export type InternationalizedArraySlug = Array<
+  {
+    _key: string
+  } & InternationalizedArraySlugValue
+>
+
 export type Navigation = {
   _id: string
   _type: 'navigation'
@@ -274,12 +425,6 @@ export type Navigation = {
     secondaryAction?: 'none' | 'booking' | 'viber' | 'whatsapp' | 'email'
   }
 }
-
-export type InternationalizedArrayString = Array<
-  {
-    _key: string
-  } & InternationalizedArrayStringValue
->
 
 export type SiteSettings = {
   _id: string
@@ -367,12 +512,6 @@ export type SiteSettings = {
   }
 }
 
-export type InternationalizedArrayText = Array<
-  {
-    _key: string
-  } & InternationalizedArrayTextValue
->
-
 export type SanityImageCrop = {
   _type: 'sanity.imageCrop'
   top?: number
@@ -387,6 +526,12 @@ export type SanityImageHotspot = {
   y?: number
   height?: number
   width?: number
+}
+
+export type InternationalizedArraySlugValue = {
+  _type: 'internationalizedArraySlugValue'
+  value?: Slug
+  language?: string
 }
 
 export type InternationalizedArrayRichTextSimpleValue = {
@@ -406,12 +551,6 @@ export type InternationalizedArrayStringValue = {
   value?: string
   language?: string
 }
-
-export type InternationalizedArrayRichTextSimple = Array<
-  {
-    _key: string
-  } & InternationalizedArrayRichTextSimpleValue
->
 
 export type TranslationMetadata = {
   _id: string
@@ -572,12 +711,6 @@ export type Geopoint = {
   alt?: number
 }
 
-export type Slug = {
-  _type: 'slug'
-  current?: string
-  source?: string
-}
-
 export type AllSanitySchemaTypes =
   | BookingConfig
   | LegalEntity
@@ -601,16 +734,27 @@ export type AllSanitySchemaTypes =
   | Callout
   | RichTextSimple
   | RichText
-  | Navigation
+  | Announcement
   | InternationalizedArrayString
-  | SiteSettings
+  | Testimonial
   | InternationalizedArrayText
+  | GalleryItemReference
+  | GalleryItem
+  | FaqItem
+  | InternationalizedArrayRichTextSimple
+  | ServiceCategoryReference
+  | TeamMember
+  | Slug
+  | ServiceCategory
+  | InternationalizedArraySlug
+  | Navigation
+  | SiteSettings
   | SanityImageCrop
   | SanityImageHotspot
+  | InternationalizedArraySlugValue
   | InternationalizedArrayRichTextSimpleValue
   | InternationalizedArrayTextValue
   | InternationalizedArrayStringValue
-  | InternationalizedArrayRichTextSimple
   | TranslationMetadata
   | InternationalizedArrayReference
   | InternationalizedArrayReferenceValue
@@ -626,4 +770,3 @@ export type AllSanitySchemaTypes =
   | SanityAssetSourceData
   | SanityImageAsset
   | Geopoint
-  | Slug

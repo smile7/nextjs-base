@@ -26,7 +26,7 @@ export const plugins: PluginOptions[] = [
     languages: studioLanguages,
     defaultLanguages: [defaultLanguage],
     // Add a type here only when a field needs it (each one adds schema types and attributes).
-    fieldTypes: ['string', 'text', 'richTextSimple'],
+    fieldTypes: ['string', 'text', 'richTextSimple', 'slug'],
     apiVersion,
   }),
   ...devPlugins,
