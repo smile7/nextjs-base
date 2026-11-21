@@ -57,7 +57,7 @@ export const navigationQuery = defineQuery(`*[_id == "navigation"][0]{
 }`)
 
 const announcementFields = /* groq */ `
-  _id, "message": ${i18n('message')}, link{ ${ctaI18nFields} }, tone, startsAt, endsAt, dismissible, pages
+  _id, _updatedAt, "message": ${i18n('message')}, link{ ${ctaI18nFields} }, tone, startsAt, endsAt, dismissible, pages
 `
 
 /** Active now (latest start first), else the next upcoming one; never an ended one. */

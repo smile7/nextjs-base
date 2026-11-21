@@ -5,15 +5,17 @@ import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { getMessages, getTranslations } from 'next-intl/server'
 
 import { MotionProvider } from '@/components/motion/MotionProvider'
+import { AnnouncementBanner } from '@/components/site/AnnouncementBanner'
 import { MobileActionBar } from '@/components/site/MobileActionBar'
 import { MobileNav } from '@/components/site/MobileNav'
 import { SiteHeader } from '@/components/site/SiteHeader'
 import { fontVariables } from '@/config/fonts'
-import { getNavigation, getSiteSettings } from '@/lib/content'
+import { getAnnouncement, getNavigation, getSiteSettings } from '@/lib/content'
 import { PreviewTools } from '@/lib/content/preview'
 import { bookingAction, mobileBarActions, primaryPhone } from '@/lib/site/actions'
 import { cn } from '@/lib/utils'
 import { readPublicEnv } from '@/env'
+import { getPathname } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
 import '@/styles/globals.css'
 
@@ -34,11 +36,12 @@ export const viewport: Viewport = { viewportFit: 'cover' }
 export default async function LocaleLayout({ children, params }: LayoutProps<'/[locale]'>) {
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) notFound()
-  const [messages, draft, settings, navigation, t] = await Promise.all([
+  const [messages, draft, settings, navigation, announcement, t] = await Promise.all([
     getMessages(),
     draftMode(),
     getSiteSettings(locale),
     getNavigation(locale),
+    getAnnouncement(locale),
     getTranslations(),
   ])
   const nav = navigation?.header ?? []
@@ -73,8 +76,16 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             Header: messages.Header,
             MobileNav: messages.MobileNav,
             ActionBar: messages.ActionBar,
+            Announcement: messages.Announcement,
           }}
         >
+          {settings && announcement ? (
+            <AnnouncementBanner
+              announcement={announcement}
+              settings={settings}
+              homePath={getPathname({ locale, href: '/' })}
+            />
+          ) : null}
           {settings ? (
             <SiteHeader
               brandName={settings.brandName}

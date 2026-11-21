@@ -34,7 +34,7 @@ export function directionsUrl(settings: Pick<SiteSettings, 'geo' | 'address'>): 
   return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}`
 }
 
-type ActionSettings = Pick<SiteSettings, 'booking' | 'phones' | 'geo' | 'address'>
+export type ActionSettings = Pick<SiteSettings, 'booking' | 'phones' | 'geo' | 'address'>
 
 export type LabelledAction = ActionLink & { label: string }
 

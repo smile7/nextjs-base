@@ -145,6 +145,8 @@ export type Navigation = {
 
 export type Announcement = {
   id: string
+  /** Revision (ISO date-time); a dismissal only hides this revision. */
+  updatedAt: string
   message: string
   link: Cta | null
   tone: 'info' | 'promo' | 'warning'

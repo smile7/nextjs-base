@@ -38,5 +38,9 @@
     "whatsapp": "WhatsApp",
     "email": "Имейл",
     "opensInNewTab": "(отваря се в нов раздел)"
+  },
+  "Announcement": {
+    "label": "Съобщение",
+    "dismiss": "Скрий съобщението"
   }
 }

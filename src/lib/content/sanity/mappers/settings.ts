@@ -180,6 +180,7 @@ export function mapAnnouncement(
   if (!row?.message || !row.startsAt) return null
   return {
     id: row._id,
+    updatedAt: row._updatedAt,
     message: row.message,
     link: mapCta(row.link, locale),
     tone: clean(row.tone) ?? 'info',

@@ -38,5 +38,9 @@
     "whatsapp": "WhatsApp",
     "email": "Email",
     "opensInNewTab": "(opens in a new tab)"
+  },
+  "Announcement": {
+    "label": "Announcement",
+    "dismiss": "Dismiss announcement"
   }
 }

@@ -102,6 +102,7 @@ describe('mapAnnouncement', () => {
       mapAnnouncement(
         fixture<AnnouncementQueryRow>({
           _id: 'a',
+          _updatedAt: '2026-11-20T10:00:00Z',
           message: 'Closed on 24 December',
           link: null,
           tone: null,
@@ -114,6 +115,7 @@ describe('mapAnnouncement', () => {
       ),
     ).toEqual({
       id: 'a',
+      updatedAt: '2026-11-20T10:00:00Z',
       message: 'Closed on 24 December',
       link: null,
       tone: 'info',
