@@ -1,0 +1,43 @@
+import { Heading } from '@/components/primitives/Heading'
+import { Text } from '@/components/primitives/Text'
+import type { TilesSection as TilesModel } from '@/lib/content'
+
+import { SectionShell, sectionTitleId } from './SectionShell'
+import { TilesGrid } from './TilesGrid'
+import { sectionHeadingLevel, subsectionHeadingLevel } from './helpers'
+import type { SectionComponentProps } from './types'
+
+export function TilesSection({
+  section: raw,
+  index,
+  sections,
+  locale,
+}: SectionComponentProps) {
+  const section = raw as TilesModel
+  const titleId = sectionTitleId(section.key)
+  const level = sectionHeadingLevel(index, sections)
+  const tileLevel = subsectionHeadingLevel(level)
+
+  return (
+    <SectionShell section={section} labelledBy={section.heading ? titleId : undefined}>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: 'document.documentElement.classList.add("js")',
+        }}
+      />
+      {section.heading ? (
+        <Heading as={level} size="step-3" id={titleId}>
+          {section.heading}
+        </Heading>
+      ) : null}
+      {section.intro ? (
+        <Text tone="muted" className="mt-4 max-w-(--container-prose)">
+          {section.intro}
+        </Text>
+      ) : null}
+      <div className="mt-10">
+        <TilesGrid section={section} locale={locale} tileHeadingLevel={tileLevel} />
+      </div>
+    </SectionShell>
+  )
+}
