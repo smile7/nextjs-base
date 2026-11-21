@@ -1,0 +1,105 @@
+import { describe, expect, it } from 'vitest'
+
+import type { ArticleQueryRow, LegalPageQueryRow, PageQueryRow } from '../query-types'
+import { mapArticle, mapLegalPage, mapPage } from './documents'
+import { blockRow, fixture } from './fixtures'
+
+const summary = (n: number) => ({
+  _id: `a${n}`,
+  title: `Article ${n}`,
+  slug: `article-${n}`,
+  excerpt: 'Excerpt',
+  cover: null,
+  publishedAt: '2026-11-01T08:00:00Z',
+  updatedAt: null,
+})
+
+describe('mapPage', () => {
+  it('maps a system page with its translations and ignores its slug', () => {
+    const page = mapPage(
+      fixture<PageQueryRow>({
+        _id: 'p1',
+        pageKey: 'about',
+        title: 'За нас',
+        slug: 'ignored',
+        intro: null,
+        seo: null,
+        hideFromNav: null,
+        hideFromSitemap: true,
+        sections: [],
+        translations: [
+          { locale: 'bg', doc: { _type: 'page', slug: null, pageKey: 'about' } },
+          { locale: 'en', doc: { _type: 'page', slug: null, pageKey: 'about' } },
+        ],
+      }),
+      'bg',
+    )
+    expect(page).toEqual({
+      id: 'p1',
+      pageKey: 'about',
+      title: 'За нас',
+      sections: [],
+      seo: { noIndex: false },
+      hideFromNav: false,
+      hideFromSitemap: true,
+      translations: { bg: '/about', en: '/about' },
+    })
+  })
+
+  it('returns null without a title or without both pageKey and slug', () => {
+    expect(mapPage(null, 'bg')).toBeNull()
+    expect(mapPage(fixture<PageQueryRow>({ _id: 'p', title: null, slug: 'x' }), 'bg')).toBeNull()
+    expect(
+      mapPage(fixture<PageQueryRow>({ _id: 'p', title: 'T', slug: null, pageKey: null }), 'bg'),
+    ).toBeNull()
+  })
+})
+
+describe('mapArticle', () => {
+  it('computes the reading time and falls back to the latest articles for related', () => {
+    const article = mapArticle(
+      fixture<ArticleQueryRow>({
+        ...summary(1),
+        body: [blockRow('Body')],
+        wordCount: 401,
+        author: null,
+        reviewedBy: { _id: 't1', name: 'Д-р Иванова', role: 'Детски зъболекар' },
+        related: [],
+        latest: [summary(2), summary(3)],
+        seo: null,
+        translations: null,
+      }),
+      'en',
+    )
+    expect(article).toMatchObject({
+      href: '/en/blog/article-1',
+      readingTimeMinutes: 3,
+      author: null,
+      reviewedBy: { id: 't1', name: 'Д-р Иванова' },
+      related: [{ id: 'a2' }, { id: 'a3' }],
+      translations: { en: { pathname: '/blog/[slug]', params: { slug: 'article-1' } } },
+    })
+  })
+})
+
+describe('mapLegalPage', () => {
+  it('maps a legal page and requires a kind', () => {
+    const row = {
+      _id: 'l1',
+      kind: 'privacy',
+      title: 'Privacy',
+      slug: 'privacy',
+      body: [],
+      lastUpdated: '2026-11-01',
+      showCookieTable: null,
+      translations: null,
+    }
+    expect(mapLegalPage(fixture<LegalPageQueryRow>(row), 'en')).toMatchObject({
+      kind: 'privacy',
+      lastUpdated: '2026-11-01',
+      showCookieTable: false,
+      translations: { en: { pathname: '/legal/[slug]', params: { slug: 'privacy' } } },
+    })
+    expect(mapLegalPage(fixture<LegalPageQueryRow>({ ...row, kind: null }), 'en')).toBeNull()
+  })
+})

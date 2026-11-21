@@ -3,6 +3,9 @@
     "label": "Language",
     "missingTranslation": "(this page isn’t translated; the link goes to the closest translated page)"
   },
+  "RichText": {
+    "opensInNewTab": "(opens in a new tab)"
+  },
   "NotFound": {
     "code": "404",
     "title": "This page doesn’t exist",
