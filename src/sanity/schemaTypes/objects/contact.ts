@@ -41,12 +41,12 @@ export const phoneType = defineType({
       title: 'Number for dialling',
       type: 'string',
       description: 'International format without spaces, e.g. +359888123456.',
-      validation: (rule) =>
+      validation: (rule) => [
+        rule.required().error('Add the phone number.'),
         rule
-          .required()
-          .error('Add the phone number.')
           .regex(E164)
           .error('Write the number as +359 followed by the digits, without spaces or dashes.'),
+      ],
     }),
     defineField({
       name: 'display',
@@ -80,31 +80,35 @@ export const openingHoursSpecType = defineType({
       type: 'array',
       of: [defineArrayMember({ type: 'string' })],
       options: { list: [...weekdays], layout: 'grid' },
-      validation: (rule) => rule.required().min(1).error('Choose at least one day.').unique(),
+      validation: (rule) => [
+        rule.required().min(1).error('Choose at least one day.'),
+        rule.unique().error('Each day only once.'),
+      ],
     }),
     defineField({
       name: 'opens',
       title: 'Opens',
       type: 'string',
       placeholder: '09:00',
-      validation: (rule) =>
-        rule.required().error('Add the opening time.').custom(timeRule(TIME_FORMAT)),
+      validation: (rule) => [
+        rule.required().error('Add the opening time.'),
+        rule.custom(timeRule(TIME_FORMAT)),
+      ],
     }),
     defineField({
       name: 'closes',
       title: 'Closes',
       type: 'string',
       placeholder: '18:00',
-      validation: (rule) =>
-        rule
-          .required()
-          .error('Add the closing time.')
-          .custom(timeRule(TIME_FORMAT))
-          .custom((closes: string | undefined, context) =>
-            closesAfterOpens((context.parent as { opens?: string } | undefined)?.opens, closes)
-              ? true
-              : 'The closing time must be after the opening time.',
-          ),
+      validation: (rule) => [
+        rule.required().error('Add the closing time.'),
+        rule.custom(timeRule(TIME_FORMAT)),
+        rule.custom((closes: string | undefined, context) =>
+          closesAfterOpens((context.parent as { opens?: string } | undefined)?.opens, closes)
+            ? true
+            : 'The closing time must be after the opening time.',
+        ),
+      ],
     }),
     defineField({
       name: 'note',
@@ -242,12 +246,12 @@ export const socialLinkType = defineType({
       title: 'Profile address',
       type: 'url',
       description: 'Viber and WhatsApp links may start with viber:// or https://wa.me/.',
-      validation: (rule) =>
+      validation: (rule) => [
+        rule.required().error('Add the profile address.'),
         rule
-          .required()
-          .error('Add the profile address.')
           .uri({ scheme: ['https', 'viber'] })
           .error('Use a full address that starts with https://'),
+      ],
     }),
     defineField({
       name: 'label',

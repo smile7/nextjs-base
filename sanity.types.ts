@@ -24,12 +24,6 @@ export type BookingConfig = {
   note?: InternationalizedArrayString
 }
 
-export type InternationalizedArrayString = Array<
-  {
-    _key: string
-  } & InternationalizedArrayStringValue
->
-
 export type LegalEntity = {
   _type: 'legalEntity'
   legalName?: string
@@ -40,15 +34,6 @@ export type LegalEntity = {
   professionalBody?: InternationalizedArrayString
   registration?: InternationalizedArrayString
   supervisoryAuthority?: InternationalizedArrayString
-}
-
-export type Address = {
-  _type: 'address'
-  street?: InternationalizedArrayString
-  city?: InternationalizedArrayString
-  postalCode?: string
-  region?: InternationalizedArrayString
-  countryCode?: string
 }
 
 export type SocialLink = {
@@ -97,6 +82,15 @@ export type Geo = {
   _type: 'geo'
   lat?: number
   lng?: number
+}
+
+export type Address = {
+  _type: 'address'
+  street?: InternationalizedArrayString
+  city?: InternationalizedArrayString
+  postalCode?: string
+  region?: InternationalizedArrayString
+  countryCode?: string
 }
 
 export type Seo = {
@@ -245,6 +239,140 @@ export type RichText = Array<
     } & CtaInline)
 >
 
+export type Navigation = {
+  _id: string
+  _type: 'navigation'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  header?: Array<{
+    label?: InternationalizedArrayString
+    link?: Link
+    children?: Array<{
+      label?: InternationalizedArrayString
+      link?: Link
+      _type: 'navLink'
+      _key: string
+    }>
+    _type: 'navItem'
+    _key: string
+  }>
+  headerCta?: CtaI18n
+  footerColumns?: Array<{
+    title?: InternationalizedArrayString
+    links?: Array<{
+      label?: InternationalizedArrayString
+      link?: Link
+      _type: 'navLink'
+      _key: string
+    }>
+    _type: 'footerColumn'
+    _key: string
+  }>
+  mobileActionBar?: {
+    showDirections?: boolean
+    secondaryAction?: 'none' | 'booking' | 'viber' | 'whatsapp' | 'email'
+  }
+}
+
+export type InternationalizedArrayString = Array<
+  {
+    _key: string
+  } & InternationalizedArrayStringValue
+>
+
+export type SiteSettings = {
+  _id: string
+  _type: 'siteSettings'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  brandName?: InternationalizedArrayString
+  tagline?: InternationalizedArrayString
+  logo?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  logoCompact?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  favicon?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  businessType?:
+    | 'Dentist'
+    | 'MedicalClinic'
+    | 'Physician'
+    | 'LocalBusiness'
+    | 'ProfessionalService'
+    | 'HealthAndBeautyBusiness'
+    | 'Store'
+  areaServed?: InternationalizedArrayString
+  priceRange?: string
+  address?: Address
+  geo?: Geo
+  phones?: Array<
+    {
+      _key: string
+    } & Phone
+  >
+  email?: string
+  mapEmbedUrl?: string
+  mapPlaceholder?: ImageWithAlt
+  googleBusinessUrl?: string
+  openingHours?: Array<
+    {
+      _key: string
+    } & OpeningHoursSpec
+  >
+  specialHours?: Array<
+    {
+      _key: string
+    } & SpecialHours
+  >
+  timeZone?: string
+  socials?: Array<
+    {
+      _key: string
+    } & SocialLink
+  >
+  booking?: BookingConfig
+  contactForm?: {
+    recipient?: string
+    subjectPrefix?: InternationalizedArrayString
+    successMessage?: InternationalizedArrayText
+  }
+  legal?: LegalEntity
+  legalLinks?: Array<
+    {
+      _key: string
+    } & LegalPageReference
+  >
+  footerNote?: InternationalizedArrayText
+  seoDefaults?: {
+    titleTemplate?: InternationalizedArrayString
+    description?: InternationalizedArrayText
+    ogImage?: ImageWithAlt
+  }
+}
+
+export type InternationalizedArrayText = Array<
+  {
+    _key: string
+  } & InternationalizedArrayTextValue
+>
+
 export type SanityImageCrop = {
   _type: 'sanity.imageCrop'
   top?: number
@@ -283,12 +411,6 @@ export type InternationalizedArrayRichTextSimple = Array<
   {
     _key: string
   } & InternationalizedArrayRichTextSimpleValue
->
-
-export type InternationalizedArrayText = Array<
-  {
-    _key: string
-  } & InternationalizedArrayTextValue
 >
 
 export type TranslationMetadata = {
@@ -458,14 +580,13 @@ export type Slug = {
 
 export type AllSanitySchemaTypes =
   | BookingConfig
-  | InternationalizedArrayString
   | LegalEntity
-  | Address
   | SocialLink
   | SpecialHours
   | OpeningHoursSpec
   | Phone
   | Geo
+  | Address
   | Seo
   | SanityImageAssetReference
   | ImageWithAlt
@@ -480,13 +601,16 @@ export type AllSanitySchemaTypes =
   | Callout
   | RichTextSimple
   | RichText
+  | Navigation
+  | InternationalizedArrayString
+  | SiteSettings
+  | InternationalizedArrayText
   | SanityImageCrop
   | SanityImageHotspot
   | InternationalizedArrayRichTextSimpleValue
   | InternationalizedArrayTextValue
   | InternationalizedArrayStringValue
   | InternationalizedArrayRichTextSimple
-  | InternationalizedArrayText
   | TranslationMetadata
   | InternationalizedArrayReference
   | InternationalizedArrayReferenceValue

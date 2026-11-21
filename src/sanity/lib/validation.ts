@@ -51,6 +51,16 @@ export const TIME = /^([01]\d|2[0-3]):[0-5]\d$/
 /** Lowercase Latin words joined by single hyphens (`first-visit`). */
 export const SLUG_LIKE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
+/** IANA time zone known to the runtime (`Europe/Sofia`). */
+export const isTimeZone = (value: string): boolean => {
+  try {
+    new Intl.DateTimeFormat('en', { timeZone: value })
+    return true
+  } catch {
+    return false
+  }
+}
+
 /** Minutes since midnight. A closing time of `00:00` means midnight at the end of the day. */
 export const toMinutes = (time: string, { closing = false } = {}): number => {
   const [hours = 0, minutes = 0] = time.split(':').map(Number)

@@ -105,15 +105,14 @@ export const bookingConfigType = defineType({
       title: 'Booking page address',
       type: 'url',
       hidden: ({ parent }) => (parent as BookingValue | undefined)?.mode !== 'externalUrl',
-      validation: (rule) =>
-        rule
-          .uri({ scheme: ['https'] })
-          .error('Use a full address that starts with https://')
-          .custom((value, context) =>
-            (context.parent as BookingValue | undefined)?.mode === 'externalUrl' && !value
-              ? 'Add the address of the booking page.'
-              : true,
-          ),
+      validation: (rule) => [
+        rule.uri({ scheme: ['https'] }).error('Use a full address that starts with https://'),
+        rule.custom((value, context) =>
+          (context.parent as BookingValue | undefined)?.mode === 'externalUrl' && !value
+            ? 'Add the address of the booking page.'
+            : true,
+        ),
+      ],
     }),
     defineField({
       name: 'label',

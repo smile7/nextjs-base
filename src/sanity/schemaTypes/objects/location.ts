@@ -41,11 +41,10 @@ export const addressType = defineType({
       type: 'string',
       description: 'Two-letter country code, e.g. BG.',
       initialValue: 'BG',
-      validation: (rule) =>
-        rule
-          .required()
-          .regex(/^[A-Z]{2}$/)
-          .error('Use the two-letter country code in capitals, e.g. BG.'),
+      validation: (rule) => [
+        rule.required().error('Add the country code, e.g. BG.'),
+        rule.regex(/^[A-Z]{2}$/).error('Use the two-letter country code in capitals, e.g. BG.'),
+      ],
     }),
   ],
   preview: {
@@ -69,23 +68,19 @@ export const geoType = defineType({
       name: 'lat',
       title: 'Latitude',
       type: 'number',
-      validation: (rule) =>
-        rule
-          .required()
-          .min(-90)
-          .max(90)
-          .error('Latitude is a number between -90 and 90, e.g. 43.8356.'),
+      validation: (rule) => [
+        rule.required().error('Add the latitude.'),
+        rule.min(-90).max(90).error('Latitude is a number between -90 and 90, e.g. 43.8356.'),
+      ],
     }),
     defineField({
       name: 'lng',
       title: 'Longitude',
       type: 'number',
-      validation: (rule) =>
-        rule
-          .required()
-          .min(-180)
-          .max(180)
-          .error('Longitude is a number between -180 and 180, e.g. 25.9657.'),
+      validation: (rule) => [
+        rule.required().error('Add the longitude.'),
+        rule.min(-180).max(180).error('Longitude is a number between -180 and 180, e.g. 25.9657.'),
+      ],
     }),
   ],
   preview: {

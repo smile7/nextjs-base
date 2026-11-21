@@ -17,6 +17,8 @@ import { linkType } from './objects/link'
 import { addressType, geoType } from './objects/location'
 import { calloutType, richTextSimpleType, richTextType } from './objects/richText'
 import { seoType } from './objects/seo'
+import { navigationType } from './singletons/navigation'
+import { siteSettingsType } from './singletons/siteSettings'
 
 const objects = [
   imageWithAltType,
@@ -38,6 +40,11 @@ const objects = [
   bookingConfigType,
 ]
 
+const singletons = [siteSettingsType, navigationType]
+
 const documents = [pageType, serviceType, articleType, legalPageType]
 
-export const schemaTypes: SchemaTypeDefinition[] = [...documents, ...objects]
+export const schemaTypes: SchemaTypeDefinition[] = [...singletons, ...documents, ...objects]
+
+/** Fixed-id documents, registered in `sanity.config.ts` `document.singletons` (document id = type name). */
+export const singletonTypes = singletons.map((type) => type.name)

@@ -7,6 +7,7 @@ import {
   closesAfterOpens,
   headingsSkippingLevels,
   i18nValue,
+  isTimeZone,
   toMinutes,
   validateI18n,
 } from './validation'
@@ -59,6 +60,13 @@ describe('patterns', () => {
     expect(SLUG_LIKE.test('first-visit')).toBe(true)
     expect(SLUG_LIKE.test('First visit')).toBe(false)
     expect(SLUG_LIKE.test('a--b')).toBe(false)
+  })
+})
+
+describe('isTimeZone', () => {
+  it('accepts IANA zones and rejects anything else', () => {
+    expect(isTimeZone('Europe/Sofia')).toBe(true)
+    expect(isTimeZone('Sofia')).toBe(false)
   })
 })
 

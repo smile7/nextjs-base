@@ -5,7 +5,10 @@ import { defineConfig } from 'sanity'
 import { dataset, projectId, studioBasePath } from './src/sanity/env'
 import { isRoutableType } from './src/sanity/i18n'
 import { plugins } from './src/sanity/plugins'
-import { schemaTypes } from './src/sanity/schemaTypes'
+import { schemaTypes, singletonTypes } from './src/sanity/schemaTypes'
+
+/** Singletons can only be edited and published: no delete, unpublish or duplicate. */
+const singletonActions = new Set(['publish', 'discardChanges', 'restore'])
 
 export default defineConfig({
   name: 'default',
@@ -19,5 +22,12 @@ export default defineConfig({
     // Routable documents are created only through the per-language templates
     // ("Български Page", "English Page"), so `language` is always set.
     templates: (prev) => prev.filter((template) => !isRoutableType(template.id)),
+  },
+  document: {
+    singletons: singletonTypes,
+    actions: (prev, context) =>
+      context.singleton
+        ? prev.filter(({ action }) => action && singletonActions.has(action))
+        : prev,
   },
 })

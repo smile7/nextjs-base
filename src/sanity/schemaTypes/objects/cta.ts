@@ -62,12 +62,10 @@ export const ctaFields = [
     title: 'Button text',
     type: 'string',
     description: `Short and active, e.g. "Book a visit". Max ${LABEL_MAX} characters.`,
-    validation: (rule) =>
-      rule
-        .required()
-        .error('Add the button text.')
-        .max(LABEL_MAX)
-        .error(`Keep the button text under ${LABEL_MAX} characters.`),
+    validation: (rule) => [
+      rule.required().error('Add the button text.'),
+      rule.max(LABEL_MAX).error(`Keep the button text under ${LABEL_MAX} characters.`),
+    ],
   }),
   actionField,
   linkField,

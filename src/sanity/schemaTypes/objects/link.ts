@@ -84,13 +84,14 @@ export const linkType = defineType({
       type: 'url',
       description: 'The full address, starting with https://',
       hidden: unless('external'),
-      validation: (rule) =>
+      validation: (rule) => [
         rule
           .uri({ scheme: ['https', 'mailto', 'tel'] })
-          .error('Use a full address that starts with https://')
-          .custom((value, context) =>
-            parentOf(context).kind === 'external' && !value ? 'Add the web address.' : true,
-          ),
+          .error('Use a full address that starts with https://'),
+        rule.custom((value, context) =>
+          parentOf(context).kind === 'external' && !value ? 'Add the web address.' : true,
+        ),
+      ],
     }),
     defineField({
       name: 'phoneKey',
