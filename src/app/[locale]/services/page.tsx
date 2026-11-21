@@ -5,8 +5,8 @@ import { getTranslations } from 'next-intl/server'
 
 import { CmsPage } from '@/components/site/CmsPage'
 import { ServiceAudienceFilter } from '@/components/site/ServiceAudienceFilter'
-import { getPageByKey, getSiteSettings, withoutStega, type Section } from '@/lib/content'
-import { buildAlternates } from '@/lib/seo/alternates'
+import { getPageByKey, getSiteSettings, type Section } from '@/lib/content'
+import { systemPageMetadata } from '@/lib/seo/buildMetadata'
 import { routing } from '@/i18n/routing'
 
 export const dynamicParams = false
@@ -26,15 +26,7 @@ function hasMixedAudiences(sections: Section[]) {
 export async function generateMetadata({
   params,
 }: PageProps<'/[locale]/services'>): Promise<Metadata> {
-  const { locale } = await params
-  if (!hasLocale(routing.locales, locale)) return {}
-  const page = await getPageByKey('services', locale)
-  if (!page) return {}
-  return withoutStega({
-    title: page.seo.title ?? page.title,
-    description: page.seo.description ?? page.intro,
-    alternates: buildAlternates(locale, page.translations),
-  })
+  return systemPageMetadata('services', (await params).locale)
 }
 
 export default async function ServicesPage({ params }: PageProps<'/[locale]/services'>) {

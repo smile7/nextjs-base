@@ -126,6 +126,7 @@
   "Blog": {
     "listHeading": "Статии",
     "pageTitle": "{title} – страница {page}",
+    "pageDescription": "{description} (страница {page})",
     "paginationLabel": "Страници на блога",
     "newer": "По-нови статии",
     "older": "По-стари статии",

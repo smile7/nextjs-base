@@ -767,6 +767,10 @@ export function demoDocuments(images: SeedImages) {
     ...routable<Page>('page', 'about', (locale) => ({
       pageKey: 'about',
       title: { bg: 'За нас', en: 'About us' }[locale],
+      intro: {
+        bg: 'Екипът, историята и ценностите зад Демо Дентал.',
+        en: 'The team, the story and the values behind Demo Dental.',
+      }[locale],
       sections: keyed(
         [
           section('section.textImage', {
@@ -824,6 +828,10 @@ export function demoDocuments(images: SeedImages) {
     ...routable<Page>('page', 'gallery', (locale) => ({
       pageKey: 'gallery',
       title: { bg: 'Галерия', en: 'Gallery' }[locale],
+      intro: {
+        bg: 'Разгледайте клиниката отвътре: чакалнята, кабинетите и детския кът.',
+        en: 'Take a look inside the clinic: the waiting room, treatment rooms and kids’ corner.',
+      }[locale],
       sections: keyed(
         [
           section('section.gallery', {
@@ -846,6 +854,10 @@ export function demoDocuments(images: SeedImages) {
     ...routable<Page>('page', 'contact', (locale) => ({
       pageKey: 'contact',
       title: { bg: 'Контакти', en: 'Contact' }[locale],
+      intro: {
+        bg: 'Адрес, работно време и как да се свържете с нас.',
+        en: 'Address, opening hours and how to reach us.',
+      }[locale],
       sections: keyed(
         [
           section('section.contactHours', {

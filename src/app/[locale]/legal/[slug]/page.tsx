@@ -11,15 +11,9 @@ import { PageHeader } from '@/components/site/PageHeader'
 import { SetPageTranslations } from '@/components/site/PageTranslations'
 import { readPublicEnv } from '@/env'
 import { routing } from '@/i18n/routing'
-import {
-  getLegalPage,
-  getSiteSettings,
-  getStaticParams,
-  RichText,
-  withoutStega,
-} from '@/lib/content'
+import { getLegalPage, getSiteSettings, getStaticParams, RichText } from '@/lib/content'
 import { formatDate } from '@/lib/i18n/format'
-import { buildAlternates } from '@/lib/seo/alternates'
+import { buildMetadata } from '@/lib/seo/buildMetadata'
 
 export const dynamicParams = false
 
@@ -33,11 +27,14 @@ export async function generateMetadata({
 }: PageProps<'/[locale]/legal/[slug]'>): Promise<Metadata> {
   const { locale, slug } = await params
   if (!hasLocale(routing.locales, locale)) return {}
-  const page = await getLegalPage(slug, locale)
-  if (!page) return {}
-  return withoutStega({
+  const [page, settings] = await Promise.all([getLegalPage(slug, locale), getSiteSettings(locale)])
+  if (!page || !settings) return {}
+  return buildMetadata({
+    locale,
+    settings,
+    translations: page.translations,
     title: page.title,
-    alternates: buildAlternates(locale, page.translations),
+    description: page.excerpt,
   })
 }
 

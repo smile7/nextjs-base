@@ -20,11 +20,10 @@ import {
   getSiteSettings,
   getStaticParams,
   RichText,
-  withoutStega,
   type Section as SectionModel,
 } from '@/lib/content'
 import { formatDate } from '@/lib/i18n/format'
-import { buildAlternates } from '@/lib/seo/alternates'
+import { buildMetadata } from '@/lib/seo/buildMetadata'
 import { routing } from '@/i18n/routing'
 
 export const dynamicParams = false
@@ -39,12 +38,24 @@ export async function generateMetadata({
 }: PageProps<'/[locale]/blog/[slug]'>): Promise<Metadata> {
   const { locale, slug } = await params
   if (!hasLocale(routing.locales, locale)) return {}
-  const article = await getArticleBySlug(slug, locale)
-  if (!article) return {}
-  return withoutStega({
-    title: article.seo.title ?? article.title,
-    description: article.seo.description ?? article.excerpt,
-    alternates: buildAlternates(locale, article.translations),
+  const [article, settings] = await Promise.all([
+    getArticleBySlug(slug, locale),
+    getSiteSettings(locale),
+  ])
+  if (!article || !settings) return {}
+  return buildMetadata({
+    locale,
+    settings,
+    translations: article.translations,
+    title: article.title,
+    description: article.excerpt,
+    seo: article.seo,
+    image: article.cover,
+    article: {
+      publishedTime: article.publishedAt,
+      modifiedTime: article.updatedAt,
+      authors: article.author ? [article.author.name] : [],
+    },
   })
 }
 

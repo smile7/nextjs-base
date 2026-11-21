@@ -12,10 +12,9 @@ import {
   getArticles,
   getPageByKey,
   getSiteSettings,
-  withoutStega,
   type Translations,
 } from '@/lib/content'
-import { buildAlternates } from '@/lib/seo/alternates'
+import { cmsPageMetadata } from '@/lib/seo/buildMetadata'
 import { permanentRedirect } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
 
@@ -57,11 +56,18 @@ export async function generateMetadata({
 }: PageProps<'/[locale]/blog/page/[n]'>): Promise<Metadata> {
   const { locale, n } = await params
   if (!hasLocale(routing.locales, locale)) return {}
-  const { blogPage, translations, title } = await load(locale, n)
-  return withoutStega({
+  const [{ blogPage, page, translations, title }, settings, t] = await Promise.all([
+    load(locale, n),
+    getSiteSettings(locale),
+    getTranslations({ locale, namespace: 'Blog' }),
+  ])
+  if (!settings) return {}
+  const description = blogPage.seo.description || blogPage.intro
+  return cmsPageMetadata(blogPage, locale, settings, {
+    translations,
     title,
-    description: blogPage.seo.description ?? blogPage.intro,
-    alternates: buildAlternates(locale, translations),
+    seo: { ...blogPage.seo, title: undefined, description: undefined },
+    description: description ? t('pageDescription', { description, page }) : undefined,
   })
 }
 

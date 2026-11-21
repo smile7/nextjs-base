@@ -90,6 +90,7 @@ export function mapLegalPage(row: LegalPageQueryRow | null, locale: Locale): Leg
     ...(row.lastUpdated ? { lastUpdated: clean(row.lastUpdated) } : {}),
     showCookieTable: Boolean(row.showCookieTable),
     translations: mapTranslations(row.translations, { _type: 'legalPage', slug: row.slug }, locale),
+    ...excerptOf(row.body ?? []),
     toc: (row.body ?? []).flatMap((block) =>
       block._type === 'block' && block.style === 'h2'
         ? [{ id: headingAnchor(clean(block._key)), text: blockText(block) }]
@@ -107,6 +108,17 @@ const blockText = (block: TextBlock) =>
     : ''
 
 /** Same pattern as the Studio's publish validation (`placeholdersIn`). */
+const EXCERPT_LENGTH = 160
+
+function excerptOf(blocks: (TextBlock & { style?: unknown })[]): { excerpt?: string } {
+  const first = blocks.find((block) => block._type === 'block' && block.style === 'normal')
+  const text = first ? blockText(first).trim() : ''
+  if (!text) return {}
+  if (text.length <= EXCERPT_LENGTH) return { excerpt: text }
+  const cut = text.slice(0, EXCERPT_LENGTH - 1)
+  return { excerpt: `${cut.slice(0, cut.lastIndexOf(' ')).replace(/[\s,.;:]+$/, '')}…` }
+}
+
 const PLACEHOLDER = /\[\[[^\]]*\]\]/g
 
 /** Unique `[[…]]` template fields, in order of appearance. */

@@ -24,10 +24,9 @@ import {
   getSiteSettings,
   getStaticParams,
   RichText,
-  withoutStega,
   type FaqSection,
 } from '@/lib/content'
-import { buildAlternates } from '@/lib/seo/alternates'
+import { buildMetadata } from '@/lib/seo/buildMetadata'
 import { cn } from '@/lib/utils'
 import { routing } from '@/i18n/routing'
 
@@ -43,12 +42,19 @@ export async function generateMetadata({
 }: PageProps<'/[locale]/services/[slug]'>): Promise<Metadata> {
   const { locale, slug } = await params
   if (!hasLocale(routing.locales, locale)) return {}
-  const service = await getServiceBySlug(slug, locale)
-  if (!service) return {}
-  return withoutStega({
-    title: service.seo.title ?? service.title,
-    description: service.seo.description ?? service.teaser,
-    alternates: buildAlternates(locale, service.translations),
+  const [service, settings] = await Promise.all([
+    getServiceBySlug(slug, locale),
+    getSiteSettings(locale),
+  ])
+  if (!service || !settings) return {}
+  return buildMetadata({
+    locale,
+    settings,
+    translations: service.translations,
+    title: service.title,
+    description: service.teaser,
+    seo: service.seo,
+    image: service.image,
   })
 }
 

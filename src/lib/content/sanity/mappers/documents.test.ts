@@ -134,5 +134,33 @@ describe('mapLegalPage', () => {
       { id: 'h-d', text: 'Your rights' },
     ])
     expect(page?.placeholders).toEqual(['[[CLINIC_NAME]]', '[[DPO_EMAIL]]'])
+    expect(page?.excerpt).toBe('Contact [[DPO_EMAIL]] or [[CLINIC_NAME]].')
+  })
+
+  it('shortens a long first paragraph to a ~160 character excerpt at a word boundary', () => {
+    const long = 'Word '.repeat(60).trim()
+    const page = mapLegalPage(
+      fixture<LegalPageQueryRow>({
+        _id: 'l1',
+        kind: 'terms',
+        title: 'Terms',
+        slug: 'terms',
+        body: [
+          {
+            _type: 'block',
+            _key: 'a',
+            style: 'normal',
+            markDefs: [],
+            children: [{ _type: 'span', _key: 'as', text: long, marks: [] }],
+          },
+        ],
+        lastUpdated: null,
+        showCookieTable: null,
+        translations: null,
+      }),
+      'en',
+    )
+    expect(page?.excerpt?.length).toBeLessThanOrEqual(160)
+    expect(page?.excerpt).toMatch(/^Word( Word)+…$/)
   })
 })
