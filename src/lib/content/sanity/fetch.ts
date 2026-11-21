@@ -6,8 +6,8 @@ import type { QueryParams } from 'next-sanity'
 import { client } from './client'
 import { readToken } from './token'
 
-export type FetchOpts<Q extends string> = {
-  query: Q
+export type FetchOpts = {
+  query: string
   params?: QueryParams
   /** Default: on in draft mode. Always pass `false` for metadata, JSON-LD, static params, sitemap. */
   stega?: boolean
@@ -21,13 +21,16 @@ export type FetchOpts<Q extends string> = {
 /**
  * The only way the content layer talks to Sanity (ARCHITECTURE §5.2). Published reads are
  * tokenless CDN reads with no cache tags (ADR-012), so they keep routes static.
+ *
+ * Pass the TypeGen result type explicitly (`sanityFetch<PageByKeyQueryResult>`): queries built
+ * from fragment helpers are typed `string`, so TypeGen's per-query client overloads never match.
  */
-export async function sanityFetch<const Q extends string>({
+export async function sanityFetch<Result>({
   query,
   params = {},
   stega,
   perspective,
-}: FetchOpts<Q>) {
+}: FetchOpts): Promise<Result> {
   const drafts = perspective ? perspective === 'drafts' : (await draftMode()).isEnabled
 
   if (drafts) {

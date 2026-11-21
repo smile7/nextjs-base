@@ -1,0 +1,96 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { defaultLocale } from '@/config/i18n'
+
+const mocks = vi.hoisted(() => ({ sanityFetch: vi.fn() }))
+
+vi.mock('server-only', () => ({}))
+vi.mock('./sanity/fetch', () => ({ sanityFetch: mocks.sanityFetch }))
+
+const content = await import('./index')
+
+const lastCall = () => mocks.sanityFetch.mock.calls.at(-1)![0] as Record<string, unknown>
+
+beforeEach(() => {
+  mocks.sanityFetch.mockReset()
+  vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+})
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
+
+describe('content API', () => {
+  it('passes the locale and the default-locale fallback to every query', async () => {
+    mocks.sanityFetch.mockResolvedValue(null)
+    await content.getPageByKey('home', 'en')
+
+    expect(lastCall().params).toEqual({ locale: 'en', fallback: defaultLocale, key: 'home' })
+  })
+
+  it('returns null and logs when a document is missing, without throwing', async () => {
+    mocks.sanityFetch.mockResolvedValue(null)
+
+    await expect(content.getPageBySlug('missing-page', 'bg')).resolves.toBeNull()
+    await expect(content.getSiteSettings('bg')).resolves.toBeNull()
+    await expect(content.getArticleBySlug('missing-article', 'bg')).resolves.toBeNull()
+    expect(console.warn).toHaveBeenCalledWith('[content] page /missing-page (bg) not found')
+  })
+
+  it('returns empty lists for missing collections', async () => {
+    mocks.sanityFetch.mockResolvedValue(null)
+
+    await expect(content.getTeam('bg')).resolves.toEqual([])
+    await expect(content.getFaq('bg', { category: 'children' })).resolves.toEqual([])
+    expect(lastCall().params).toMatchObject({ category: 'children' })
+  })
+
+  it('lets a failed request throw so the build fails instead of shipping empty pages', async () => {
+    mocks.sanityFetch.mockRejectedValue(new Error('network down'))
+
+    await expect(content.getServiceBySlug('failing-service', 'bg')).rejects.toThrow('network down')
+  })
+
+  it('turns omitted filters into null params', async () => {
+    mocks.sanityFetch.mockResolvedValue([])
+    await content.getServices('bg')
+    expect(lastCall().params).toMatchObject({ category: null })
+
+    await content.getGallery('bg')
+    expect(lastCall().params).toMatchObject({ album: null, limit: 100 })
+
+    await content.getTestimonials('bg', { featured: true })
+    expect(lastCall().params).toMatchObject({ featured: true })
+  })
+
+  it('pages articles with a 1-based page number', async () => {
+    mocks.sanityFetch.mockResolvedValue({ items: [], total: 19 })
+    const result = await content.getArticles('bg', { page: 3, pageSize: 9 })
+
+    expect(lastCall().params).toMatchObject({ start: 18, end: 27 })
+    expect(result).toEqual({ items: [], total: 19, pages: 3 })
+  })
+
+  it('reads static slugs published and stega-free, dropping unknown locales', async () => {
+    mocks.sanityFetch.mockResolvedValue([
+      { slug: 'about-us', language: 'en' },
+      { slug: 'za-nas', language: 'bg' },
+      { slug: 'orphan', language: 'xx' },
+      { slug: null, language: 'bg' },
+    ])
+
+    await expect(content.getStaticSlugs('page')).resolves.toEqual([
+      { locale: 'en', slug: 'about-us' },
+      { locale: 'bg', slug: 'za-nas' },
+    ])
+    expect(lastCall()).toMatchObject({ stega: false, perspective: 'published', params: { type: 'page' } })
+  })
+
+  it('returns no translations for a missing or non-routable document', async () => {
+    mocks.sanityFetch.mockResolvedValue(null)
+    await expect(content.getTranslations('missing-doc')).resolves.toEqual({})
+
+    mocks.sanityFetch.mockResolvedValue({ _type: 'siteSettings', language: 'bg', translations: null })
+    await expect(content.getTranslations('siteSettings-bg')).resolves.toEqual({})
+  })
+})

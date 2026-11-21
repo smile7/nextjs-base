@@ -79,4 +79,13 @@ export const legalPageQuery = defineQuery(
   }`,
 )
 
-export const translationsQuery = defineQuery(`*[_id == $id][0]{ _id, ${translationsField} }`)
+export const translationsQuery = defineQuery(`*[_id == $id][0]{
+  _type, language, "slug": slug.current, pageKey, hasDetailPage, ${translationsField}
+}`)
+
+/** Routable documents with a URL of their own (for `generateStaticParams`). */
+export const staticSlugsQuery = defineQuery(`*[
+  _type == $type && defined(slug.current) && defined(language)
+  && ($type != "page" || !defined(pageKey))
+  && ($type != "service" || hasDetailPage == true)
+]{ "slug": slug.current, language }`)

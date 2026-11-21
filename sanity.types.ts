@@ -5063,43 +5063,617 @@ export type LegalPageQueryResult = {
 
 // Source: src/lib/content/sanity/queries/documents.ts
 // Variable: translationsQuery
-// Query: *[_id == $id][0]{ _id,   "translations": *[_type == "translation.metadata" && references(^._id)][0]    .translations[]{ "locale": language, "doc": value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage } } }
-export type TranslationsQueryResult = {
-  _id: string
-  translations: Array<{
-    locale: string | null
-    doc:
-      | {
-          _type: 'article'
-          title: string | null
-          slug: string | null
-          pageKey: null
-          hasDetailPage: null
-        }
-      | {
-          _type: 'legalPage'
-          title: string | null
-          slug: string | null
-          pageKey: null
-          hasDetailPage: null
-        }
-      | {
-          _type: 'page'
-          title: string | null
-          slug: string | null
-          pageKey: 'about' | 'blog' | 'contact' | 'gallery' | 'home' | 'services' | null
-          hasDetailPage: null
-        }
-      | {
-          _type: 'service'
-          title: string | null
-          slug: string | null
-          pageKey: null
-          hasDetailPage: boolean | null
-        }
-      | null
-  }> | null
-} | null
+// Query: *[_id == $id][0]{  _type, language, "slug": slug.current, pageKey, hasDetailPage,   "translations": *[_type == "translation.metadata" && references(^._id)][0]    .translations[]{ "locale": language, "doc": value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage } }}
+export type TranslationsQueryResult =
+  | {
+      _type: 'announcement'
+      language: null
+      slug: null
+      pageKey: null
+      hasDetailPage: null
+      translations: Array<{
+        locale: string | null
+        doc:
+          | {
+              _type: 'article'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'legalPage'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'page'
+              title: string | null
+              slug: string | null
+              pageKey: 'about' | 'blog' | 'contact' | 'gallery' | 'home' | 'services' | null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'service'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: boolean | null
+            }
+          | null
+      }> | null
+    }
+  | {
+      _type: 'article'
+      language: string | null
+      slug: string | null
+      pageKey: null
+      hasDetailPage: null
+      translations: Array<{
+        locale: string | null
+        doc:
+          | {
+              _type: 'article'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'legalPage'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'page'
+              title: string | null
+              slug: string | null
+              pageKey: 'about' | 'blog' | 'contact' | 'gallery' | 'home' | 'services' | null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'service'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: boolean | null
+            }
+          | null
+      }> | null
+    }
+  | {
+      _type: 'faqItem'
+      language: null
+      slug: null
+      pageKey: null
+      hasDetailPage: null
+      translations: Array<{
+        locale: string | null
+        doc:
+          | {
+              _type: 'article'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'legalPage'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'page'
+              title: string | null
+              slug: string | null
+              pageKey: 'about' | 'blog' | 'contact' | 'gallery' | 'home' | 'services' | null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'service'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: boolean | null
+            }
+          | null
+      }> | null
+    }
+  | {
+      _type: 'galleryItem'
+      language: null
+      slug: null
+      pageKey: null
+      hasDetailPage: null
+      translations: Array<{
+        locale: string | null
+        doc:
+          | {
+              _type: 'article'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'legalPage'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'page'
+              title: string | null
+              slug: string | null
+              pageKey: 'about' | 'blog' | 'contact' | 'gallery' | 'home' | 'services' | null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'service'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: boolean | null
+            }
+          | null
+      }> | null
+    }
+  | {
+      _type: 'legalPage'
+      language: string | null
+      slug: string | null
+      pageKey: null
+      hasDetailPage: null
+      translations: Array<{
+        locale: string | null
+        doc:
+          | {
+              _type: 'article'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'legalPage'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'page'
+              title: string | null
+              slug: string | null
+              pageKey: 'about' | 'blog' | 'contact' | 'gallery' | 'home' | 'services' | null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'service'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: boolean | null
+            }
+          | null
+      }> | null
+    }
+  | {
+      _type: 'navigation'
+      language: null
+      slug: null
+      pageKey: null
+      hasDetailPage: null
+      translations: Array<{
+        locale: string | null
+        doc:
+          | {
+              _type: 'article'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'legalPage'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'page'
+              title: string | null
+              slug: string | null
+              pageKey: 'about' | 'blog' | 'contact' | 'gallery' | 'home' | 'services' | null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'service'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: boolean | null
+            }
+          | null
+      }> | null
+    }
+  | {
+      _type: 'page'
+      language: string | null
+      slug: string | null
+      pageKey: 'about' | 'blog' | 'contact' | 'gallery' | 'home' | 'services' | null
+      hasDetailPage: null
+      translations: Array<{
+        locale: string | null
+        doc:
+          | {
+              _type: 'article'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'legalPage'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'page'
+              title: string | null
+              slug: string | null
+              pageKey: 'about' | 'blog' | 'contact' | 'gallery' | 'home' | 'services' | null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'service'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: boolean | null
+            }
+          | null
+      }> | null
+    }
+  | {
+      _type: 'sanity.fileAsset'
+      language: null
+      slug: null
+      pageKey: null
+      hasDetailPage: null
+      translations: Array<{
+        locale: string | null
+        doc:
+          | {
+              _type: 'article'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'legalPage'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'page'
+              title: string | null
+              slug: string | null
+              pageKey: 'about' | 'blog' | 'contact' | 'gallery' | 'home' | 'services' | null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'service'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: boolean | null
+            }
+          | null
+      }> | null
+    }
+  | {
+      _type: 'sanity.imageAsset'
+      language: null
+      slug: null
+      pageKey: null
+      hasDetailPage: null
+      translations: Array<{
+        locale: string | null
+        doc:
+          | {
+              _type: 'article'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'legalPage'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'page'
+              title: string | null
+              slug: string | null
+              pageKey: 'about' | 'blog' | 'contact' | 'gallery' | 'home' | 'services' | null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'service'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: boolean | null
+            }
+          | null
+      }> | null
+    }
+  | {
+      _type: 'service'
+      language: string | null
+      slug: string | null
+      pageKey: null
+      hasDetailPage: boolean | null
+      translations: Array<{
+        locale: string | null
+        doc:
+          | {
+              _type: 'article'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'legalPage'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'page'
+              title: string | null
+              slug: string | null
+              pageKey: 'about' | 'blog' | 'contact' | 'gallery' | 'home' | 'services' | null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'service'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: boolean | null
+            }
+          | null
+      }> | null
+    }
+  | {
+      _type: 'serviceCategory'
+      language: null
+      slug: null
+      pageKey: null
+      hasDetailPage: null
+      translations: Array<{
+        locale: string | null
+        doc:
+          | {
+              _type: 'article'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'legalPage'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'page'
+              title: string | null
+              slug: string | null
+              pageKey: 'about' | 'blog' | 'contact' | 'gallery' | 'home' | 'services' | null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'service'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: boolean | null
+            }
+          | null
+      }> | null
+    }
+  | {
+      _type: 'siteSettings'
+      language: null
+      slug: null
+      pageKey: null
+      hasDetailPage: null
+      translations: Array<{
+        locale: string | null
+        doc:
+          | {
+              _type: 'article'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'legalPage'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'page'
+              title: string | null
+              slug: string | null
+              pageKey: 'about' | 'blog' | 'contact' | 'gallery' | 'home' | 'services' | null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'service'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: boolean | null
+            }
+          | null
+      }> | null
+    }
+  | {
+      _type: 'teamMember'
+      language: null
+      slug: string | null
+      pageKey: null
+      hasDetailPage: null
+      translations: Array<{
+        locale: string | null
+        doc:
+          | {
+              _type: 'article'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'legalPage'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'page'
+              title: string | null
+              slug: string | null
+              pageKey: 'about' | 'blog' | 'contact' | 'gallery' | 'home' | 'services' | null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'service'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: boolean | null
+            }
+          | null
+      }> | null
+    }
+  | {
+      _type: 'testimonial'
+      language: null
+      slug: null
+      pageKey: null
+      hasDetailPage: null
+      translations: Array<{
+        locale: string | null
+        doc:
+          | {
+              _type: 'article'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'legalPage'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'page'
+              title: string | null
+              slug: string | null
+              pageKey: 'about' | 'blog' | 'contact' | 'gallery' | 'home' | 'services' | null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'service'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: boolean | null
+            }
+          | null
+      }> | null
+    }
+  | {
+      _type: 'translation.metadata'
+      language: null
+      slug: null
+      pageKey: null
+      hasDetailPage: null
+      translations: Array<{
+        locale: string | null
+        doc:
+          | {
+              _type: 'article'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'legalPage'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'page'
+              title: string | null
+              slug: string | null
+              pageKey: 'about' | 'blog' | 'contact' | 'gallery' | 'home' | 'services' | null
+              hasDetailPage: null
+            }
+          | {
+              _type: 'service'
+              title: string | null
+              slug: string | null
+              pageKey: null
+              hasDetailPage: boolean | null
+            }
+          | null
+      }> | null
+    }
+  | null
+
+// Source: src/lib/content/sanity/queries/documents.ts
+// Variable: staticSlugsQuery
+// Query: *[  _type == $type && defined(slug.current) && defined(language)  && ($type != "page" || !defined(pageKey))  && ($type != "service" || hasDetailPage == true)]{ "slug": slug.current, language }
+export type StaticSlugsQueryResult = Array<{
+  slug: string
+  language: string
+}>
 
 // Source: src/lib/content/sanity/queries/settings.ts
 // Variable: siteSettingsQuery
@@ -5564,7 +6138,8 @@ declare global {
     '{\n  "items": *[_type == "article" && language == $locale] | order(publishedAt desc)[$start...$end]{\n    \n  _id, title, "slug": slug.current, excerpt, cover{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n }, publishedAt, updatedAt\n\n  },\n  "total": count(*[_type == "article" && language == $locale])\n}': ArticlesQueryResult
     '*[_type == "article" && language == $locale && slug.current == $slug][0]{\n    \n  _id, title, "slug": slug.current, excerpt, cover{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n }, publishedAt, updatedAt\n,\n    body[]{\n  ...,\n  _type == "block" => { markDefs[]{ ..., _type == "link" => { \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } } },\n  _type == "imageWithAlt" => { \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n, "caption": coalesce(caption[language == $locale][0].value, caption[language == $fallback][0].value) },\n  _type == "ctaInline" => { label, action, style, link{ \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } }\n},\n    "wordCount": length(string::split(pt::text(body), " ")),\n    author->{ \n  _id,\n  name,\n  nameLatin,\n  "honorific": coalesce(honorific[language == $locale][0].value, honorific[language == $fallback][0].value),\n  "role": coalesce(role[language == $locale][0].value, role[language == $fallback][0].value),\n  "specialties": specialties[]{ "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value) },\n  "bioShort": coalesce(bioShort[language == $locale][0].value, bioShort[language == $fallback][0].value),\n  "bio": coalesce(bio[language == $locale][0].value, bio[language == $fallback][0].value)[]{ ..., markDefs[]{ ..., _type == "link" => { \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } } },\n  photo{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n },\n  featured,\n  "credentials": credentials[]{ "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value), year },\n  sameAs\n },\n    reviewedBy->{ \n  _id,\n  name,\n  nameLatin,\n  "honorific": coalesce(honorific[language == $locale][0].value, honorific[language == $fallback][0].value),\n  "role": coalesce(role[language == $locale][0].value, role[language == $fallback][0].value),\n  "specialties": specialties[]{ "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value) },\n  "bioShort": coalesce(bioShort[language == $locale][0].value, bioShort[language == $fallback][0].value),\n  "bio": coalesce(bio[language == $locale][0].value, bio[language == $fallback][0].value)[]{ ..., markDefs[]{ ..., _type == "link" => { \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } } },\n  photo{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n },\n  featured,\n  "credentials": credentials[]{ "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value), year },\n  sameAs\n },\n    related[]->{ \n  _id, title, "slug": slug.current, excerpt, cover{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n }, publishedAt, updatedAt\n },\n    "latest": *[_type == "article" && language == $locale && _id != ^._id]\n      | order(publishedAt desc)[0...3]{ \n  _id, title, "slug": slug.current, excerpt, cover{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n }, publishedAt, updatedAt\n },\n    seo{ \n  title, description, noIndex, canonicalOverride, ogImage{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n }\n },\n    \n  "translations": *[_type == "translation.metadata" && references(^._id)][0]\n    .translations[]{ "locale": language, "doc": value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage } }\n\n  }': ArticleBySlugQueryResult
     '*[_type == "legalPage" && language == $locale && slug.current == $slug][0]{\n    _id, kind, title, "slug": slug.current, body[]{\n  ...,\n  _type == "block" => { markDefs[]{ ..., _type == "link" => { \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } } },\n  _type == "imageWithAlt" => { \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n, "caption": coalesce(caption[language == $locale][0].value, caption[language == $fallback][0].value) },\n  _type == "ctaInline" => { label, action, style, link{ \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } }\n}, lastUpdated, showCookieTable,\n    \n  "translations": *[_type == "translation.metadata" && references(^._id)][0]\n    .translations[]{ "locale": language, "doc": value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage } }\n\n  }': LegalPageQueryResult
-    '*[_id == $id][0]{ _id, \n  "translations": *[_type == "translation.metadata" && references(^._id)][0]\n    .translations[]{ "locale": language, "doc": value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage } }\n }': TranslationsQueryResult
+    '*[_id == $id][0]{\n  _type, language, "slug": slug.current, pageKey, hasDetailPage, \n  "translations": *[_type == "translation.metadata" && references(^._id)][0]\n    .translations[]{ "locale": language, "doc": value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage } }\n\n}': TranslationsQueryResult
+    '*[\n  _type == $type && defined(slug.current) && defined(language)\n  && ($type != "page" || !defined(pageKey))\n  && ($type != "service" || hasDetailPage == true)\n]{ "slug": slug.current, language }': StaticSlugsQueryResult
     '*[_id == "siteSettings"][0]{\n  "brandName": coalesce(brandName[language == $locale][0].value, brandName[language == $fallback][0].value),\n  "tagline": coalesce(tagline[language == $locale][0].value, tagline[language == $fallback][0].value),\n  logo{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n },\n  logoCompact{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n },\n  businessType,\n  "areaServed": coalesce(areaServed[language == $locale][0].value, areaServed[language == $fallback][0].value),\n  priceRange,\n  address{ \n  "street": coalesce(street[language == $locale][0].value, street[language == $fallback][0].value),\n  "city": coalesce(city[language == $locale][0].value, city[language == $fallback][0].value),\n  postalCode,\n  "region": coalesce(region[language == $locale][0].value, region[language == $fallback][0].value),\n  countryCode\n },\n  geo,\n  phones[]{ key, e164, display, "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value) },\n  email,\n  mapEmbedUrl,\n  mapPlaceholder{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n },\n  googleBusinessUrl,\n  openingHours[]{ days, opens, closes, "note": coalesce(note[language == $locale][0].value, note[language == $fallback][0].value) },\n  specialHours[]{ "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value), date, endDate, closed, opens, closes },\n  timeZone,\n  socials[]{ platform, url, "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value) },\n  booking{ mode, url, "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value), "note": coalesce(note[language == $locale][0].value, note[language == $fallback][0].value) },\n  contactForm{ "subjectPrefix": coalesce(subjectPrefix[language == $locale][0].value, subjectPrefix[language == $fallback][0].value), "successMessage": coalesce(successMessage[language == $locale][0].value, successMessage[language == $fallback][0].value) },\n  legal{\n    legalName, uic, vatNumber, representative,\n    registeredAddress{ \n  "street": coalesce(street[language == $locale][0].value, street[language == $fallback][0].value),\n  "city": coalesce(city[language == $locale][0].value, city[language == $fallback][0].value),\n  postalCode,\n  "region": coalesce(region[language == $locale][0].value, region[language == $fallback][0].value),\n  countryCode\n },\n    "professionalBody": coalesce(professionalBody[language == $locale][0].value, professionalBody[language == $fallback][0].value),\n    "registration": coalesce(registration[language == $locale][0].value, registration[language == $fallback][0].value),\n    "supervisoryAuthority": coalesce(supervisoryAuthority[language == $locale][0].value, supervisoryAuthority[language == $fallback][0].value)\n  },\n  "legalLinks": legalLinks[]{ "doc": select(\n  @->language == $locale => @->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n) },\n  "footerNote": coalesce(footerNote[language == $locale][0].value, footerNote[language == $fallback][0].value),\n  seoDefaults{\n    "titleTemplate": coalesce(titleTemplate[language == $locale][0].value, titleTemplate[language == $fallback][0].value),\n    "description": coalesce(description[language == $locale][0].value, description[language == $fallback][0].value),\n    ogImage{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n }\n  }\n}': SiteSettingsQueryResult
     '*[_id == "navigation"][0]{\n  header[]{ _key, "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value), link{ \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n }, children[]{ _key, "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value), link{ \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } } },\n  headerCta{ "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value), action, style, link{ \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } },\n  footerColumns[]{ _key, "title": coalesce(title[language == $locale][0].value, title[language == $fallback][0].value), links[]{ _key, "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value), link{ \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } } },\n  mobileActionBar\n}': NavigationQueryResult
     'coalesce(\n  *[_type == "announcement" && startsAt <= now() && (!defined(endsAt) || endsAt > now())]\n    | order(startsAt desc)[0]{ \n  _id, "message": coalesce(message[language == $locale][0].value, message[language == $fallback][0].value), link{ "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value), action, style, link{ \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } }, tone, startsAt, endsAt, dismissible, pages\n },\n  *[_type == "announcement" && startsAt > now()] | order(startsAt asc)[0]{ \n  _id, "message": coalesce(message[language == $locale][0].value, message[language == $fallback][0].value), link{ "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value), action, style, link{ \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } }, tone, startsAt, endsAt, dismissible, pages\n }\n)': AnnouncementQueryResult

@@ -1,4 +1,4 @@
-/** Row types derived from the generated query results. The only importer of `sanity.types`. */
+/** Generated query results and row types derived from them. The only importer of `sanity.types`. */
 import type {
   AnnouncementQueryResult,
   ArticleBySlugQueryResult,
@@ -8,12 +8,34 @@ import type {
   LegalPageQueryResult,
   NavigationQueryResult,
   PageByKeyQueryResult,
+  PageBySlugQueryResult,
   ServiceBySlugQueryResult,
   ServicesQueryResult,
   SiteSettingsQueryResult,
+  StaticSlugsQueryResult,
   TeamQueryResult,
   TestimonialsQueryResult,
+  TranslationsQueryResult,
 } from '../../../../sanity.types'
+
+export type {
+  AnnouncementQueryResult,
+  ArticleBySlugQueryResult,
+  ArticlesQueryResult,
+  FaqQueryResult,
+  GalleryQueryResult,
+  LegalPageQueryResult,
+  NavigationQueryResult,
+  PageByKeyQueryResult,
+  PageBySlugQueryResult,
+  ServiceBySlugQueryResult,
+  ServicesQueryResult,
+  SiteSettingsQueryResult,
+  StaticSlugsQueryResult,
+  TeamQueryResult,
+  TestimonialsQueryResult,
+  TranslationsQueryResult,
+}
 
 export type TeamMemberQueryRow = TeamQueryResult[number]
 export type FaqItemQueryRow = FaqQueryResult[number]
