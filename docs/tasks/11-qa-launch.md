@@ -24,7 +24,7 @@ Dropped with Playwright. No replacement; visual review is manual.
 **Done check:** artifact link + drill notes in PROGRESS.
 
 ### T11.5 — Editor guide and handover pack
-**Steps:** `docs/handover/EDITOR-GUIDE.bg.md` (Bulgarian, non-technical, with screenshots): logging in, editing pages and sections, Presentation (preview + click-to-edit), translations workflow (create EN from BG, AI-assisted translation via Sanity MCP/agent by the developer, review), images (alt text, hotspot, child photo consent), announcements (holiday hours), publishing and what happens after (≈10 s live in ISR, 3–5 min in Static), what not to do. `docs/handover/OWNERSHIP.bg.md`: accounts the client owns (Cloudflare, Sanity, Resend, domain, GitHub optional), roles, billing expectations ($0 baseline; R2 card; optional Workers Paid $5/mo), DSR procedure (T09.4).
+**Steps:** `docs/handover/EDITOR-GUIDE.bg.md` (Bulgarian, non-technical, with screenshots): logging in, editing pages and sections, Presentation (preview + click-to-edit), translations workflow (create EN from BG, AI-assisted translation via Sanity MCP/agent by the developer, review), images (alt text, hotspot, child photo consent), announcements (holiday hours), publishing and what happens after (live in about 3–5 min after Publish; drafts never go live), what not to do. `docs/handover/OWNERSHIP.bg.md`: accounts the client owns (Cloudflare, Sanity, Resend, domain, GitHub optional), roles, billing expectations ($0; Cloudflare Free with no payment card, ADR-012; Sanity Growth only if roles or scheduling are wanted), DSR procedure (T09.4).
 **AC:** A non-technical reviewer can follow the guide to publish an announcement unaided (dry run with Silvena).
 **Done check:** dry-run notes.
 

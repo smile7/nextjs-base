@@ -4,11 +4,11 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 
 ## 0. Before you start (sales/contract)
 - [ ] [D] The contract clause says: "Third-party service fees (hosting, CMS, email, domain) are borne by the client. Expected $0–10/month."
-- [ ] [D] Decide the **cache profile**: Static (default, card-free, publishes go live in ~3–5 min) or ISR (optional upgrade, needs a card on the Cloudflare account for R2, still $0; ADR-012). Decide the **Workers plan**: Free, or Paid $5/mo (recommended if the Phase 00 spike showed CPU-limit hits).
+- [ ] [D] Tell the client how publishing works (ADR-012): the site is static, a publish goes live in about 3–5 minutes, and Cloudflare runs on the Free plan with **no payment card**.
 - [ ] [D] Gather: legal entity data (name, ЕИК, address, registrations), domain registrar access, logo/wordmark wishes, brand colors (if any), photos, team bios, services list, hours, phones, socials, booking method.
 
 ## 1. Accounts (client-owned, developer invited)
-- [ ] [C] **Cloudflare** account with the client's email. Invite [D] as Administrator (or a custom role: Workers Admin, DNS, R2, D1, Turnstile, Analytics). If ISR: add a payment method.
+- [ ] [C] **Cloudflare** account with the client's email. Invite [D] as Administrator (or a custom role: Workers Admin, DNS, Turnstile, Analytics). **Never add a payment method** (ADR-012).
 - [ ] [C] **Sanity** account/organization → [D] creates the project inside the client's org (or transfers it later). Invite [D] as Administrator. Client editors are invited as Administrator too (Free plan roles: Administrator/Viewer only).
 - [ ] [C] **Resend** account (or [D]'s account if agreed; Free allows 3 domains). Add the sending domain `mail.<domain>`.
 - [ ] [C] **Google**: Business Profile (owner = client), Search Console (client owner, [D] full user). GA4 only if requested.
@@ -17,7 +17,7 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 
 ## 2. Repository
 - [ ] [D] GitHub: "Use this template" → `client-<slug>-site` (private).
-- [ ] [D] `pnpm install`, then `pnpm new-client` (interactive). It asks for: client slug, brand names per locale, production domain, Sanity project ID, datasets, cache profile, locales (default `bg`, `en`) and analytics provider. It writes `src/config/site.ts`, `.env.local`, `.dev.vars`, `wrangler.jsonc` (worker name, bindings per profile) and `open-next.config.ts`, and resets `docs/PROGRESS.md` for the client.
+- [ ] [D] `pnpm install`, then `pnpm new-client` (interactive). It asks for: client slug, brand names per locale, production domain, Sanity project ID, datasets, locales (default `bg`, `en`) and analytics provider. It writes `src/config/site.ts`, `.env.local`, `.dev.vars` and the worker name in `wrangler.jsonc`, and resets `docs/PROGRESS.md` for the client.
 - [ ] [D] Update the `README.md` header (client name, URLs, who to contact).
 
 ## 3. Sanity
@@ -27,16 +27,13 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 - [ ] [D] API → CORS origins (with credentials): `http://localhost:3000`, the preview URL pattern (`https://*.<account>.workers.dev`), `https://<domain>`, `https://www.<domain>`.
 - [ ] [D] `pnpm seed --client --dataset production` → structure: system pages (home/services/about/gallery/blog/contact) with default sections, empty settings, legal templates.
 - [ ] [D] Optional: `pnpm sanity deploy` → `<slug>.sanity.studio` (hosted Studio as a backup entry point).
-- [ ] [D] Webhook (Manage → API → Webhooks), **1 of the 2 allowed on Free**:
-  - ISR: URL `https://<domain>/api/revalidate` (use the workers.dev URL until DNS is ready), dataset `production`, triggers create/update/delete, filter `!(_type match "sanity.*")`, projection `{_id, _type, "slug": slug.current, language}`, secret = `SANITY_REVALIDATE_SECRET`, POST, **"Trigger webhook when drafts are modified" off**.
-  - Static: URL `https://api.github.com/repos/<owner>/<repo>/dispatches`, headers `Authorization: Bearer <fine-grained PAT with contents:write on this repo>`, `Accept: application/vnd.github+json`, body projection `{"event_type": "sanity-publish"}`.
+- [ ] [D] Publish webhook (Manage → API → Webhooks), **1 of the 2 allowed on Free** (ARCHITECTURE §6.2): URL `https://api.github.com/repos/<owner>/<repo>/dispatches`, dataset `production`, triggers create/update/delete, filter `!(_type match "sanity.*")`, **"Trigger webhook when drafts are modified" off**, POST, headers `Authorization: Bearer <fine-grained PAT with contents:write on this repo only>` and `Accept: application/vnd.github+json`, projection `{"event_type": "sanity-publish"}`. Add a calendar reminder to rotate the PAT before it expires.
 
 ## 4. Cloudflare
 - [ ] [D] `wrangler login` (or an API token scoped to the client account), then check `account_id`.
-- [ ] [D] ISR profile: `wrangler r2 bucket create <slug>-next-cache --jurisdiction eu`, `wrangler d1 create <slug>-tag-cache`, and paste the IDs into `wrangler.jsonc`. The DO queue needs no setup beyond `migrations`.
 - [ ] [D] Turnstile: add a widget (managed mode) for `<domain>` + `localhost`, giving the site key + secret.
-- [ ] [D] Secrets: `wrangler secret put SANITY_API_READ_TOKEN`, `SANITY_REVALIDATE_SECRET` (random 32+ chars), `RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`. Vars in `wrangler.jsonc`: `CONTACT_FROM_EMAIL`, `CONTACT_TO_EMAIL`.
-- [ ] [D] GitHub repo secrets: `CLOUDFLARE_API_TOKEN` (Workers Scripts:Edit, Account Settings:Read, R2/D1 edit if ISR, Workers Routes, Zone DNS), `CLOUDFLARE_ACCOUNT_ID`, `SANITY_WRITE_TOKEN` (backup), plus build vars (`NEXT_PUBLIC_*`) as repository **variables**.
+- [ ] [D] Secrets: `wrangler secret put SANITY_API_READ_TOKEN`, `RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`. Vars in `wrangler.jsonc`: `CONTACT_FROM_EMAIL`, `CONTACT_TO_EMAIL`.
+- [ ] [D] GitHub repo secrets: `CLOUDFLARE_API_TOKEN` (Workers Scripts:Edit, Account Settings:Read, Workers Routes, Zone DNS), `CLOUDFLARE_ACCOUNT_ID`, `SANITY_WRITE_TOKEN` (backup), plus build vars (`NEXT_PUBLIC_*`) as repository **variables**.
 - [ ] [D] First deploy: push to `main` → check the workers.dev URL works.
 - [ ] [D] Observability: `"observability": { "enabled": true }` in wrangler. Check the logs appear.
 
@@ -63,8 +60,7 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 ## 8. Domain and go-live
 - [ ] [C/D] Move DNS to Cloudflare (change nameservers at the registrar), or add a CNAME setup if the registrar requires it.
 - [ ] [D] Worker → Settings → Domains & Routes → add the custom domain (`<domain>` and `www.<domain>`). Redirect Rule: `www` → apex (or the reverse), 301.
-- [ ] [D] ISR: enable `cachePurge` in `open-next.config.ts` + secrets `CACHE_PURGE_API_TOKEN`, `CACHE_PURGE_ZONE_ID` (only now that a zone exists).
-- [ ] [D] Update `NEXT_PUBLIC_SITE_URL`, the Sanity webhook URL, CORS and the Presentation `previewUrl` to the real domain, then redeploy.
+- [ ] [D] Update `NEXT_PUBLIC_SITE_URL`, CORS and the Presentation `previewUrl` to the real domain, then redeploy. (The publish webhook points at GitHub, so it doesn't change.)
 - [ ] [D] SSL mode Full (strict). "Always Use HTTPS" on. HSTS via our headers (no preload until stable).
 - [ ] [D] Old site? Redirect map in `src/config/redirects.ts` (SEO.md §9).
 
@@ -73,19 +69,19 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 - [ ] Manual: iPhone Safari + Android Chrome (call, directions, menu, tiles, form, map, language switch), keyboard-only walkthrough, screen-reader spot check (VoiceOver/TalkBack) of the home + contact pages.
 - [ ] SEO: view-source canonical/hreflang, Rich Results Test (home, article), sitemap reachable, robots correct, `llms.txt` content correct.
 - [ ] Legal checklist (LEGAL-GDPR.md §10).
-- [ ] Publish test: edit a text → live in < 60 s (ISR) / < 10 min (Static).
+- [ ] Publish test: edit a text → the GitHub deploy run starts → live in < 10 min.
 - [ ] Search Console: add the property, submit the sitemap. Bing Webmaster import. GBP website link with UTM.
 
 ## 10. Handover
 - [ ] [D] 30-minute Studio training for the client (record it): editing texts, hours/special hours, adding an article, translating, gallery consent flags, Presentation preview, announcements.
 - [ ] [D] Write a one-page "How to edit your site" in the client's language (BG) and add it as a Studio dashboard/help link (optional).
 - [ ] [D] Confirm the weekly backup workflow ran. Do a test restore into `development` (`sanity dataset import`).
-- [ ] [D] Calendar reminders: dependency updates monthly (Renovate PRs), DMARC tighten in 4 weeks, GSC check in 2 weeks.
+- [ ] [D] Calendar reminders: dependency review monthly (`pnpm outdated`, merge template upgrades), publish-webhook PAT rotation, DMARC tighten in 4 weeks, GSC check in 2 weeks.
 
 ## Restore runbook
 1. Download the latest `backup.yml` artifact (`production-YYYY-MM-DD.tar.gz`).
 2. `pnpm sanity dataset import production-YYYY-MM-DD.tar.gz development --replace` → verify in the Studio (switch dataset) → if OK, `… production --replace`.
-3. Trigger a full revalidate: `curl -X POST <site>/api/revalidate` with a signed test payload for `_type: siteSettings` (tags `sanity`), or redeploy.
+3. Redeploy: re-run the latest `deploy.yml` run in GitHub Actions (or push an empty commit to `main`).
 
 ## Upstream changes (template ↔ client repos)
 - The template repo is the source of truth for components and infra. Client repos add the template as a remote: `git remote add template git@github.com:<you>/site-starter.git`.

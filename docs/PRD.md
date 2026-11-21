@@ -13,7 +13,7 @@ First client: **Rumi Dent** (Руми Дент), a dental practice in Ruse, Bulg
 | Found locally | Valid LocalBusiness/Dentist JSON-LD, sitemap with hreflang, indexed in both languages within 4 weeks of launch |
 | Client edits everything without the developer | Every visible text (except UI microcopy), image, list and section order is editable in the Studio. A new blog post goes from draft to live in < 10 min without help |
 | Reusable | A new client site reaches "content-ready" in ≤ 2 developer days |
-| Low running cost | $0/month baseline on free tiers; the documented worst case is ≤ $10/month |
+| Low running cost | $0/month on free tiers. No payment card on Cloudflare, ever (ADR-012) |
 
 ## 3. Users
 1. **Developer (Silvena):** sets up new clients, themes, extends. Needs clear structure, typed APIs, docs and repeatable setup.
@@ -29,8 +29,8 @@ First client: **Rumi Dent** (Руми Дент), a dental practice in Ruse, Bulg
 - Cookie consent, only shown when a non-essential category is enabled. Cookieless analytics by default; GA4 Consent Mode v2 optional.
 - Full SEO/AEO kit: metadata, hreflang, sitemap, robots, OG, JSON-LD, llms.txt.
 - Embedded Sanity Studio at `/admin` with Presentation (visual editing) and draft mode.
-- Cloudflare Workers hosting (two cache profiles), CI/CD, backups.
-- Quality gates: lint, types, unit, contrast, Lighthouse CI, manual a11y + visual review (no e2e: ADR-011).
+- Cloudflare Workers Free hosting, static only (every page prerendered; publish triggers a rebuild, ADR-012), CI/CD, backups.
+- Quality gates: lint, types, unit (incl. token contrast), build, Lighthouse CI, manual a11y + visual review (no e2e: ADR-011).
 
 ### Non-goals (v1), but design for them
 | Future feature | How v1 prepares |
@@ -74,15 +74,15 @@ Format: **F-ID — Feature**, then acceptance criteria (AC). "Both locales" mean
 - AC7: "Translate to EN" creates a linked EN document. A "Missing translations" list view exists.
 
 ### F-05 Content layer
-- AC1: Only `src/lib/content/**`, `src/sanity/**`, `src/app/admin/**` and the draft/revalidate routes import Sanity packages (CI check).
+- AC1: Only `src/lib/content/**`, `src/sanity/**`, `src/app/admin/**` and the draft-mode routes import Sanity packages (lint check).
 - AC2: All page data are typed domain models (`src/lib/content/types.ts`), and mappers have unit tests with fixtures.
 - AC3: Field-level i18n falls back to the default locale per field. Document-level content without a translation is not listed in that locale.
 
-### F-06 Publishing and caching
-- AC1 (ISR profile): publishing in the Studio updates the affected public pages within 60 s, with no rebuild.
-- AC2 (Static profile): publishing triggers a deploy, and the change is live in ≤ 10 min.
-- AC3: The webhook route rejects bad signatures (401) and is covered by a unit test.
-- AC4: Public pages are prerendered. `next build` output shows them as static/SSG.
+### F-06 Publishing (static only, ADR-012)
+- AC1: Publishing in the Studio triggers a rebuild + deploy (Sanity webhook → GitHub `repository_dispatch`), and the change is live in ≤ 10 min. Saving a draft triggers nothing.
+- AC2: Public pages are prerendered. `next build` output shows them as static/SSG, and content routes have `dynamicParams = false` (unknown slugs 404, nothing renders per request).
+- AC3: Time-bound content (announcements) respects its end time without a publish (client-side check) and its start time within a day (scheduled daily deploy).
+- AC4: No Cloudflare product that needs a payment card is used (no R2, D1, Durable Objects, Workers Paid).
 
 ### F-07 Page builder sections
 Each section: editable in the Studio, renders responsively from 320 px, passes axe, has a styleguide entry, and accepts an optional `anchorId` and `tone` (background token).
@@ -147,7 +147,7 @@ See `docs/SEO.md`. AC: metadata on every route in both locales, canonical + href
 - Error visibility: Cloudflare Workers logs/observability enabled (`observability.enabled = true` in wrangler).
 
 ## 6. Constraints
-- Budget: free tiers by default. Documented paid upgrades (Workers Paid $5/mo is the most likely).
+- Budget: free tiers only. No payment card on the Cloudflare account (ADR-012). The only foreseeable paid upgrade is Sanity Growth, if a client needs roles or scheduled publishing.
 - Hosting: Cloudflare Workers via OpenNext only (no Vercel-specific APIs).
 - Sanity Free: 2 roles, public datasets, 2 webhooks, 10k docs.
 - Legal: EU GDPR, Bulgarian ЗЗЛД, ePrivacy cookie rules (Bulgarian Electronic Communications Act). Health context, so stay conservative.

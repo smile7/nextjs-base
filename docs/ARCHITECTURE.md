@@ -34,7 +34,7 @@ Install with exact versions (`pnpm add -E`). Upgrade deliberately, one PR per ma
 | | @sanity/image-url | 2.2.0 | URL builder used by our image loader. |
 | | @portabletext/react | 8.0.1 | Rich text rendering. |
 | | styled-components | 6.6.0 | Peer dependency of the Studio. |
-| Hosting | @opennextjs/cloudflare | 1.20.17 | Supports Next 16 incl. ISR, `'use cache'`, image binding. `proxy.ts` (Node middleware) is **experimental** since 1.20.3. |
+| Hosting | @opennextjs/cloudflare | 1.20.17 | Supports Next 16, static-assets incremental cache, image binding. `proxy.ts` (Node middleware) is **experimental** since 1.20.3. |
 | | wrangler | 4.165.0 | OpenNext requires `^4.148.0`. |
 | Forms | react-hook-form / @hookform/resolvers | 7.92.0 / 7.0.7 | |
 | | zod | 4.6.7 | Shared client/server schemas. |
@@ -52,15 +52,15 @@ Install with exact versions (`pnpm add -E`). Upgrade deliberately, one PR per ma
 
 | Service | Plan | Free-tier facts that matter (checked 2026-11-19) |
 | --- | --- | --- |
-| Cloudflare Workers | Free, or Paid ($5/mo minimum) | Free: 100k requests/day, **10 ms CPU per request**, 64 MiB worker size (uncompressed), 1 s startup. Paid: 5 min CPU. |
-| Cloudflare R2 | Pay-as-you-go with a free allowance | 10 GB, 1M class-A and 10M class-B operations/month free. **Needs a payment method on file to enable, even at $0.** |
-| Cloudflare D1 / Durable Objects | Free | SQLite-backed DOs are available on Free. |
+| Cloudflare Workers | **Free only** (ADR-012: never a payment card) | 100k requests/day, **10 ms CPU per request**, 64 MiB worker size (uncompressed), 1 s startup. Prerendered pages are read from Static Assets (cache interception), so the Worker does no rendering for public pages. R2, D1, Durable Objects and Workers Paid are **not used**. |
 | Cloudflare Images (binding) | Free | 5,000 unique transformations/month. After that, new transforms fail on Free (no charge). We route CMS images to the Sanity CDN instead, so this only serves a few local assets. |
 | Cloudflare Turnstile | Free | |
 | Cloudflare Web Analytics | Free | Cookieless. |
 | Sanity | Free | 20 seats, **2 roles (Administrator, Viewer)**, 2 datasets (**public only**), 10k documents, 2k unique attributes per dataset, **2 GROQ webhooks**, 1M CDN / 250k API requests, 100 GB assets, 100 GB bandwidth per month. AI Assist, scheduled drafts and comments are paid-only. |
 | Resend | Free | 3,000 emails/month, **100/day**, 3 domains. |
 | Umami Cloud (optional) | Hobby (free) | 100k events/month, 1 website, cookieless. |
+| GitHub Actions | Free | 2,000 minutes/month on private repos (unlimited on public). Each publish = one build + deploy (~3–5 min). |
+| GitHub Actions | Free | 2,000 minutes/month on private repos (unlimited on public). Each publish = one build + deploy (~3–5 min). |
 
 ---
 
@@ -68,16 +68,17 @@ Install with exact versions (`pnpm add -E`). Upgrade deliberately, one PR per ma
 
 ```
 Visitor ──► Cloudflare edge ──► Worker (OpenNext, Next.js 16)
-                                   │  ├─ static/ISR HTML from the incremental cache (R2) or static assets
+                                   │  ├─ prerendered HTML/RSC from Static Assets (built in CI)
                                    │  ├─ Server Actions (contact form) ──► Turnstile siteverify ──► Resend
-                                   │  └─ /api/revalidate  ◄── Sanity GROQ webhook (signed)
+                                   │  └─ draft mode (Presentation preview only) ──► Sanity API
                                    ▼
                          Sanity Content Lake (API CDN) ◄── Sanity Studio (/admin embedded, or <client>.sanity.studio)
+Publish: Sanity GROQ webhook ──► GitHub repository_dispatch ──► deploy.yml (next build + opennextjs-cloudflare deploy)
 Images: browser ──► cdn.sanity.io (resized/AVIF/WebP via our loader); no Worker CPU spent.
 ```
 
 Principles:
-1. **Static first.** Every public page is prerendered at build time (`generateStaticParams`) and refreshed on demand by tag. Requests rarely execute React on the Worker. That keeps us under the Free plan's 10 ms CPU limit and makes the site fast.
+1. **Static only (ADR-012).** Every public page is prerendered at build time (`generateStaticParams`, `dynamicParams = false`). Publishing rebuilds and redeploys the site. Public requests never execute React on the Worker. That keeps us under the Free plan's 10 ms CPU limit, needs no payment card and makes the site fast.
 2. **The CMS is behind one door.** `src/lib/content` is the only runtime code that knows about Sanity.
 3. **Config over code per client.** A new client changes `src/config/*`, `tokens.css`, `messages/*` and content, not components.
 4. **Everything localized by construction.** Locales come from one config. Types make missing translations visible.
@@ -89,8 +90,8 @@ Principles:
 | # | Decision | Why |
 | --- | --- | --- |
 | ADR-001 | Hybrid i18n: **document-level** for routable types (`page`, `article`, `service`, `legalPage`); **field-level** (internationalized arrays) for shared, non-routable types | See §7. |
-| ADR-002 | Manual `sanityFetch` with tags + signed webhook → `revalidateTag(tag, { expire: 0 })`. **Not** `defineLive` | No browser EventSource for every visitor, no Live Content API quota use, fully static pages. Visual Editing still works in Draft Mode. |
-| ADR-012 (supersedes 003) | Two cache profiles per client: **Static** (default; read-only static-assets cache + rebuild on publish) or **ISR** (optional upgrade; R2 + D1 tag cache + DO queue) | Static needs no payment card and has the least CPU risk on Free. ISR gives seconds-fast publishes for clients who accept a card. |
+| ADR-002 | Manual `sanityFetch` (draft-aware). **Not** `defineLive` | No browser EventSource for every visitor, no Live Content API quota use, fully static pages. Visual Editing still works in Draft Mode. (Its tag/revalidate part is superseded by ADR-012.) |
+| ADR-012 (supersedes 003) | **Static only**: read-only static-assets cache, every page prerendered, Sanity publish → GitHub `repository_dispatch` → rebuild + deploy. No ISR, R2, D1, DO or tag revalidation | No payment card ever, one infra variant, no Worker CPU for public pages. Publishes take minutes, not seconds. |
 | ADR-004 | `src/proxy.ts` for next-intl, with a fallback to `src/middleware.ts` (edge) | `proxy.ts` is the Next 16 convention. OpenNext support is experimental, so the Phase 00 spike must confirm it. |
 | ADR-005 | CMS images via the Sanity Image CDN with our own `next/image` loader | Free resizing and modern formats. No Cloudflare transformation quota. Hotspot/crop supported. |
 | ADR-006 | No `cacheComponents` (Cache Components/PPR) in v1 | Classic fetch-tag caching is the best-trodden path on OpenNext. Revisit in v2 (ADR placeholder). |
@@ -152,7 +153,6 @@ Principles:
     │   ├── admin/                 # Sanity Studio: own root layout, force-static
     │   │   ├── layout.tsx  [[...tool]]/page.tsx
     │   ├── api/
-    │   │   ├── revalidate/route.ts
     │   │   └── draft-mode/{enable,disable}/route.ts
     │   ├── sitemap.ts  robots.ts
     │   └── llms.txt/route.ts
@@ -172,7 +172,6 @@ Principles:
     │   ├── content/               # THE CMS BOUNDARY
     │   │   ├── index.ts           # public API (get* functions), re-exports domain types
     │   │   ├── types.ts           # domain models (CMS-agnostic)
-    │   │   ├── tags.ts            # cache tag helpers
     │   │   ├── image-loader.ts    # next/image loader → Sanity CDN
     │   │   ├── preview.tsx        # <PreviewTools/>: VisualEditing + DisableDraftMode (server component)
     │   │   └── sanity/            # client.ts, fetch.ts, queries/*.ts, fragments.ts, mappers/*.ts, token.ts
@@ -198,24 +197,22 @@ Rules: `src/components/**` never imports from `src/lib/content/sanity/**`. Pages
 ### 5.1 Request flow (public page)
 1. `proxy.ts` (next-intl) negotiates the locale, redirects `/` → `/bg`, and rewrites localized pathnames (`/bg/uslugi` → internal `/bg/services`). It excludes `/admin`, `/api`, `/_next`, `/_vercel` and files with dots.
 2. The route (Server Component) awaits `params`, validates the locale (`hasLocale`) and calls `@/lib/content` functions such as `getPageByKey('services', locale)`.
-3. The content API calls `sanityFetch({ query, params, tags })`, maps the typegen result → domain model and returns it.
+3. The content API calls `sanityFetch({ query, params })`, maps the typegen result → domain model and returns it.
 4. The page renders `<SectionRenderer sections={page.sections} />`, plus JSON-LD and `generateMetadata` via `@/lib/seo`.
-5. At build time `generateStaticParams` enumerates all locales × slugs. `dynamicParams = true` lets a page published after the build render on first request and then get cached (ISR profile). In the Static profile (default) such a page renders on every request until the next deploy, which the publish webhook triggers.
+5. All of the above happens **at build time in CI**. `generateStaticParams` enumerates all locales × slugs and every content route sets `dynamicParams = false`, so an unknown slug is a 404 and a page published after the build appears with the next (webhook-triggered) deploy. At request time the Worker only runs `proxy.ts` and serves the prerendered output.
 
 ### 5.2 `sanityFetch` contract (`src/lib/content/sanity/fetch.ts`)
 ```ts
 import 'server-only'
 type FetchOpts<Q extends string> = {
   query: Q; params?: QueryParams
-  tags: string[]                 // REQUIRED: always tag (see §6.2)
-  revalidate?: number | false    // default false; only the announcement query sets 3600
   stega?: boolean                // default: draft mode on → true; ALWAYS false in metadata/JSON-LD/static params
   perspective?: 'published' | 'drafts'
 }
 ```
 Behaviour:
-- Draft mode off: `perspective: 'published'`, `useCdn: true`, no token, `next: { tags: [...tags, 'sanity'], revalidate }`.
-- Draft mode on: `perspective: 'drafts'`, `useCdn: false`, `token: SANITY_API_READ_TOKEN`, `stega: { studioUrl }`, `next: { revalidate: 0 }`.
+- Draft mode off: `perspective: 'published'`, `useCdn: true`, no token, no cache tags. The fetch must not opt the route into dynamic rendering (check the `next build` route table: every public route is ○/● static).
+- Draft mode on: `perspective: 'drafts'`, `useCdn: false`, `token: SANITY_API_READ_TOKEN`, `stega: { studioUrl }`, no caching (rendered per request on the Worker).
 - Pass `stega: false` explicitly in `generateMetadata`, JSON-LD builders, `generateStaticParams`, the sitemap, `llms.txt` and anything compared in code. Use `stegaClean()` on enum-like strings (layout variants, tones) inside mappers.
 
 ### 5.3 Draft mode and Visual Editing (Presentation tool)
@@ -233,46 +230,26 @@ Behaviour:
 
 ---
 
-## 6. Caching and revalidation on Cloudflare
+## 6. Static build and publishing on Cloudflare (ADR-012)
 
-### 6.1 Cache profiles (`open-next.config.ts` + `wrangler.jsonc`), selected per client
-
-**Profile Static (default, ADR-012; repo root):** publish → live in about 3–5 minutes.
+### 6.1 OpenNext config (`open-next.config.ts` + `wrangler.jsonc`, repo root, the only variant)
 ```ts
 import staticAssetsIncrementalCache from '@opennextjs/cloudflare/overrides/incremental-cache/static-assets-incremental-cache'
 export default defineCloudflareConfig({ incrementalCache: staticAssetsIncrementalCache, enableCacheInterception: true })
 ```
-No R2/D1/DO, no payment card. The Sanity webhook calls the GitHub `repository_dispatch` API, which triggers `deploy.yml` (rebuild + deploy). Rendering happens in CI, so there is no Worker CPU risk for prerendered pages. The cache is read-only: `revalidateTag` has no effect, and a page published after the build (not in `generateStaticParams`) renders on **every** request until the next deploy.
+wrangler: `ASSETS` (Static Assets), `IMAGES` (Images binding), `WORKER_SELF_REFERENCE` (service binding to itself), `observability.enabled`. Flags: `nodejs_compat`, `global_fetch_strictly_public`. `compatibility_date` = the pinned workerd build date. **No R2, D1, Durable Objects, KV or queues**, so nothing needs a payment card and nothing has to be created per client except the Worker itself.
 
-**Profile ISR (optional upgrade, `infra/isr/`):** publish → live in seconds. Only for clients who accept a card on the Cloudflare account.
-```ts
-// infra/isr/open-next.config.ts
-import { defineCloudflareConfig } from '@opennextjs/cloudflare'
-import r2IncrementalCache from '@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache'
-import doQueue from '@opennextjs/cloudflare/overrides/queue/do-queue'
-import d1NextTagCache from '@opennextjs/cloudflare/overrides/tag-cache/d1-next-tag-cache'
-export default defineCloudflareConfig({
-  incrementalCache: r2IncrementalCache,
-  queue: doQueue,
-  tagCache: d1NextTagCache,
-  // cachePurge: purgeCache({ type: 'durableObject' })  ← only after a custom domain (zone) is attached
-})
-```
-wrangler bindings: `NEXT_INC_CACHE_R2_BUCKET` (R2), `NEXT_CACHE_DO_QUEUE` (DO class `DOQueueHandler`, migration `new_sqlite_classes`), `NEXT_TAG_CACHE_D1` (D1), `WORKER_SELF_REFERENCE` (service binding to itself), `IMAGES` (Images binding), `ASSETS`. Flags: `nodejs_compat`, `global_fetch_strictly_public`. Set `compatibility_date` to the scaffold date. Create the R2 bucket in the **EU jurisdiction**, which can't be changed later.
-Requires: R2 enabled on the client's Cloudflare account (payment method on file; expected cost $0).
+The incremental cache is read-only: it serves what `next build` prerendered. `revalidateTag`/`revalidatePath` have nothing to refresh, so the template doesn't use them. Deploy with the OpenNext command (`opennextjs-cloudflare deploy`), which uploads the prerendered output as assets.
 
-The root files are the Static profile. For an ISR client, `scripts/new-client.ts` copies `infra/isr/{open-next.config.ts,wrangler.jsonc}` over them. Use the OpenNext deploy command (`opennextjs-cloudflare deploy`), which also populates the cache for build-time data.
+### 6.2 Publish → rebuild
+- One Sanity GROQ webhook (Free plan allows 2): dataset `production`, trigger on create/update/delete, filter `!(_type match "sanity.*")`, **"Trigger webhook when drafts are modified" off**, HTTP POST to `https://api.github.com/repos/<owner>/<repo>/dispatches`, headers `Authorization: Bearer <fine-grained PAT, contents:write on this repo only>` and `Accept: application/vnd.github+json`, projection `{"event_type": "sanity-publish"}`. The PAT lives only in the webhook config (project settings, not the public dataset) and expires: rotate it before expiry (calendar reminder).
+- `deploy.yml` runs on `repository_dispatch: [sanity-publish]` → `pnpm run deploy`. The production concurrency group lets a running deploy finish and keeps only the newest queued run, so a burst of publishes becomes at most two builds.
+- Publish → live in about 3–5 minutes (build time). PRD F-06.
+- A daily scheduled run of `deploy.yml` picks up time-based content (announcement start dates). The announcement banner also hides itself client-side after `endsAt`.
+- Sanity is read at build time with the published perspective via the API CDN. Sanity's CDN is eventually consistent for a few seconds after publish; the GitHub runner start-up time covers that.
 
-### 6.2 Tag strategy (`src/lib/content/tags.ts`)
-- Every fetch carries `sanity` (global) + `type:<_type>`; document-specific fetches add `doc:<_id>`.
-- Layout-level data (siteSettings, navigation, announcement) is tagged `type:siteSettings` etc. Changing settings revalidates `sanity` (everything), because NAP and hours appear on every page.
-- Lists: `getArticles` → `type:article`. The detail page → `type:article` + `doc:<id>`.
-- Tags are case-sensitive, ≤ 256 chars.
-
-### 6.3 Webhook → revalidation (`src/app/api/revalidate/route.ts`)
-- Sanity GROQ webhook (Free plan: max 2 webhooks; use one): trigger on create/update/delete for all types except `sanity.*`, dataset `production`, projection `{ _id, _type, "slug": slug.current, language }`, HTTP POST, secret = `SANITY_REVALIDATE_SECRET`.
-- Handler: `parseBody(req, secret, true)` from `next-sanity/webhook` (the 3rd argument waits for CDN eventual consistency). It rejects an invalid signature with 401, maps the payload to tags (`type:<_type>`, `doc:<_id>`, plus `sanity` for singleton/global types), calls `revalidateTag(tag, { expire: 0 })` for each (webhook context: immediate expiry; Next 16 requires the second argument) and returns `{ revalidated: tags }`.
-- In the Static profile the same webhook targets GitHub instead (see §6.1). The revalidate route stays in place but unused.
+### 6.3 Draft mode on a static site
+Draft mode sets the `__prerender_bypass` cookie. OpenNext's cache interception skips the static copy for those requests and renders on the Worker with the drafts perspective. This only happens for editors in Presentation, never for visitors. CPU per draft render is recorded in the T00.4/T04.5 notes; if it hits the Free 10 ms limit (Error 1102), preview through `pnpm dev` and note it in PROGRESS (no paid plan, ADR-012). Open point for T04.5: with `dynamicParams = false`, a never-published draft whose slug wasn't prerendered may 404 in Presentation; verify, and if so preview new documents after their first publish or via `pnpm dev`.
 
 ### 6.4 Static asset caching
 `public/_headers`:
@@ -291,9 +268,9 @@ The root files are the Static profile. For an ISR client, `scripts/new-client.ts
 - `next-sanity/image` is still **alpha**. Revisit once it is stable (it could replace our loader).
 
 ### 6.6 CPU budget (Free plan: 10 ms per request)
-- Static/ISR hits are cheap. Rendering on a cache miss (ISR regeneration), Draft Mode SSR, OG generation and the contact Server Action can approach or exceed 10 ms.
+- Prerendered pages cost only `proxy.ts` + the static-asset read. Draft Mode SSR and the contact Server Action are the only per-request rendering/work, and they can approach 10 ms.
 - Mitigations: no per-request OG generation (build-time only); emails rendered with inline styles (no `<Tailwind>` component); minimal Server Action work.
-- **Phase 00 spike measures real CPU time.** If regeneration or Draft Mode regularly hits Error 1102, recommend **Workers Paid ($5/mo, client-paid)** or the Static profile.
+- There is no paid fallback (ADR-012). If something hits Error 1102, make it cheaper or move it to build time.
 
 ---
 
@@ -379,15 +356,14 @@ Consumers: next-intl routing, both Sanity i18n plugins (`supportedLanguages` / `
 | `NEXT_PUBLIC_ENABLE_STYLEGUIDE` | build, public | CI vars | `true` on preview, `false` in production after sign-off |
 | `NEXT_PUBLIC_ENV` | build, public | CI vars | `production` \| `preview` \| `development` (robots/noindex) |
 | `SANITY_API_READ_TOKEN` | runtime secret | `wrangler secret` | Viewer token: draft mode + seed reads |
-| `SANITY_REVALIDATE_SECRET` | runtime secret | `wrangler secret` | Webhook signature |
 | `RESEND_API_KEY` | runtime secret | `wrangler secret` | |
 | `TURNSTILE_SECRET_KEY` | runtime secret | `wrangler secret` | Test secret `1x0000000000000000000000000000000AA` |
 | `CONTACT_FROM_EMAIL` | runtime var | wrangler `vars` | e.g. `Website <noreply@mail.client.bg>` |
 | `CONTACT_TO_EMAIL` | runtime var | wrangler `vars` | Overrides `siteSettings.contactForm.recipient` (keeps the inbox out of the public dataset if preferred) |
 | `CONTACT_DRY_RUN` | runtime var | `.dev.vars` | `true` skips the Resend call (local testing only; never in production) |
-| `CACHE_PURGE_API_TOKEN` / `CACHE_PURGE_ZONE_ID` | runtime secret | `wrangler secret` | Only if `cachePurge` is enabled (custom domain) |
 | `SANITY_WRITE_TOKEN` | local/CI only | `.env.local`, GH secret | Seed script, backups. **Never** deployed to the Worker. |
 | `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` | CI only | GH secrets | Deploys |
+| GitHub fine-grained PAT (`contents:write`, one repo) | Sanity webhook only | Sanity webhook header | Triggers `repository_dispatch` on publish (§6.2). Not an env var; never in the repo. |
 
 Local: `.env.local` for `next dev`, `.dev.vars` for `pnpm preview` (workerd). Add `NEXTJS_ENV=development` to `.dev.vars`. `pnpm cf-typegen` generates `cloudflare-env.d.ts`. Access bindings via `getCloudflareContext()` from `@opennextjs/cloudflare`. Vars and secrets are also exposed on `process.env`.
 
@@ -401,26 +377,27 @@ Local: `.env.local` for `next dev`, `.dev.vars` for `pnpm preview` (workerd). Ad
 ---
 
 ## 11. CI/CD (GitHub Actions)
-- `ci.yml` (PRs and main): pnpm install (frozen) → `pnpm typegen` + `git diff --exit-code sanity.types.ts schema.json` → lint → typecheck → unit tests → contrast check → `next build` (no e2e: ADR-011), with Turnstile test keys.
-- `deploy.yml`: on push to `main` → `opennextjs-cloudflare build && opennextjs-cloudflare deploy` (production). On PR → `opennextjs-cloudflare upload` (new version + preview URL, comment on the PR). In the Static profile it also runs on `repository_dispatch: [sanity-publish]`.
-- `backup.yml`: weekly `sanity dataset export production` → artifact (90-day retention). Optionally push to a private backup repo or R2. This matters because Free has no backup/restore SLA and the client is an Administrator.
+- `ci.yml` (PRs and main): pnpm install (frozen) → lint → typecheck → unit tests → `next build`. Nothing else (ADR-011, ADR-012). The token contrast check runs as a unit test (`scripts/check-contrast.test.ts`); from T03.1 `pnpm typecheck` regenerates Sanity types first, so stale query types fail the typecheck.
+- `deploy.yml`: production (`pnpm run deploy` = `opennextjs-cloudflare build && opennextjs-cloudflare deploy`) on push to `main`, on `repository_dispatch: [sanity-publish]` (publish webhook, §6.2) and on a daily schedule. On PR → `opennextjs-cloudflare upload` (new version + preview URL, comment on the PR).
+- No Renovate/Dependabot (ADR-012). Upgrade dependencies deliberately, one PR per platform major, and re-run the T00.4 deploy check after upgrading Next, OpenNext, Wrangler or Sanity.
+- `backup.yml`: weekly `sanity dataset export production` → artifact (90-day retention). Optionally push to a private backup repo. This matters because Free has no backup/restore SLA and the client is an Administrator.
 - Lighthouse CI on the PR preview URL with budgets (see `SEO.md` §8).
 
 ---
 
 ## 12. Per-client setup (summary; the full checklist is `NEW-CLIENT.md`)
 1. "Use this template" → new private repo `client-<name>-site`.
-2. Client creates (or approves) the accounts: **Sanity** (org + project, developer invited as Administrator), **Cloudflare** (account, developer as member with Workers/DNS/R2 permissions, payment method if ISR profile), **Resend** (domain), optionally **Umami**.
-3. `pnpm new-client` writes `src/config/site.ts` and `.env.local`, picks the cache profile, renames the worker, and creates R2/D1 (ISR).
+2. Client creates (or approves) the accounts: **Sanity** (org + project, developer invited as Administrator), **Cloudflare** (Free account, no payment card; developer as member with Workers/DNS permissions), **Resend** (domain), optionally **Umami**.
+3. `pnpm new-client` writes `src/config/site.ts` and `.env.local` and renames the worker. There are no bindings to create.
 4. Theme: `tokens.css` + `fonts.ts`. `/styleguide` sign-off.
 5. Content: seed structure → client and developer fill in BG → translate EN → review.
-6. Webhook, CORS, secrets, domain, email DNS, analytics, Search Console, Google Business Profile → launch QA.
+6. Publish webhook (→ GitHub), CORS, secrets, domain, email DNS, analytics, Search Console, Google Business Profile → launch QA.
 
 ---
 
 ## 13. Migration and exit plan
 - **Content portability:** `sanity dataset export` (NDJSON + assets) weekly via CI. Portable Text is an open spec (portabletext.org) with renderers for many stacks.
 - **Swap the CMS:** re-implement `src/lib/content/index.ts` (the get* functions) against the new source and keep `types.ts` unchanged. Components, routes and SEO stay untouched. The estimated surface is about 15 functions + mappers. Payload/Supabase migration: map NDJSON → tables. Images: download from the CDN and re-upload.
-- **Swap the host:** the code is standard Next.js. Remove `open-next.config.ts` / `wrangler.jsonc` / `getCloudflareContext` usages (only in `src/lib/platform/*`, if any) and deploy to Vercel/Netlify/Node. Cloudflare-specific pieces: cache profile, `IMAGES` binding, Turnstile (works anywhere).
+- **Swap the host:** the code is standard Next.js. Remove `open-next.config.ts` / `wrangler.jsonc` / `getCloudflareContext` usages (only in `src/lib/platform/*`, if any) and deploy to Vercel/Netlify/Node. Cloudflare-specific pieces: the static-assets cache config, `IMAGES` binding, Turnstile (works anywhere).
 - **Client offboarding:** accounts are already client-owned. Remove the developer's memberships, transfer the GitHub repo or export it, and hand over `docs/` + credentials via a password manager.
-- **Pricing changes:** contract clause, "third-party service fees are borne by the client". Expected upgrade path: Workers Paid $5/mo; Sanity Growth $15/seat/mo only if roles, scheduled publishing or AI Assist are needed.
+- **Pricing changes:** contract clause, "third-party service fees are borne by the client". Cloudflare stays on Free with no card (ADR-012); the only expected paid upgrade is Sanity Growth $15/seat/mo only if roles, scheduled publishing or AI Assist are needed.

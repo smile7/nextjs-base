@@ -32,7 +32,7 @@ We (humans) wrote the **what and why**. Claude writes the code, one task at a ti
 1. **Node 24 LTS** (`nvm install 24 && nvm use 24`) and **pnpm 12**: `npm i -g pnpm@12.21.0` (Corepack is no longer bundled with newer Node versions, so don't rely on it).
 2. **Git** + a GitHub account (optional: GitHub CLI `gh auth login`).
 3. **Cursor** (latest). Settings → Models: use Claude (the strongest available model for Plan Mode and for coding). Settings → Rules: make sure project rules are enabled. Settings → MCP: the servers from `.cursor/mcp.json` appear once the repo is open.
-4. **Sandbox accounts for development** (yours, not the client's): Sanity (free), Cloudflare (free; add a payment method only if you want to test the ISR profile with R2, expected cost $0), Resend (free), GitHub. Client accounts are created later (`docs/NEW-CLIENT.md`).
+4. **Sandbox accounts for development** (yours, not the client's): Sanity (free), Cloudflare (Free plan, **never add a payment card**: ADR-012), Resend (free), GitHub. Client accounts are created later (`docs/NEW-CLIENT.md`).
 5. **Wrangler login** (after Phase 00 installs it): `pnpm wrangler login`.
 
 ---
@@ -63,7 +63,7 @@ Use `npx skills add <repo> --list` to see what a repo offers. Skills land in `.a
 | `next-devtools` | Next 16 docs, runtime errors, routes from the running dev server (`/_next/mcp`) | none (run `pnpm dev`) |
 | `sanity` (`https://mcp.sanity.io`) | Query/patch datasets, schema info, docs, translations | OAuth on first use (or `npx sanity@latest mcp configure`) |
 | `cloudflare-docs` | Current Workers/OpenNext/limits docs | none |
-| `cloudflare-bindings` | Inspect R2/D1/KV on your account | OAuth |
+| `cloudflare-bindings` | Inspect Workers and bindings on your account | OAuth |
 | `cloudflare-observability` | Logs and CPU time of deployed workers | OAuth |
 
 Optional: the full Cloudflare API MCP `https://mcp.cloudflare.com/mcp` (powerful; only enable it when needed) and `https://builds.mcp.cloudflare.com/mcp` if you switch to Workers Builds. After opening the repo in Cursor: Settings → MCP → enable each server and complete OAuth. **Don't enable write-capable MCP tools against a client's production dataset** without reviewing each call.
@@ -160,11 +160,11 @@ We're starting client <name>. Follow docs/NEW-CLIENT.md step by step. Tell me wh
 
 | Phase | Outcome | Your gate |
 | --- | --- | --- |
-| 00 Setup + spike | Strict repo, CI, deploys to Workers. Spike measures proxy.ts, CPU, Studio size | Read the spike results. Confirm ISR vs Static default and Free vs Paid recommendation |
+| 00 Setup + spike | Strict repo, CI, deploys to Workers. Deploy check: proxy.ts, Worker size vs the Free limit, Studio embedded | Read the deploy-check results. Confirm embedded vs hosted Studio |
 | 01 Design foundation | Tokens, fonts (Cyrillic), primitives, shadcn, motion, `/styleguide` | Pick font pairing + palette from the styleguide |
 | 02 i18n | BG/EN routing, localized paths, switcher, hreflang | Click through both languages |
 | 03 Studio | Full content model, i18n plugins, seed | Try editing as an editor would |
-| 04 Content layer | Typed API, webhook revalidation, preview/Presentation | Publish → see it live on preview |
+| 04 Content layer | Typed API, publish → rebuild webhook, preview/Presentation | Publish → see it live on workers.dev in a few minutes |
 | 05 Shell | Shrinking header, mobile menu, action bar, banner, footer | Test on your phone |
 | 06 Sections | All sections incl. expand-in-place tiles | Design review |
 | 07 Pages | All routes, both locales | Click through everything |
@@ -179,10 +179,10 @@ Realistic effort: about 75 focused chats. Phases 00–04 are the foundation, so 
 
 ## 7. Things to know before you start
 
-- **Cloudflare Free plan CPU = 10 ms per request.** The design is static-first so normal page views are cheap. Regeneration, draft preview and the form action are measured in the spike. If they hit the limit, the recommendation to the client is **Workers Paid ($5/month)** or the **Static** profile.
-- **R2 needs a payment method** on the Cloudflare account even on the free tier. Clients who refuse a card get the Static profile (publish → live in ~3–5 min via a rebuild).
+- **Static only, no payment card (ADR-012).** Every page is prerendered in CI; a Sanity publish triggers a GitHub rebuild + deploy (live in ~3–5 min). No ISR, R2, D1 or Durable Objects, because R2 needs a card even at $0.
+- **Cloudflare Free plan CPU = 10 ms per request.** Public page views do no rendering. Only draft preview and the contact form action run per request; keep them light, there is no paid fallback.
 - **Sanity Free**: datasets are **public** (no secrets/PII in content), only Admin/Viewer roles, 2 webhooks, no AI Assist. Our design fits within it.
-- **Pins on purpose**: TypeScript 6.0 (not 7) and ESLint 9 (not 10) because of lint-plugin compatibility. Don't let Renovate bump them without checking `docs/DECISIONS.md` ADR-009.
+- **Pins on purpose**: TypeScript 6.0 (not 7) and ESLint 9 (not 10) because of lint-plugin compatibility. Don't bump them without checking `docs/DECISIONS.md` ADR-009. There is no Renovate (ADR-012); upgrade deliberately.
 - **Legal notes are not legal advice.** Items marked "verify" in `docs/LEGAL-GDPR.md` need a lawyer's or the client's confirmation before launch.
 - **EN content** is AI-translated (via the Sanity MCP / agent) and then reviewed by a human. BG is the source of truth.
 
@@ -192,9 +192,9 @@ Realistic effort: about 75 focused chats. Phases 00–04 are the foundation, so 
 
 | Symptom | Likely cause / fix |
 | --- | --- |
-| Claude uses an outdated API (e.g. `middleware.ts`, `revalidateTag(tag)` with 1 arg, `@react-email/components`) | Point it to ARCHITECTURE §1 and `node_modules/next/dist/docs/`. Add the case to `.cursor/rules` if it repeats. |
+| Claude uses an outdated API (e.g. `middleware.ts`, `revalidateTag`/ISR, `@react-email/components`) | Point it to ARCHITECTURE §1 and `node_modules/next/dist/docs/`. Add the case to `.cursor/rules` if it repeats. |
 | Error 1102 (CPU exceeded) on Workers | Check `cloudflare-observability` logs. Move work to build time. See ARCHITECTURE §6.6. |
 | Preview (Presentation) iframe is blank | CORS origin with credentials missing in Sanity, or the CSP `frame-ancestors` lacks the Studio origin. Firefox strict tracking protection blocks third-party cookies (use Chrome/Safari). |
-| Publish doesn't update the site | Webhook delivery log in sanity.io/manage. Secret mismatch → 401. ISR profile: D1 tag cache bound? Static profile: GitHub dispatch token valid? |
+| Publish doesn't update the site | Webhook delivery log in sanity.io/manage (401/404 from GitHub = PAT expired or missing `contents:write`). Then the `deploy.yml` run in GitHub Actions. |
 | Bulgarian letters look wrong in a font | The font lacks Cyrillic or `subsets` misses `'cyrillic'`. See DESIGN-SYSTEM §3. |
 | Skills/MCP not used by the agent | Say it explicitly in the prompt ("use the frontend-design skill", "check with the shadcn MCP"). Verify they're enabled in Cursor settings. |

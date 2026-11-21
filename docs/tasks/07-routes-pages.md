@@ -8,7 +8,7 @@
 
 ### T07.1 — Home and generic CMS pages
 **Steps:** `[locale]/page.tsx` → `getPageByKey('home')` → SectionRenderer. `[locale]/[slug]/page.tsx` → `getPageBySlug` (excluding system pageKeys and reserved slugs). Both prerendered. The 404 for unknown slugs is the localized not-found.
-**AC:** Home renders the seed fully in both locales; a new page published in Studio appears at its URL without a deploy (ISR profile).
+**AC:** Home renders the seed fully in both locales; a new page published in Studio appears at its URL after the publish-triggered deploy (ADR-012); an unknown slug is a 404 (`dynamicParams = false`).
 **Done check:** `pnpm build` lists the prerendered routes; `curl -I` gives 200 for `/bg`, `/en` and one generic page per locale.
 
 ### T07.2 — Services index and service detail

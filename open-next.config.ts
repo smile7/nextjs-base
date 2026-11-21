@@ -1,4 +1,4 @@
-// Cache profile: Static (default, ADR-012). The ISR variant lives in infra/isr/.
+// Static only (ADR-012): read-only cache of the prerendered build output.
 import { defineCloudflareConfig } from '@opennextjs/cloudflare'
 import staticAssetsIncrementalCache from '@opennextjs/cloudflare/overrides/incremental-cache/static-assets-incremental-cache'
 

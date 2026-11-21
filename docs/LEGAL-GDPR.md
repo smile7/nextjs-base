@@ -25,7 +25,7 @@
 | GA4 (optional) | pseudonymous identifiers, events | measurement | consent (6(1)(a)) | Google | [[2/14]] months setting |
 | CMS editors | editor name/email | content management | 6(1)(b)/(f) | Sanity | account lifetime |
 
-International transfers: Cloudflare, Resend, Sanity and Google are US-based or have US sub-processors. Rely on the EU–US Data Privacy Framework and/or SCCs. Sign/accept each provider's DPA in the **client's** account. Prefer EU regions where offered (R2 bucket in the EU jurisdiction; check Resend's sending-region options when adding the domain) **(verify)**.
+International transfers: Cloudflare, Resend, Sanity and Google are US-based or have US sub-processors. Rely on the EU–US Data Privacy Framework and/or SCCs. Sign/accept each provider's DPA in the **client's** account. Prefer EU regions where offered (check Resend's sending-region options when adding the domain; the static site stores no data on Cloudflare) **(verify)**.
 
 ## 3. Cookie and storage registry (`src/config/cookies.ts`)
 Single source for the consent banner, the preferences dialog and the cookie policy table.

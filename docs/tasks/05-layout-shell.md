@@ -2,7 +2,7 @@
 
 **Goal:** the persistent chrome. A shrinking sticky header, an accessible mobile menu, a sticky mobile action bar (Call / Directions / Book), an announcement banner and a footer with NAP and hours, all mobile-first and token-driven.
 **Read first:** `docs/DESIGN-SYSTEM.md` §8, §10, §11, `docs/PRD.md` (F-features for header, action bar, banner, footer), `.cursor/rules/components-a11y.mdc`. Use the **frontend-design** skill.
-**Data:** `getSiteSettings`, `getNavigation`, `getActiveAnnouncement` in the `[locale]` layout. Pass plain domain props to components.
+**Data:** `getSiteSettings`, `getNavigation`, `getAnnouncement` in the `[locale]` layout. Pass plain domain props to components.
 
 ---
 
@@ -22,8 +22,8 @@
 **Done check:** manual check at 360px (tab to the last footer link); screenshot.
 
 ### T05.4 — AnnouncementBanner
-**Steps:** Rendered above the header when `getActiveAnnouncement` returns one (holiday hours, closures). Tone variants (info/warning). It is dismissible, with the dismissal stored in `sessionStorage` keyed by announcement ID + `_updatedAt` (functional storage, listed in the cookie registry as strictly necessary). It's a server-rendered shell with a client dismiss button, and doesn't cause CLS. If dismissed state would cause a shift, render it collapsed by default via a small inline script, or accept and document that it shows again per session.
-**AC:** Expired announcements disappear within 1 hour without a deploy (revalidate 3600); banner text is a `region` with a label.
+**Steps:** Rendered above the header when `getAnnouncement` returns one (holiday hours, closures). The page is static (ADR-012), so a small client check hides the banner once `endsAt` has passed and keeps a not-yet-started one hidden until `startsAt`; the daily scheduled deploy then renders the right one server-side. Tone variants (info/warning). It is dismissible, with the dismissal stored in `sessionStorage` keyed by announcement ID + `_updatedAt` (functional storage, listed in the cookie registry as strictly necessary). It's a server-rendered shell with a client dismiss button, and doesn't cause CLS. If dismissed state would cause a shift, render it collapsed by default via a small inline script, or accept and document that it shows again per session.
+**AC:** An expired announcement is not shown (client-side check) without a publish or deploy; one that starts later appears by its start time at the latest after the next daily deploy; banner text is a `region` with a label. Unit-test the date logic.
 **Done check:** seed an active + an expired announcement; verify.
 
 ### T05.5 — SiteFooter

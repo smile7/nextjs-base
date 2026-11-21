@@ -11,15 +11,17 @@ Task format
 
 > **ADR-011 (no Playwright).** The task files no longer contain e2e, Playwright, axe-in-browser or `pnpm shots` steps; those checks were rewritten as Vitest tests (where jsdom can cover the behavior) or manual checks noted in PROGRESS. Don't add browser tests back. Skipped: **T01.7** (screenshot script) and **T11.2** (visual regression).
 
+> **ADR-012 (static only).** No ISR, R2, D1, Durable Objects, cache tags, `/api/revalidate` or Renovate. Every page is prerendered; a Sanity publish triggers a GitHub rebuild + deploy. No Cloudflare feature that needs a payment card. Task files were rewritten accordingly (T00.3–T00.5, T04.1/T04.3/T04.4/T04.7, T05.4, T07.1).
+
 Phase order and gates
 
 | Phase | File | Gate at the end |
 | --- | --- | --- |
-| 00 | `00-setup.md` | Spike results recorded. ADR-003/004/010 confirmed or amended |
+| 00 | `00-setup.md` | Deploy check recorded (fits Workers Free). ADR-004/010 confirmed or amended |
 | 01 | `01-design-foundation.md` | Styleguide reviewed by Silvena |
 | 02 | `02-i18n-routing.md` | Both locales route correctly |
 | 03 | `03-sanity-studio.md` | Studio usable with seed content |
-| 04 | `04-content-layer.md` | Publish → page updates (ISR on preview deploy) |
+| 04 | `04-content-layer.md` | Publish → rebuild → page updated on workers.dev in ≤ 10 min |
 | 05 | `05-layout-shell.md` | Header/menu/action bar pass a manual keyboard + visual review |
 | 06 | `06-sections.md` | Every section in the styleguide + home renders the seed |
 | 07 | `07-routes-pages.md` | All routes in both locales (manual check) |

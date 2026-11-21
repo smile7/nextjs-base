@@ -1,7 +1,7 @@
 # Phase 00 — Repo, toolchain, Cloudflare spike
 
 **Goal:** a clean, strict Next.js 16 project that builds, tests and deploys to Cloudflare Workers via OpenNext, and **proves the risky parts early** (proxy.ts on Workers, CPU time, Studio size).
-**Read first:** `AGENTS.md`, `docs/ARCHITECTURE.md` §1, §6, §9, §11, `docs/DECISIONS.md` ADR-003/004/009/010.
+**Read first:** `AGENTS.md`, `docs/ARCHITECTURE.md` §1, §6, §9, §11, `docs/DECISIONS.md` ADR-004/009/010/012.
 
 ---
 
@@ -31,38 +31,37 @@
 **Done check:** `pnpm check`.
 
 ### T00.3 — Cloudflare / OpenNext configuration
-**Context:** ARCHITECTURE §6. Start with the **ISR profile** files, and also commit the Static-profile variants in `infra/`.
+**Context:** ARCHITECTURE §6, ADR-012 (static only: one config, no R2/D1/DO, no payment card).
 **Steps**
 1. `pnpm add -E @opennextjs/cloudflare@1.20.17` and `pnpm add -DE wrangler@4.165.0`. (You may run `npx @opennextjs/cloudflare migrate` and then review and trim its output to match the docs.)
-2. `wrangler.jsonc`: `$schema`, `main: .open-next/worker.js`, `name: site-starter-demo`, `compatibility_date` = today, `compatibility_flags: ["nodejs_compat", "global_fetch_strictly_public"]`, `assets { directory: .open-next/assets, binding: ASSETS }`, `services` self-reference, `images { binding: IMAGES }`, `observability { enabled: true }`, plus ISR bindings (R2 `NEXT_INC_CACHE_R2_BUCKET`, D1 `NEXT_TAG_CACHE_D1`, DO `NEXT_CACHE_DO_QUEUE` with a `migrations` `new_sqlite_classes: ["DOQueueHandler"]`).
-3. `open-next.config.ts` (ISR: r2IncrementalCache + doQueue + d1NextTagCache). `infra/static/open-next.config.ts` + `infra/static/wrangler.jsonc` (no R2/D1/DO).
+2. `wrangler.jsonc`: `$schema`, `main: .open-next/worker.js`, `name: site-starter-demo`, `compatibility_date` = the pinned workerd date, `compatibility_flags: ["nodejs_compat", "global_fetch_strictly_public"]`, `assets { directory: .open-next/assets, binding: ASSETS }`, `services` self-reference, `images { binding: IMAGES }`, `observability { enabled: true }`. No other bindings.
+3. `open-next.config.ts`: `staticAssetsIncrementalCache` + `enableCacheInterception: true`.
 4. `next.config.ts`: `initOpenNextCloudflareForDev()` call, `images.remotePatterns` for `cdn.sanity.io`, `images.qualities: [60, 75, 85]`, `poweredByHeader: false`, `trailingSlash: false`, `logging.fetches.fullUrl` in dev.
 5. `public/_headers` (immutable `/_next/static/*`). `.dev.vars.example` with `NEXTJS_ENV=development`. `cf-typegen` → `cloudflare-env.d.ts`.
-6. Create the R2 bucket (EU jurisdiction) + D1 database on the **developer sandbox account** and record the IDs in `wrangler.jsonc`.
-**Files:** `wrangler.jsonc`, `open-next.config.ts`, `infra/static/*`, `next.config.ts`, `public/_headers`, `.dev.vars.example`, `cloudflare-env.d.ts`, `package.json`.
+**Files:** `wrangler.jsonc`, `open-next.config.ts`, `next.config.ts`, `public/_headers`, `.dev.vars.example`, `cloudflare-env.d.ts`, `package.json`.
 **AC:** `pnpm preview` serves the app in workerd locally; `pnpm cf-typegen` generates types; config matches the OpenNext docs for the installed version.
 **Done check:** `pnpm preview` → `curl -I http://localhost:8787` gives 200.
 
-### T00.4 — Deployment spike and measurements (GATE)
-**Context:** Validate ADR-003, ADR-004 and ADR-010 before building on them. Temporary spike code lives under `src/app/(spike)/`. Remove it at the end, but keep the results.
+### T00.4 — Deploy check: does it fit Workers Free? (GATE, short)
+**Context:** Validate ADR-004 (proxy.ts) and ADR-010 (embedded Studio) on the real platform before building on them. Static only (ADR-012), so there is no ISR/revalidation to measure. Temporary code lives under `src/app/(spike)/`. Remove it at the end, but keep the results.
 **Steps**
-1. Add a minimal `src/proxy.ts` (`next-intl` `createMiddleware` with a 2-locale routing stub) and a `[locale]/spike` page that is (a) static, (b) ISR with a tag, (c) has a Server Action form that does a `fetch` to `https://httpbin.org/post`. Also add a route handler calling `revalidateTag('spike', { expire: 0 })`.
-2. Temporarily add the embedded Sanity Studio route (`next-sanity/studio` with an empty schema) to measure its impact on worker size and startup.
-3. `pnpm run deploy` to the sandbox account (workers.dev).
-4. Measure and record in `docs/PROGRESS.md` → "Spike results": Wrangler "Total Upload" size with/without the Studio, startup time (Wrangler output), CPU time per request type (static hit, ISR miss after revalidate, server action, `/admin` load) using `wrangler tail --format pretty` / dashboard Observability (CPU time field). Check whether `proxy.ts` works (redirect `/` → `/bg`, rewrite of a localized path).
-5. Decide: proxy.ts OK, or fall back to `middleware.ts` (edge). Studio embedded or hosted. Free plan viable for ISR regeneration, or recommend Paid/Static. Write ADR updates in `docs/DECISIONS.md`.
-6. Remove the spike code (keep the proxy file if it stays).
-**AC:** All measurements recorded with numbers. ADR statuses updated. The spike code is removed.
+1. Add a minimal `src/proxy.ts` (`next-intl` `createMiddleware` with a 2-locale routing stub), a prerendered `[locale]` page and one localized static path.
+2. Add the embedded Sanity Studio route (`next-sanity/studio`, empty schema) for the sandbox Sanity project.
+3. `pnpm run deploy` to the sandbox account (workers.dev, Free plan, no card).
+4. Record in `docs/PROGRESS.md` → "Spike results": Wrangler "Total Upload" size (and gzip) vs the Free limit, worker startup time, and whether pages load: `/` → `/bg` redirect, a localized path rewrite, a prerendered page, `/admin`. Optionally CPU time per request from Observability.
+5. Decide: proxy.ts OK or fall back to `middleware.ts`; Studio embedded or hosted (`/admin` → `<project>.sanity.studio`). Update the ADR statuses.
+6. Remove the spike code (keep the proxy file only if T02.1 takes it over).
+**AC:** Size vs limit and page checks recorded with numbers. ADR-004/010 statuses updated. The spike code is removed.
 **Done check:** the "Spike results" section is complete; `git grep -n "(spike)"` returns nothing.
 
 ### T00.5 — CI/CD workflows
 **Context:** ARCHITECTURE §11, ADR-008.
 **Steps**
-1. `.github/workflows/ci.yml`: on PR + push to main. Steps: checkout, pnpm/action-setup, setup-node (from `.nvmrc`, pnpm cache), `pnpm install --frozen-lockfile`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm contrast`, `pnpm build` (Turnstile test keys in the job env).
-2. `.github/workflows/deploy.yml`: on push to main → `pnpm run deploy` (env: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, all `NEXT_PUBLIC_*` from repo variables). On PR (same repo only) → `pnpm upload` + comment the preview URL. Add `repository_dispatch: types: [sanity-publish]` → deploy (Static profile).
-3. Concurrency groups (cancel in-progress on the same ref).
-4. `renovate.json` (or Dependabot): weekly, group minor/patch, no automerge for next/opennext/wrangler/sanity majors.
-**Files:** `.github/workflows/ci.yml`, `.github/workflows/deploy.yml`, `renovate.json`.
+1. `.github/workflows/ci.yml`: on PR + push to main. Steps: checkout, pnpm/action-setup, setup-node (from `.nvmrc`, pnpm cache), `pnpm install --frozen-lockfile`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` (Turnstile test keys in the job env). Nothing else (ADR-012).
+2. `.github/workflows/deploy.yml`: production `pnpm run deploy` on push to main, on `repository_dispatch: types: [sanity-publish]` (publish webhook) and on a daily schedule (env: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, all `NEXT_PUBLIC_*` from repo variables). On PR (same repo only) → `pnpm upload` + comment the preview URL.
+3. Concurrency: PR previews cancel in-progress runs on the same ref; production never cancels a running deploy (newest queued run wins).
+4. No Renovate/Dependabot (ADR-012).
+**Files:** `.github/workflows/ci.yml`, `.github/workflows/deploy.yml`.
 **AC:** A PR shows green CI and a preview URL comment. Main deploys to production (sandbox).
 **Done check:** open a test PR and verify both workflows (screenshot or link in PROGRESS).
 

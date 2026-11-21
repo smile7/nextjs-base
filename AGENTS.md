@@ -11,7 +11,7 @@ You are building a **reusable, multi-client website starter template**. It is no
 5. `docs/PROGRESS.md`: what is done.
 
 Version-matched framework docs ship in `node_modules`. **Prefer them over memory**:
-- Next.js: `node_modules/next/dist/docs/` (Next 16.x has breaking changes vs. your training data: `proxy.ts`, async `params`, `revalidateTag(tag, profile)`, no `next lint`).
+- Next.js: `node_modules/next/dist/docs/` (Next 16.x has breaking changes vs. your training data: `proxy.ts`, async `params`, no `next lint`).
 - Sanity: https://www.sanity.io/docs/llms.txt, plus the Sanity MCP `read_docs` / rules tools if they are connected.
 - OpenNext Cloudflare: https://opennext.js.org/cloudflare
 - next-intl: https://next-intl.dev/docs
@@ -32,7 +32,7 @@ If an API you plan to use is not in those docs, stop and say so. Don't invent AP
 ## Non-negotiable rules
 
 **Boundaries**
-- Only `src/lib/content/**` (runtime) and `src/sanity/**` (Studio) may import `sanity`, `next-sanity`, `@sanity/*`, `groq` or `@portabletext/*`. One exception: `src/app/admin/**` and the draft-mode/revalidate route handlers may import from `next-sanity`. Pages and components consume **typed domain models** from `@/lib/content`.
+- Only `src/lib/content/**` (runtime) and `src/sanity/**` (Studio) may import `sanity`, `next-sanity`, `@sanity/*`, `groq` or `@portabletext/*`. One exception: `src/app/admin/**` and the draft-mode route handlers may import from `next-sanity`. Pages and components consume **typed domain models** from `@/lib/content`.
 - Server-only modules start with `import 'server-only'`. Secrets never reach client components.
 
 **i18n**
@@ -58,7 +58,8 @@ If an API you plan to use is not in those docs, stop and say so. Don't invent AP
 
 **Cloudflare Workers runtime**
 - Code runs on workerd with `nodejs_compat`. No filesystem access at runtime, no native Node addons, no `export const runtime = 'edge'`.
-- On the Workers Free plan, CPU is limited to 10 ms per request. Public pages must be static or ISR. Never do heavy work per request.
+- Static only (ADR-012): every public page is prerendered at build (`generateStaticParams`, `dynamicParams = false`). A Sanity publish triggers a rebuild. No ISR, cache tags, `revalidateTag`, R2, D1 or Durable Objects, and never a Cloudflare feature that needs a payment card.
+- On the Workers Free plan, CPU is limited to 10 ms per request. Never do heavy work per request.
 
 **Quality**
 - TypeScript strict. No `any`, no `@ts-ignore` (use `@ts-expect-error` with a reason if truly needed).

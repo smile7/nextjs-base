@@ -1,4 +1,4 @@
-// Cache profile: Static (default, ADR-012). No R2/D1/DO, no payment card. The ISR variant lives in infra/isr/.
+// Static only (ADR-012): no R2/D1/Durable Objects/KV, nothing that needs a payment card.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "site-starter-demo",

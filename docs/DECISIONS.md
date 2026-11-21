@@ -12,13 +12,13 @@ Format: Context → Decision → Consequences → Status. To change a decision, 
 - **Context:** Sanity recommends `defineLive` for most apps. It subscribes browsers to the Live Content API (Free: 1k live connections per dataset) and shifts work to runtime. Our sites are mostly static, and Workers Free has a 10 ms CPU limit.
 - **Decision:** A custom `sanityFetch` (tags, draft-aware, stega in draft mode) + `/api/revalidate` with `parseBody` + `revalidateTag(tag, { expire: 0 })`. Visual Editing via `<VisualEditing/>` in draft mode only.
 - **Consequences:** + Static HTML, no client JS for live updates, predictable quotas. − No real-time updates for visitors (not needed). Preview refreshes on mutation, but less instantly than with Live.
-- **Status:** Accepted.
+- **Status:** Superseded in part by ADR-012 (2026-11-21): no cache tags, no `/api/revalidate`, no `revalidateTag`; the webhook triggers a rebuild instead. "No `defineLive`" and Visual Editing in draft mode still stand.
 
 ## ADR-003 Two cache profiles (ISR default, Static fallback)
 - **Context:** OpenNext's recommended small-site setup is R2 + DO queue + D1 tag cache. R2 requires a payment method on file even at $0. ISR regeneration runs inside the Worker (CPU limit on Free).
 - **Decision:** Support both profiles, selected per client in `new-client`. ISR is the default. Static (static-assets incremental cache + rebuild via GitHub `repository_dispatch` from the Sanity webhook) is the fallback.
 - **Consequences:** Two infra variants to test (CI builds both in the template repo).
-- **Status:** Superseded by ADR-012 (2026-11-21): Static is the default, ISR is the optional upgrade.
+- **Status:** Superseded by ADR-012 (2026-11-21): static-only, ISR removed.
 
 ## ADR-004 `proxy.ts` for next-intl, with a fallback
 - **Context:** Next 16 renamed middleware → proxy (Node runtime). OpenNext Cloudflare supports Node middleware experimentally since 1.20.3 (maintainers confirm it is supported in the latest releases, Nov 2026). Edge `middleware.ts` still works but is deprecated.
@@ -57,8 +57,14 @@ Format: Context → Decision → Consequences → Status. To change a decision, 
 - **Consequences:** Keyboard journeys, focus traps, axe on real pages, reduced motion, no-horizontal-scroll and network assertions (consent, map, Turnstile) are no longer verified automatically. WCAG 2.2 AA remains a requirement, now checked manually. Sign-off screenshots for clients are taken by hand. Revisit if regressions appear.
 - **Status:** Accepted.
 
-## ADR-012 Static cache profile is the default; ISR is an optional upgrade (supersedes ADR-003)
-- **Context:** R2 (needed by the ISR profile's incremental cache) can only be enabled with a payment card on the Cloudflare account, even at $0 usage. The owner decided (2026-11-21) that clients won't add a card, so the template must work out of the box without one. The Phase 00 spike ran on the Static profile only.
-- **Decision:** The repo root `wrangler.jsonc` + `open-next.config.ts` are the **Static** profile (`staticAssetsIncrementalCache`, `enableCacheInterception`, no R2/D1/DO). Publishing triggers a rebuild + deploy (Sanity webhook → GitHub `repository_dispatch` → `deploy.yml`). The **ISR** profile (R2 + D1 tag cache + DO queue) lives in `infra/isr/` and is copied to the root only for a client who accepts a card.
-- **Consequences:** + No card, no R2/D1 setup, and almost no Worker CPU spent on rendering, because pages are prerendered in CI. − Publishes go live in minutes, not seconds (PRD AC2). The static-assets cache is read-only, so `revalidateTag` refreshes nothing, and a route that was not prerendered (e.g. a CMS page published after the last build with `dynamicParams`) renders on **every** request until the next deploy (CPU cost per request; see the spike results in `docs/PROGRESS.md`). The `/api/revalidate` route is only used by ISR clients. Every Phase 07 route must enumerate all slugs in `generateStaticParams`.
+## ADR-012 Static-only: prerender everything, rebuild on publish (supersedes ADR-003 and part of ADR-002)
+- **Context:** The ISR setup needs R2 (incremental cache), D1 (tag cache) and a Durable Object queue. R2 can only be enabled with a payment card on the Cloudflare account, even at $0 usage. The owner decided (2026-11-21) that **no Cloudflare account may ever need a payment card**, and that the template should carry one infra variant, not two. (This replaces a same-day draft of ADR-012 that kept ISR as an optional `infra/isr/` upgrade.)
+- **Decision:**
+  - One profile only. The repo root `open-next.config.ts` uses `staticAssetsIncrementalCache` + `enableCacheInterception`; `wrangler.jsonc` has only `ASSETS`, `IMAGES`, `WORKER_SELF_REFERENCE` and observability. No R2, D1, Durable Objects, KV or queues. `infra/` is deleted.
+  - Every public page is prerendered in CI. Content routes set `dynamicParams = false` and enumerate every slug in `generateStaticParams`, so an unknown URL is a 404 and the Worker never renders a public page per request.
+  - Publishing: one Sanity GROQ webhook (publish only, drafts off) calls the GitHub `repository_dispatch` API (`event_type: sanity-publish`), which runs `deploy.yml` (build + deploy). No cache tags, no `/api/revalidate`, no `revalidateTag`, no `SANITY_REVALIDATE_SECRET`, no cache purge.
+  - Time-based content (announcement start/end) can't revalidate on a timer: the deploy workflow also runs on a daily schedule, and the banner hides itself client-side once `endsAt` has passed.
+  - Only free Cloudflare features: Workers Free, Static Assets, Images binding (5k transforms/month, CMS images go to the Sanity CDN anyway), Turnstile, Web Analytics, Free DNS zone. Workers Paid is not an upgrade path of the template (it needs a card).
+  - Renovate is removed. Dependencies are upgraded deliberately (monthly `pnpm outdated` review, one PR per platform major, re-run the T00.4 deploy check). CI = lint, typecheck, unit tests, build.
+- **Consequences:** + No card, no bindings to create per client, no cache state to debug, almost no Worker CPU for public pages (they are static assets), one config to test. − Publishes go live in a few minutes (build time), not seconds. Every publish costs one CI build (GitHub Free: 2,000 Actions minutes/month on private repos, about 3–5 min per build, so roughly 400 publishes/month). A burst of publishes is coalesced by the deploy concurrency group. Draft mode (Presentation preview) and the contact Server Action still run on the Worker per request, under the 10 ms CPU limit (T00.4 records the numbers). If a client ever needs seconds-fast publishing, that is a new ADR, not a switch.
 - **Status:** Accepted.

@@ -4,13 +4,18 @@ on:
   push:
     branches: [main]
   pull_request:
-  # Static cache profile: the Sanity webhook calls the GitHub dispatch API to rebuild on publish.
+  # Static only (ADR-012): the Sanity publish webhook calls the GitHub dispatch API to rebuild.
   repository_dispatch:
     types: [sanity-publish]
+  # Daily rebuild for time-based content (announcement start dates). 01:15 UTC = 03:15/04:15 Sofia.
+  schedule:
+    - cron: '15 1 * * *'
+  workflow_dispatch:
 
+# Production never cancels a running deploy; only the newest queued run is kept.
 concurrency:
   group: deploy-${{ github.event_name == 'pull_request' && github.ref || 'production' }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read

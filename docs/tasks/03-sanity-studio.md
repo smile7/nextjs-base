@@ -57,6 +57,6 @@
 **Steps**
 1. `scripts/seed.ts` (`tsx`, uses `@sanity/client` with a write token from `.env.local` `SANITY_WRITE_TOKEN`, never committed): uploads images from `seed/images/`, `createOrReplace` deterministic IDs, builds translation metadata documents, flags `--dataset`, `--client` (structure only), `--reset` (deletes seed docs only, by ID prefix).
 2. Demo content "Demo Dental" BG + EN for every type and section (BG written natively, EN natural, not literal).
-3. CI: `pnpm typegen` then `git diff --exit-code sanity.types.ts schema.json` (fails if not regenerated).
-**AC:** `pnpm seed --dataset development` is idempotent; Studio shows complete BG/EN content; CI typegen check works.
+3. Types in CI: `pnpm typecheck` runs `pnpm typegen` before `tsc`, so CI type-checks against freshly generated Sanity types without an extra CI step (ADR-012: CI = lint, typecheck, unit tests, build). Commit the regenerated files.
+**AC:** `pnpm seed --dataset development` is idempotent; Studio shows complete BG/EN content; a query/schema mismatch fails `pnpm typecheck`.
 **Done check:** run the seed twice → no duplicates; CI green.

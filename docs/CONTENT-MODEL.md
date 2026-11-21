@@ -241,7 +241,7 @@ Slug uniqueness per language: custom `isUnique` that queries `!defined(*[_type =
 `quote` [F] (required, ≤ 400), `authorName` (string, e.g. "Maria, mother of Niki (5)"; first name/initials only), `rating` (1–5, optional), `date` (date), `source` enum `manual google` (google reserved), `sourceUrl` url, `consentOnFile` boolean (required true for manual), `featured` boolean. Medical-advertising caution: the clinic must confirm testimonials comply with professional ethics rules (see LEGAL-GDPR).
 
 ### `announcement`
-`message` [F] (required, ≤ 140), `link` (ctaI18n, optional), `tone` enum `info promo warning`, `startsAt` datetime (required), `endsAt` datetime (optional, after startsAt), `dismissible` boolean (default true), `pages` enum `all home` (default all). Query: active = `startsAt <= now() && (!defined(endsAt) || endsAt > now())`, first by `startsAt desc`. Fetched with `revalidate: 3600` in addition to tags, so start/end times apply within an hour without a publish.
+`message` [F] (required, ≤ 140), `link` (ctaI18n, optional), `tone` enum `info promo warning`, `startsAt` datetime (required), `endsAt` datetime (optional, after startsAt), `dismissible` boolean (default true), `pages` enum `all home` (default all). Query (at build time): not ended = `!defined(endsAt) || endsAt > now()`; prefer the active one (`startsAt <= now()`, latest `startsAt` first), else the next upcoming one. The site is static (ADR-012), so the banner gets `startsAt`/`endsAt` and checks them client-side (hidden before start and after end); the daily scheduled deploy refreshes the choice.
 
 ---
 
