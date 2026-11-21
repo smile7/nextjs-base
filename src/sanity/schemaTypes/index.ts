@@ -23,6 +23,7 @@ import { linkType } from './objects/link'
 import { addressType, geoType } from './objects/location'
 import { calloutType, richTextSimpleType, richTextType } from './objects/richText'
 import { seoType } from './objects/seo'
+import { sectionTypes } from './sections'
 import { navigationType } from './singletons/navigation'
 import { siteSettingsType } from './singletons/siteSettings'
 
@@ -63,6 +64,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   ...singletons,
   ...documents,
   ...collections,
+  ...sectionTypes,
   ...objects,
 ]
 

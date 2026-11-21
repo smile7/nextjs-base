@@ -5,13 +5,73 @@ import {
   SLUG_LIKE,
   TIME,
   closesAfterOpens,
+  duplicateKeys,
   headingsSkippingLevels,
   i18nValue,
   isTimeZone,
   placeholdersIn,
+  sectionProblems,
   toMinutes,
   validateI18n,
 } from './validation'
+
+describe('duplicateKeys', () => {
+  it('returns the later items that repeat a value, skipping empty ones', () => {
+    const items = [
+      { _key: 'a', id: 'x' },
+      { _key: 'b', id: 'y' },
+      { _key: 'c', id: 'x' },
+      { _key: 'd' },
+      { _key: 'e' },
+    ]
+    expect(duplicateKeys(items, (item) => item.id)).toEqual([{ _key: 'c', value: 'x' }])
+  })
+})
+
+describe('sectionProblems', () => {
+  const hero = (key: string) => ({ _key: key, _type: 'section.hero' })
+  const faq = (key: string, emitSchema?: boolean) => ({
+    _key: key,
+    _type: 'section.faq',
+    emitSchema,
+  })
+  const text = (key: string, anchorId?: string) => ({
+    _key: key,
+    _type: 'section.richTextBlock',
+    anchorId,
+  })
+
+  it('accepts a hero first, one FAQ for Google and unique anchors', () => {
+    expect(sectionProblems([hero('h'), text('t', 'a'), faq('f1'), faq('f2', false)])).toBe(true)
+  })
+
+  it('flags a hero that is not first, and a second hero', () => {
+    expect(sectionProblems([text('t'), hero('h')])).toEqual([
+      expect.objectContaining({ path: [{ _key: 'h' }] }),
+    ])
+    expect(sectionProblems([hero('h1'), hero('h2')])).toEqual([
+      expect.objectContaining({ path: [{ _key: 'h2' }] }),
+    ])
+  })
+
+  it('flags every FAQ for Google after the first (emitSchema defaults to true)', () => {
+    expect(sectionProblems([faq('f1'), faq('f2', true), faq('f3')])).toEqual([
+      expect.objectContaining({ path: [{ _key: 'f2' }, 'emitSchema'] }),
+      expect.objectContaining({ path: [{ _key: 'f3' }, 'emitSchema'] }),
+    ])
+  })
+
+  it('flags repeated anchor IDs', () => {
+    expect(sectionProblems([text('a', 'visit'), text('b', 'visit')])).toEqual([
+      expect.objectContaining({ path: [{ _key: 'b' }, 'anchorId'] }),
+    ])
+  })
+
+  it('requires a section only when asked', () => {
+    expect(sectionProblems([])).toBe(true)
+    expect(sectionProblems(undefined, { requireOne: true })).toBe('Add at least one section.')
+  })
+})
 
 describe('placeholdersIn', () => {
   const block = (key: string, ...texts: string[]) => ({

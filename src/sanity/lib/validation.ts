@@ -75,6 +75,61 @@ export const closesAfterOpens = (opens: string | undefined, closes: string | und
   !TIME.test(closes) ||
   toMinutes(closes, { closing: true }) > toMinutes(opens)
 
+/** Array items whose picked value already appeared earlier in the array (empty values skipped). */
+export const duplicateKeys = <T extends { _key: string }>(
+  items: T[],
+  pick: (item: T) => string | undefined,
+): { _key: string; value: string }[] => {
+  const seen = new Set<string>()
+  const duplicates: { _key: string; value: string }[] = []
+  for (const item of items) {
+    const value = pick(item)
+    if (!value) continue
+    if (seen.has(value)) duplicates.push({ _key: item._key, value })
+    seen.add(value)
+  }
+  return duplicates
+}
+
+type SectionItem = { _key: string; _type: string; anchorId?: string; emitSchema?: boolean }
+
+/**
+ * Page-builder rules across sections: one hero, and only as the first section; one FAQ section
+ * with structured data; unique anchor IDs. Messages point at the offending section.
+ */
+export const sectionProblems = (
+  sections: SectionItem[] | undefined,
+  { requireOne = false } = {},
+): ValidationResult => {
+  if (!sections?.length) return requireOne ? 'Add at least one section.' : true
+  const problems: { message: string; path: (string | { _key: string })[] }[] = []
+  sections.forEach((section, index) => {
+    if (section._type === 'section.hero' && index > 0) {
+      problems.push({
+        message: 'The hero must be the first section, and a page can have only one.',
+        path: [{ _key: section._key }],
+      })
+    }
+  })
+  const faqWithSchema = sections.filter(
+    (section) => section._type === 'section.faq' && section.emitSchema !== false,
+  )
+  for (const section of faqWithSchema.slice(1)) {
+    problems.push({
+      message:
+        'Only one FAQ section per page can be marked for Google. Untick "Mark as FAQ for Google" here.',
+      path: [{ _key: section._key }, 'emitSchema'],
+    })
+  }
+  for (const { _key, value } of duplicateKeys(sections, (section) => section.anchorId)) {
+    problems.push({
+      message: `The anchor ID "${value}" is already used by another section.`,
+      path: [{ _key }, 'anchorId'],
+    })
+  }
+  return problems.length ? problems : true
+}
+
 type PortableTextBlock = {
   _type: string
   _key: string

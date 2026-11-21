@@ -239,6 +239,375 @@ export type ImageWithAlt = {
   credit?: string
 }
 
+export type SectionCtaBand = {
+  _type: 'section.ctaBand'
+  heading?: string
+  text?: string
+  ctas?: Array<
+    {
+      _key: string
+    } & Cta
+  >
+  tone?: 'base' | 'soft' | 'brand' | 'accent' | 'inverse'
+  spacing?: 'default' | 'compact' | 'none'
+  anchorId?: string
+  hidden?: boolean
+}
+
+export type SectionContactHours = {
+  _type: 'section.contactHours'
+  heading?: string
+  showMap?: boolean
+  showForm?: boolean
+  note?: string
+  tone?: 'base' | 'soft' | 'brand' | 'accent' | 'inverse'
+  spacing?: 'default' | 'compact' | 'none'
+  anchorId?: string
+  hidden?: boolean
+}
+
+export type GalleryItemReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'galleryItem'
+}
+
+export type SectionGallery = {
+  _type: 'section.gallery'
+  heading?: string
+  album?: 'clinic' | 'team' | 'patients' | 'events' | 'other'
+  items?: Array<
+    {
+      _key: string
+    } & GalleryItemReference
+  >
+  limit?: number
+  showLinkToGallery?: boolean
+  tone?: 'base' | 'soft' | 'brand' | 'accent' | 'inverse'
+  spacing?: 'default' | 'compact' | 'none'
+  anchorId?: string
+  hidden?: boolean
+}
+
+export type TeamMemberReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'teamMember'
+}
+
+export type SectionTeam = {
+  _type: 'section.team'
+  heading?: string
+  intro?: string
+  members?: Array<
+    {
+      _key: string
+    } & TeamMemberReference
+  >
+  layout?: 'featuredFirst' | 'grid'
+  tone?: 'base' | 'soft' | 'brand' | 'accent' | 'inverse'
+  spacing?: 'default' | 'compact' | 'none'
+  anchorId?: string
+  hidden?: boolean
+}
+
+export type TestimonialReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'testimonial'
+}
+
+export type SectionTestimonials = {
+  _type: 'section.testimonials'
+  heading?: string
+  items?: Array<
+    {
+      _key: string
+    } & TestimonialReference
+  >
+  showRating?: boolean
+  tone?: 'base' | 'soft' | 'brand' | 'accent' | 'inverse'
+  spacing?: 'default' | 'compact' | 'none'
+  anchorId?: string
+  hidden?: boolean
+}
+
+export type SectionBlogTeaser = {
+  _type: 'section.blogTeaser'
+  heading?: string
+  mode?: 'latest' | 'selected'
+  articles?: Array<
+    {
+      _key: string
+    } & ArticleReference
+  >
+  count?: number
+  tone?: 'base' | 'soft' | 'brand' | 'accent' | 'inverse'
+  spacing?: 'default' | 'compact' | 'none'
+  anchorId?: string
+  hidden?: boolean
+}
+
+export type FaqItemReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'faqItem'
+}
+
+export type SectionFaq = {
+  _type: 'section.faq'
+  heading?: string
+  intro?: string
+  source?: 'all' | 'category' | 'selected'
+  category?: 'general' | 'firstVisit' | 'children' | 'adults' | 'prices' | 'emergencies'
+  items?: Array<
+    {
+      _key: string
+    } & FaqItemReference
+  >
+  emitSchema?: boolean
+  tone?: 'base' | 'soft' | 'brand' | 'accent' | 'inverse'
+  spacing?: 'default' | 'compact' | 'none'
+  anchorId?: string
+  hidden?: boolean
+}
+
+export type SectionProcessSteps = {
+  _type: 'section.processSteps'
+  heading?: string
+  intro?: string
+  steps?: Array<{
+    title?: string
+    text?: string
+    icon?:
+      | 'smile'
+      | 'smile-plus'
+      | 'baby'
+      | 'toothbrush'
+      | 'sparkles'
+      | 'wand-sparkles'
+      | 'gem'
+      | 'shield-check'
+      | 'shield-plus'
+      | 'stethoscope'
+      | 'syringe'
+      | 'pill'
+      | 'bone'
+      | 'microscope'
+      | 'scan-face'
+      | 'scan-line'
+      | 'layers'
+      | 'ruler'
+      | 'brush'
+      | 'droplets'
+      | 'siren'
+      | 'heart'
+      | 'heart-pulse'
+      | 'hand-heart'
+      | 'puzzle'
+      | 'graduation-cap'
+      | 'award'
+      | 'badge-check'
+      | 'star'
+      | 'users'
+      | 'clock'
+      | 'calendar-check'
+      | 'clipboard-list'
+      | 'message-circle'
+      | 'phone'
+      | 'languages'
+      | 'accessibility'
+      | 'square-parking'
+      | 'car'
+      | 'credit-card'
+      | 'wallet'
+      | 'leaf'
+      | 'house'
+      | 'circle-check'
+      | 'zap'
+    _type: 'processStep'
+    _key: string
+  }>
+  cta?: Cta
+  tone?: 'base' | 'soft' | 'brand' | 'accent' | 'inverse'
+  spacing?: 'default' | 'compact' | 'none'
+  anchorId?: string
+  hidden?: boolean
+}
+
+export type ServiceCategoryReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'serviceCategory'
+}
+
+export type SectionTiles = {
+  _type: 'section.tiles'
+  heading?: string
+  intro?: string
+  source?: 'services' | 'manual'
+  serviceCategory?: ServiceCategoryReference
+  items?: Array<{
+    title?: string
+    teaser?: string
+    icon?:
+      | 'smile'
+      | 'smile-plus'
+      | 'baby'
+      | 'toothbrush'
+      | 'sparkles'
+      | 'wand-sparkles'
+      | 'gem'
+      | 'shield-check'
+      | 'shield-plus'
+      | 'stethoscope'
+      | 'syringe'
+      | 'pill'
+      | 'bone'
+      | 'microscope'
+      | 'scan-face'
+      | 'scan-line'
+      | 'layers'
+      | 'ruler'
+      | 'brush'
+      | 'droplets'
+      | 'siren'
+      | 'heart'
+      | 'heart-pulse'
+      | 'hand-heart'
+      | 'puzzle'
+      | 'graduation-cap'
+      | 'award'
+      | 'badge-check'
+      | 'star'
+      | 'users'
+      | 'clock'
+      | 'calendar-check'
+      | 'clipboard-list'
+      | 'message-circle'
+      | 'phone'
+      | 'languages'
+      | 'accessibility'
+      | 'square-parking'
+      | 'car'
+      | 'credit-card'
+      | 'wallet'
+      | 'leaf'
+      | 'house'
+      | 'circle-check'
+      | 'zap'
+    image?: ImageWithAlt
+    body?: RichTextSimple
+    cta?: Cta
+    slug?: string
+    _type: 'tileItem'
+    _key: string
+  }>
+  allowMultiple?: boolean
+  density?: 'comfortable' | 'compact'
+  tone?: 'base' | 'soft' | 'brand' | 'accent' | 'inverse'
+  spacing?: 'default' | 'compact' | 'none'
+  anchorId?: string
+  hidden?: boolean
+}
+
+export type SectionRichTextBlock = {
+  _type: 'section.richTextBlock'
+  heading?: string
+  body?: RichText
+  width?: 'prose' | 'wide'
+  tone?: 'base' | 'soft' | 'brand' | 'accent' | 'inverse'
+  spacing?: 'default' | 'compact' | 'none'
+  anchorId?: string
+  hidden?: boolean
+}
+
+export type SectionTextImage = {
+  _type: 'section.textImage'
+  heading?: string
+  body?: RichText
+  image?: ImageWithAlt
+  imagePosition?: 'left' | 'right'
+  cta?: Cta
+  tone?: 'base' | 'soft' | 'brand' | 'accent' | 'inverse'
+  spacing?: 'default' | 'compact' | 'none'
+  anchorId?: string
+  hidden?: boolean
+}
+
+export type SectionHero = {
+  _type: 'section.hero'
+  heading?: string
+  subheading?: string
+  ctas?: Array<
+    {
+      _key: string
+    } & Cta
+  >
+  image?: ImageWithAlt
+  variant?: 'split' | 'cutout' | 'fullBleed'
+  trustItems?: Array<{
+    icon?:
+      | 'smile'
+      | 'smile-plus'
+      | 'baby'
+      | 'toothbrush'
+      | 'sparkles'
+      | 'wand-sparkles'
+      | 'gem'
+      | 'shield-check'
+      | 'shield-plus'
+      | 'stethoscope'
+      | 'syringe'
+      | 'pill'
+      | 'bone'
+      | 'microscope'
+      | 'scan-face'
+      | 'scan-line'
+      | 'layers'
+      | 'ruler'
+      | 'brush'
+      | 'droplets'
+      | 'siren'
+      | 'heart'
+      | 'heart-pulse'
+      | 'hand-heart'
+      | 'puzzle'
+      | 'graduation-cap'
+      | 'award'
+      | 'badge-check'
+      | 'star'
+      | 'users'
+      | 'clock'
+      | 'calendar-check'
+      | 'clipboard-list'
+      | 'message-circle'
+      | 'phone'
+      | 'languages'
+      | 'accessibility'
+      | 'square-parking'
+      | 'car'
+      | 'credit-card'
+      | 'wallet'
+      | 'leaf'
+      | 'house'
+      | 'circle-check'
+      | 'zap'
+    text?: string
+    _type: 'trustItem'
+    _key: string
+  }>
+  tone?: 'base' | 'soft' | 'brand' | 'accent' | 'inverse'
+  spacing?: 'default' | 'compact' | 'none'
+  anchorId?: string
+  hidden?: boolean
+}
+
 export type Announcement = {
   _id: string
   _type: 'announcement'
@@ -281,13 +650,6 @@ export type InternationalizedArrayText = Array<
     _key: string
   } & InternationalizedArrayTextValue
 >
-
-export type GalleryItemReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'galleryItem'
-}
 
 export type GalleryItem = {
   _id: string
@@ -533,13 +895,6 @@ export type Slug = {
   source?: string
 }
 
-export type TeamMemberReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'teamMember'
-}
-
 export type Article = {
   _id: string
   _type: 'article'
@@ -563,13 +918,6 @@ export type Article = {
   updatedAt?: string
   categories?: Array<string>
   seo?: Seo
-}
-
-export type ServiceCategoryReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'serviceCategory'
 }
 
 export type TeamMember = {
@@ -605,13 +953,6 @@ export type TeamMember = {
   sameAs?: Array<string>
   slug?: Slug
   orderRank?: string
-}
-
-export type FaqItemReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'faqItem'
 }
 
 export type Service = {
@@ -716,6 +1057,44 @@ export type Page = {
   title?: string
   slug?: Slug
   intro?: string
+  sections?: Array<
+    | ({
+        _key: string
+      } & SectionHero)
+    | ({
+        _key: string
+      } & SectionTextImage)
+    | ({
+        _key: string
+      } & SectionRichTextBlock)
+    | ({
+        _key: string
+      } & SectionTiles)
+    | ({
+        _key: string
+      } & SectionProcessSteps)
+    | ({
+        _key: string
+      } & SectionFaq)
+    | ({
+        _key: string
+      } & SectionBlogTeaser)
+    | ({
+        _key: string
+      } & SectionTestimonials)
+    | ({
+        _key: string
+      } & SectionTeam)
+    | ({
+        _key: string
+      } & SectionGallery)
+    | ({
+        _key: string
+      } & SectionContactHours)
+    | ({
+        _key: string
+      } & SectionCtaBand)
+  >
   seo?: Seo
   hideFromNav?: boolean
   hideFromSitemap?: boolean
@@ -841,11 +1220,27 @@ export type AllSanitySchemaTypes =
   | RichText
   | SanityImageAssetReference
   | ImageWithAlt
+  | SectionCtaBand
+  | SectionContactHours
+  | GalleryItemReference
+  | SectionGallery
+  | TeamMemberReference
+  | SectionTeam
+  | TestimonialReference
+  | SectionTestimonials
+  | SectionBlogTeaser
+  | FaqItemReference
+  | SectionFaq
+  | SectionProcessSteps
+  | ServiceCategoryReference
+  | SectionTiles
+  | SectionRichTextBlock
+  | SectionTextImage
+  | SectionHero
   | Announcement
   | InternationalizedArrayString
   | Testimonial
   | InternationalizedArrayText
-  | GalleryItemReference
   | GalleryItem
   | FaqItem
   | InternationalizedArrayRichTextSimple
@@ -863,11 +1258,8 @@ export type AllSanitySchemaTypes =
   | InternationalizedArrayReferenceValue
   | LegalPage
   | Slug
-  | TeamMemberReference
   | Article
-  | ServiceCategoryReference
   | TeamMember
-  | FaqItemReference
   | Service
   | ServiceCategory
   | Page

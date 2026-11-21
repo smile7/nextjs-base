@@ -152,7 +152,7 @@ Slug uniqueness per language: custom `isUnique` that queries `!defined(*[_type =
 | title | string | required |
 | slug | slug | required when no pageKey. Must not be a reserved segment: `uslugi services za-nas about galeriya gallery blog kontakti contact pravna-informaciya legal admin api styleguide en bg` (generated from pathnames config). |
 | intro | text | optional; used in cards, meta fallback |
-| sections | array of section types (see §5) | ≥ 1 for generic pages. The insert menu is grouped (Intro, Content, Lists, Contact). Each item shows a preview with its type and heading. |
+| sections | array of section types (see §5) | ≥ 1 for generic pages. The insert menu is grouped (Intro, Content, Social proof, Contact) with a grid of thumbnails from `public/studio/sections/<type>.png`. Each item shows a preview with its type and heading. |
 | seo | seo | |
 | hideFromNav / hideFromSitemap | boolean | |
 
@@ -259,7 +259,7 @@ All sections share the base fields: `anchorId` (slug-like, optional, unique with
 | `section.faq` | `heading`, `intro`, `source` (`selected category all`), `items` (refs → faqItem), `category`, `emitSchema` (boolean, default true) | At most 1 FAQ section with `emitSchema` per page. |
 | `section.ctaBand` | `heading` (req), `text`, `ctas` (1–2) | |
 | `section.team` | `heading`, `intro`, `members` (refs; empty = all by orderRank), `layout` (`featuredFirst grid`) | |
-| `section.gallery` | `heading`, `album` (enum or empty = all), `items` (refs, optional override), `limit` (number, default 9), `showLinkToGallery` (boolean) | |
+| `section.gallery` | `heading`, `album` (enum or empty = all), `items` (refs, optional override), `limit` (number 1–24, default 9), `showLinkToGallery` (boolean) | |
 | `section.blogTeaser` | `heading`, `mode` (`latest selected`), `articles` (refs ≤ 3), `count` (1–6, default 3) | |
 | `section.contactHours` | `heading`, `showMap` (boolean), `showForm` (boolean; contact page only), `note` (text) | Data from siteSettings. |
 | `section.processSteps` | `heading`, `intro`, `steps` (array 3–6 of `{ title ≤ 50, text ≤ 220, icon }`), `cta` | |

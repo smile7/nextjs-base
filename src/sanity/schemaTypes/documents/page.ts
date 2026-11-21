@@ -5,6 +5,7 @@ import { defineField, defineType } from 'sanity'
 import { languageField } from '../../i18n'
 import { isUniqueInLanguage, slugField } from '../../lib/fields'
 import { systemPageKeys } from '../../lib/options'
+import { sectionsField } from '../sections'
 
 const isAdministrator = (user: { roles: { name: string }[] } | null) =>
   Boolean(user?.roles.some((role) => role.name === 'administrator'))
@@ -62,6 +63,7 @@ export const pageType = defineType({
         'One or two sentences. Shown on cards that link here, and in Google when the SEO description is empty.',
       validation: (rule) => rule.max(220).warning('Keep the introduction under 220 characters.'),
     }),
+    { ...sectionsField, group: 'content' },
     defineField({ name: 'seo', title: 'SEO and sharing', type: 'seo', group: 'seo' }),
     defineField({
       name: 'hideFromNav',
