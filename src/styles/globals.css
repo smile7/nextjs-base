@@ -107,6 +107,12 @@
     color: var(--color-fg);
   }
 
+  @media (width < 48rem) {
+    html {
+      scroll-padding-top: calc(var(--header-h-mobile) + 1rem);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -120,5 +126,15 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+  }
+}
+
+@layer components {
+  .hero-cutout-mask {
+    clip-path: ellipse(88% 92% at 52% 48%);
+  }
+
+  html.js [data-tile-panel][data-open='false'] {
+    display: none;
   }
 }

@@ -11,6 +11,7 @@ type ContentImageProps = {
   sizes: string
   /** Only for the LCP image (first hero). */
   preload?: boolean
+  fetchPriority?: 'high' | 'low' | 'auto'
   /** Fill the positioned parent instead of using the intrinsic size. */
   fill?: boolean
   quality?: number
@@ -21,7 +22,15 @@ type ContentImageProps = {
  * CMS image through the Sanity CDN loader. A client component only because `next/image` needs
  * the loader function, which can't be passed from a server component.
  */
-export function ContentImage({ image, sizes, preload, fill, quality, className }: ContentImageProps) {
+export function ContentImage({
+  image,
+  sizes,
+  preload,
+  fetchPriority,
+  fill,
+  quality,
+  className,
+}: ContentImageProps) {
   const { focalPoint } = image
   return (
     <Image
@@ -31,6 +40,7 @@ export function ContentImage({ image, sizes, preload, fill, quality, className }
       sizes={sizes}
       {...(fill ? { fill: true } : { width: image.width, height: image.height })}
       preload={preload}
+      fetchPriority={preload ? 'high' : fetchPriority}
       quality={quality}
       placeholder={image.lqip ? 'blur' : 'empty'}
       blurDataURL={image.lqip}
