@@ -4,6 +4,23 @@ import nextTs from 'eslint-config-next/typescript'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
 import prettier from 'eslint-config-prettier/flat'
 
+const sanityIconsPath = {
+  name: '@sanity/icons',
+  message:
+    "Import each icon from its subpath (`import { CaseIcon } from '@sanity/icons/Case'`). The v5 root entry types icons as `never`, so the root import typechecks but is undefined at runtime.",
+}
+
+const boundaryMessage =
+  'CMS boundary: site code reads content only through `@/lib/content` (domain types + get*). See .cursor/rules/content-layer.mdc.'
+
+/** Read by scripts/check-boundaries.ts too, so keep every pattern a `regex`. */
+const contentBoundaryPatterns = [
+  { regex: '^(next-sanity|sanity|groq)(/.*)?$', message: boundaryMessage },
+  { regex: '^@(sanity|portabletext)/', message: boundaryMessage },
+  { regex: '(^|/)lib/content/sanity(/|$)', message: boundaryMessage },
+  { regex: '(^|/)sanity\\.types(\\.ts)?$', message: boundaryMessage },
+]
+
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
@@ -23,20 +40,24 @@ const eslintConfig = defineConfig([
         },
       ],
       '@typescript-eslint/consistent-type-imports': 'error',
-      // Content-layer boundary: patterns are filled in T04.6 (see ARCHITECTURE §4).
       'no-restricted-imports': [
         'error',
-        {
-          paths: [
-            {
-              name: '@sanity/icons',
-              message:
-                "Import each icon from its subpath (`import { CaseIcon } from '@sanity/icons/Case'`). The v5 root entry types icons as `never`, so the root import typechecks but is undefined at runtime.",
-            },
-          ],
-          patterns: [],
-        },
+        { paths: [sanityIconsPath], patterns: contentBoundaryPatterns },
       ],
+    },
+  },
+  {
+    // The CMS-aware side of the boundary (ARCHITECTURE §4, .cursor/rules/content-layer.mdc).
+    files: [
+      'src/lib/content/**',
+      'src/sanity/**',
+      'src/app/admin/**',
+      'src/app/api/**',
+      'scripts/**',
+      'sanity.*.ts',
+    ],
+    rules: {
+      'no-restricted-imports': ['error', { paths: [sanityIconsPath] }],
     },
   },
   {
