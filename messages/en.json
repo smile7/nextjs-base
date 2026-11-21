@@ -42,5 +42,29 @@
   "Announcement": {
     "label": "Announcement",
     "dismiss": "Dismiss announcement"
+  },
+  "Footer": {
+    "hours": "Opening hours",
+    "closed": "Closed",
+    "nav": "Footer navigation",
+    "social": "Follow us",
+    "legal": "Legal information",
+    "uic": "UIC {uic}",
+    "vat": "VAT No. {vat}",
+    "registeredAddress": "Registered address: {address}",
+    "professionalBody": "Professional body: {name}",
+    "supervisoryAuthority": "Supervisory authority: {name}",
+    "copyright": "© {year} {name}",
+    "platforms": {
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "youtube": "YouTube",
+      "linkedin": "LinkedIn",
+      "viber": "Viber",
+      "whatsapp": "WhatsApp",
+      "googleBusiness": "Google profile",
+      "other": "Website"
+    }
   }
 }

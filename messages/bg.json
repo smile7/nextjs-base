@@ -42,5 +42,29 @@
   "Announcement": {
     "label": "Съобщение",
     "dismiss": "Скрий съобщението"
+  },
+  "Footer": {
+    "hours": "Работно време",
+    "closed": "Почивен ден",
+    "nav": "Навигация в долната част на страницата",
+    "social": "Последвайте ни",
+    "legal": "Правна информация",
+    "uic": "ЕИК {uic}",
+    "vat": "ДДС № {vat}",
+    "registeredAddress": "Адрес на управление: {address}",
+    "professionalBody": "Професионална организация: {name}",
+    "supervisoryAuthority": "Надзорен орган: {name}",
+    "copyright": "© {year} {name}",
+    "platforms": {
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "youtube": "YouTube",
+      "linkedin": "LinkedIn",
+      "viber": "Viber",
+      "whatsapp": "WhatsApp",
+      "googleBusiness": "Google профил",
+      "other": "Уебсайт"
+    }
   }
 }

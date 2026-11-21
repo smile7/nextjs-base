@@ -8,6 +8,7 @@ import { MotionProvider } from '@/components/motion/MotionProvider'
 import { AnnouncementBanner } from '@/components/site/AnnouncementBanner'
 import { MobileActionBar } from '@/components/site/MobileActionBar'
 import { MobileNav } from '@/components/site/MobileNav'
+import { SiteFooter } from '@/components/site/SiteFooter'
 import { SiteHeader } from '@/components/site/SiteHeader'
 import { fontVariables } from '@/config/fonts'
 import { getAnnouncement, getNavigation, getSiteSettings } from '@/lib/content'
@@ -95,6 +96,13 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             />
           ) : null}
           <MotionProvider>{children}</MotionProvider>
+          {settings ? (
+            <SiteFooter
+              locale={locale}
+              settings={settings}
+              columns={navigation?.footerColumns ?? []}
+            />
+          ) : null}
           {barActions.length > 0 ? <MobileActionBar actions={barActions} /> : null}
         </NextIntlClientProvider>
         {draft.isEnabled && <PreviewTools />}
