@@ -1,12 +1,8 @@
 import type { MessageKeys, Messages, NestedKeyOf } from 'next-intl'
 import { describe, expect, it } from 'vitest'
 
-import { locales } from '@/config/i18n'
-
-import bg from '../../messages/bg.json'
-import en from '../../messages/en.json'
-
-const catalogs: Record<(typeof locales)[number], unknown> = { bg, en }
+import { defaultLocale, locales } from '@/config/i18n'
+import { catalogs } from '@/test/messages'
 
 function keyPaths(value: unknown, prefix = ''): string[] {
   if (typeof value !== 'object' || value === null) return [prefix]
@@ -16,9 +12,9 @@ function keyPaths(value: unknown, prefix = ''): string[] {
 }
 
 describe('messages', () => {
-  const reference = keyPaths(bg).toSorted()
+  const reference = keyPaths(catalogs[defaultLocale]).toSorted()
 
-  it.each(locales)('%s has exactly the keys of bg.json', (locale) => {
+  it.each(locales)('%s has exactly the keys of the default locale', (locale) => {
     expect(keyPaths(catalogs[locale]).toSorted()).toEqual(reference)
   })
 

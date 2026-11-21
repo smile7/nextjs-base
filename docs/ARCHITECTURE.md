@@ -291,7 +291,13 @@ export const localeMeta: Record<Locale, { label: string; short: string; hreflang
 ```
 Consumers: next-intl routing, both Sanity i18n plugins (`supportedLanguages` / `languages`), the GROQ fallback params, sitemap alternates, hreflang, the language switcher and the Presentation resolver.
 
-**Adding a language (e.g. `de`)** = add it to `locales` + `localeMeta` (the one config change). TypeScript then flags the remaining required items: `messages/de.json`, the `de` entries in `src/i18n/pathnames.ts` (typed as `Record<Locale, string>`) and translated content in the Studio.
+**Adding a language (e.g. `de`)**, checked by adding `de` and running `pnpm typecheck` (T02.5):
+1. `src/config/i18n.ts`: add the code to `locales` and an entry to `localeMeta` (native `label`, `short`, `hreflang`, `ogLocale`, `intl`). This is the only config change; `pnpm typecheck` then lists steps 2–3.
+2. `messages/de.json`: copy `en.json` and translate it. Register it in `src/i18n/request.ts` (`messageLoaders`) and `src/test/messages.ts` (`catalogs`); the parity test checks the keys.
+3. `src/i18n/pathnames.ts`: add a `de` slug to every localized entry (7 today). Entries that are plain strings stay as they are.
+4. Fonts: check that `src/config/fonts.ts` loads the subsets the language needs (e.g. `latin-ext` for Polish or Romanian). For a right-to-left language, add `dir` to `localeMeta` first.
+5. Studio: the Sanity language lists read `locales` (T03.2), so the next deploy shows `de`. Translate the required documents (home, system and legal pages) and the field-level strings in siteSettings/navigation. Untranslated routable docs simply have no `de` URL.
+6. `pnpm check`, deploy, then check `/de`, the language switcher and the hreflang tags in `<head>`.
 
 ### 7.2 Routing (next-intl)
 - `defineRouting({ locales, defaultLocale, localePrefix: 'always', pathnames })`, plus `localeDetection: true` (only affects `/` and unprefixed paths; it sets the `NEXT_LOCALE` cookie, which is strictly necessary for functionality, so list it in the cookie registry).
