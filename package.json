@@ -30,7 +30,10 @@
   "dependencies": {
     "@base-ui/react": "1.9.0",
     "@opennextjs/cloudflare": "1.20.17",
+    "@sanity/document-internationalization": "6.3.0",
+    "@sanity/icons": "5.4.0",
     "@sanity/image-url": "2.2.0",
+    "@sanity/orderable-document-list": "2.0.29",
     "@sanity/vision": "6.24.0",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
@@ -42,6 +45,7 @@
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "sanity": "6.24.0",
+    "sanity-plugin-internationalized-array": "5.3.10",
     "server-only": "0.0.1",
     "sonner": "2.0.8",
     "styled-components": "6.6.0",
@@ -50,6 +54,7 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@sanity/client": "8.17.0",
     "@tailwindcss/postcss": "4.3.5",
     "@tailwindcss/typography": "0.5.20",
     "@testing-library/dom": "10.4.2",

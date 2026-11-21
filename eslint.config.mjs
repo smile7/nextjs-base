@@ -24,7 +24,19 @@ const eslintConfig = defineConfig([
       ],
       '@typescript-eslint/consistent-type-imports': 'error',
       // Content-layer boundary: patterns are filled in T04.6 (see ARCHITECTURE §4).
-      'no-restricted-imports': ['error', { patterns: [] }],
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@sanity/icons',
+              message:
+                "Import each icon from its subpath (`import { CaseIcon } from '@sanity/icons/Case'`). The v5 root entry types icons as `never`, so the root import typechecks but is undefined at runtime.",
+            },
+          ],
+          patterns: [],
+        },
+      ],
     },
   },
   {

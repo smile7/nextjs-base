@@ -15,6 +15,120 @@
 export declare const internalGroqTypeReferenceTo: unique symbol
 
 // Source: schema.json
+export type InternationalizedArrayTextValue = {
+  _type: 'internationalizedArrayTextValue'
+  value?: string
+  language?: string
+}
+
+export type InternationalizedArrayStringValue = {
+  _type: 'internationalizedArrayStringValue'
+  value?: string
+  language?: string
+}
+
+export type InternationalizedArrayText = Array<
+  {
+    _key: string
+  } & InternationalizedArrayTextValue
+>
+
+export type InternationalizedArrayString = Array<
+  {
+    _key: string
+  } & InternationalizedArrayStringValue
+>
+
+export type TranslationMetadata = {
+  _id: string
+  _type: 'translation.metadata'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  translations?: InternationalizedArrayReference
+  schemaTypes?: Array<string>
+}
+
+export type InternationalizedArrayReference = Array<
+  {
+    _key: string
+  } & InternationalizedArrayReferenceValue
+>
+
+export type PageReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'page'
+}
+
+export type ServiceReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'service'
+}
+
+export type ArticleReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'article'
+}
+
+export type LegalPageReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'legalPage'
+}
+
+export type InternationalizedArrayReferenceValue = {
+  _type: 'internationalizedArrayReferenceValue'
+  value?: PageReference | ServiceReference | ArticleReference | LegalPageReference
+  language?: string
+}
+
+export type LegalPage = {
+  _id: string
+  _type: 'legalPage'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  language?: string
+  title?: string
+}
+
+export type Article = {
+  _id: string
+  _type: 'article'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  language?: string
+  title?: string
+}
+
+export type Service = {
+  _id: string
+  _type: 'service'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  language?: string
+  title?: string
+}
+
+export type Page = {
+  _id: string
+  _type: 'page'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  language?: string
+  title?: string
+}
+
 export type SanityImagePaletteSwatch = {
   _type: 'sanity.imagePaletteSwatch'
   background?: string
@@ -135,6 +249,21 @@ export type Slug = {
 }
 
 export type AllSanitySchemaTypes =
+  | InternationalizedArrayTextValue
+  | InternationalizedArrayStringValue
+  | InternationalizedArrayText
+  | InternationalizedArrayString
+  | TranslationMetadata
+  | InternationalizedArrayReference
+  | PageReference
+  | ServiceReference
+  | ArticleReference
+  | LegalPageReference
+  | InternationalizedArrayReferenceValue
+  | LegalPage
+  | Article
+  | Service
+  | Page
   | SanityImagePaletteSwatch
   | SanityImagePalette
   | SanityImageDimensions
