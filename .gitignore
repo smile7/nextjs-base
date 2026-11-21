@@ -40,11 +40,6 @@ yarn-error.log*
 .open-next
 .wrangler
 
-# test and screenshot output
-.screenshots
-test-results
-playwright-report
-
 # vercel
 .vercel
 

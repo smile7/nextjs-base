@@ -45,7 +45,7 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 - [ ] [D] In Cursor with the `frontend-design` skill: "Propose 2 theme directions for <client> based on @docs/DESIGN-SYSTEM.md §13-style analysis and these photos @seed/client-images/…". Pick one.
 - [ ] [D] Edit `src/styles/tokens.css` (palette, tones, radius family, shadows), `src/config/fonts.ts` (Cyrillic check), and the `Wordmark` styling. Logo SVG → `public/brand/`.
 - [ ] [D] Favicons/app icons from the logo/wordmark (`app/[locale]/icon.png`, `apple-icon.png`). OG fallback image.
-- [ ] [D] Run `pnpm shots` → send `/styleguide` screenshots + preview URL to the client → **[C] sign-off** (written, by email). Then set `NEXT_PUBLIC_ENABLE_STYLEGUIDE=false` for production.
+- [ ] [D] Take `/styleguide` screenshots at 360/768/1280 by hand → send them + preview URL to the client → **[C] sign-off** (written, by email). Then set `NEXT_PUBLIC_ENABLE_STYLEGUIDE=false` for production.
 
 ## 6. Content
 - [ ] [D+C] siteSettings: names, address, geo (from Google Maps), phones (E.164 + display), hours (incl. special hours), map embed URL, socials, booking mode, form recipient, SEO defaults, legal entity.
@@ -69,7 +69,7 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 - [ ] [D] Old site? Redirect map in `src/config/redirects.ts` (SEO.md §9).
 
 ## 9. Launch QA (run `pnpm launch-check --url https://<domain>` from T11.6, then the manual items below)
-- [ ] `pnpm check`, `pnpm e2e`, Lighthouse CI budgets green on the production URL.
+- [ ] `pnpm check`, Lighthouse CI budgets green on the production URL.
 - [ ] Manual: iPhone Safari + Android Chrome (call, directions, menu, tiles, form, map, language switch), keyboard-only walkthrough, screen-reader spot check (VoiceOver/TalkBack) of the home + contact pages.
 - [ ] SEO: view-source canonical/hreflang, Rich Results Test (home, article), sitemap reachable, robots correct, `llms.txt` content correct.
 - [ ] Legal checklist (LEGAL-GDPR.md §10).

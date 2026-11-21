@@ -50,3 +50,9 @@ Format: Context → Decision → Consequences → Status. To change a decision, 
 
 ## ADR-010 Studio location (placeholder)
 - Embedded `/admin` by default. If the spike shows the Studio bloats the Worker (size/startup), host it at `<client>.sanity.studio` and make `/admin` a redirect.
+
+## ADR-011 No Playwright: no e2e tests, no screenshot script
+- **Context:** The owner decided (2026-11-21) to drop Playwright entirely.
+- **Decision:** Removed `e2e/`, `playwright.config.ts`, `@playwright/test`, `@axe-core/playwright`, the `e2e` and `shots` scripts (`scripts/shots.ts`) and the CI e2e step. Every e2e, Playwright, axe-in-browser and `pnpm shots` step, AC and Done check in `docs/tasks/*` is **skipped**. Where a behavior can be tested in jsdom (render output, ARIA attributes, keyboard handlers, pure logic), cover it with a Vitest test instead.
+- **Consequences:** Keyboard journeys, focus traps, axe on real pages, reduced motion, no-horizontal-scroll and network assertions (consent, map, Turnstile) are no longer verified automatically. WCAG 2.2 AA remains a requirement, now checked manually. Sign-off screenshots for clients are taken by hand. Revisit if regressions appear.
+- **Status:** Accepted.

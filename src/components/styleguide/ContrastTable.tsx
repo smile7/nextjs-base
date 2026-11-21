@@ -71,7 +71,6 @@ export function ContrastTable() {
           return (
             <li
               key={`${pair.fg}/${pair.bg}`}
-              data-contrast-pair
               className="flex min-w-0 items-center gap-3 rounded-md border border-border bg-surface p-3"
             >
               <span

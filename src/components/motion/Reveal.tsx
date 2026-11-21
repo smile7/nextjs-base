@@ -21,17 +21,12 @@ export function Reveal({ children, className, delay = 0 }: RevealProps) {
   const reduceMotion = usePrefersReducedMotion()
 
   if (reduceMotion) {
-    return (
-      <div className={className} data-reveal="static">
-        {children}
-      </div>
-    )
+    return <div className={className}>{children}</div>
   }
 
   return (
     <m.div
       className={className}
-      data-reveal="animated"
       initial={{ opacity: 0, y: revealOffset }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}

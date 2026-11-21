@@ -43,7 +43,6 @@ Install with exact versions (`pnpm add -E`). Upgrade deliberately, one PR per ma
 | | react-email | 6.11.16 | **v6 merged all components here.** `@react-email/components` is deprecated. Import from `react-email`. |
 | SEO | schema-dts | 2.1.0 | Typed JSON-LD. |
 | Tests | vitest | 5.1.1 | + @vitejs/plugin-react 6.3.0, jsdom 31.0.1, @testing-library/react 16.3.3 |
-| | @playwright/test | 1.65.1 | + @axe-core/playwright 4.14.0 |
 | | @lhci/cli | 0.16.1 | Lighthouse CI budgets. |
 | Lint/format | eslint | **9.39.x** | **Not 10.** `eslint-plugin-jsx-a11y` 6.10.2 (bundled by `eslint-config-next`) peers on ESLint ≤ 9. |
 | | eslint-config-next | 16.4.6 | Flat config; `next lint` was removed in Next 16, so run the ESLint CLI. |
@@ -117,7 +116,7 @@ Principles:
 │   ├── brand/                     # logo.svg, wordmark.svg, favicon set, og-fallback.jpg
 │   └── fonts/                     # only TTFs needed for OG image generation (Cyrillic)
 ├── seed/                          # demo content + images for `pnpm seed`
-├── scripts/                       # seed.ts, shots.ts, check-boundaries.ts, new-client.ts
+├── scripts/                       # seed.ts, check-contrast.ts, check-boundaries.ts, new-client.ts
 ├── sanity.config.ts               # Studio config (shared by embedded /admin and `sanity deploy`)
 ├── sanity.cli.ts                  # projectId/dataset + typegen config
 ├── sanity.types.ts                # GENERATED (pnpm typegen), committed
@@ -374,7 +373,7 @@ Consumers: next-intl routing, both Sanity i18n plugins (`supportedLanguages` / `
 | `NEXT_PUBLIC_SANITY_DATASET` | build, public | CI vars | `production` / `development` |
 | `NEXT_PUBLIC_SANITY_API_VERSION` | build, public | CI vars | Date string, e.g. `2026-11-01` |
 | `NEXT_PUBLIC_SANITY_STUDIO_URL` | build, public | CI vars | `/admin` or `https://x.sanity.studio` (stega + links) |
-| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | build, public | CI vars | Test key `1x00000000000000000000AA` locally/e2e |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | build, public | CI vars | Test key `1x00000000000000000000AA` locally/CI |
 | `NEXT_PUBLIC_ANALYTICS` | build, public | CI vars | `none` \| `cloudflare` \| `umami` \| `ga4` |
 | `NEXT_PUBLIC_CF_BEACON_TOKEN` / `NEXT_PUBLIC_UMAMI_WEBSITE_ID` / `NEXT_PUBLIC_UMAMI_SRC` / `NEXT_PUBLIC_GA_ID` | build, public | CI vars | Per provider |
 | `NEXT_PUBLIC_ENABLE_STYLEGUIDE` | build, public | CI vars | `true` on preview, `false` in production after sign-off |
@@ -385,7 +384,7 @@ Consumers: next-intl routing, both Sanity i18n plugins (`supportedLanguages` / `
 | `TURNSTILE_SECRET_KEY` | runtime secret | `wrangler secret` | Test secret `1x0000000000000000000000000000000AA` |
 | `CONTACT_FROM_EMAIL` | runtime var | wrangler `vars` | e.g. `Website <noreply@mail.client.bg>` |
 | `CONTACT_TO_EMAIL` | runtime var | wrangler `vars` | Overrides `siteSettings.contactForm.recipient` (keeps the inbox out of the public dataset if preferred) |
-| `CONTACT_DRY_RUN` | runtime var | `.dev.vars`, CI e2e | `true` skips the Resend call (e2e only; never in production) |
+| `CONTACT_DRY_RUN` | runtime var | `.dev.vars` | `true` skips the Resend call (local testing only; never in production) |
 | `CACHE_PURGE_API_TOKEN` / `CACHE_PURGE_ZONE_ID` | runtime secret | `wrangler secret` | Only if `cachePurge` is enabled (custom domain) |
 | `SANITY_WRITE_TOKEN` | local/CI only | `.env.local`, GH secret | Seed script, backups. **Never** deployed to the Worker. |
 | `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` | CI only | GH secrets | Deploys |
@@ -402,7 +401,7 @@ Local: `.env.local` for `next dev`, `.dev.vars` for `pnpm preview` (workerd). Ad
 ---
 
 ## 11. CI/CD (GitHub Actions)
-- `ci.yml` (PRs and main): pnpm install (frozen) → `pnpm typegen` + `git diff --exit-code sanity.types.ts schema.json` → lint → typecheck → unit tests → `next build` → Playwright smoke against `pnpm preview` (workerd), with Turnstile test keys.
+- `ci.yml` (PRs and main): pnpm install (frozen) → `pnpm typegen` + `git diff --exit-code sanity.types.ts schema.json` → lint → typecheck → unit tests → contrast check → `next build` (no e2e: ADR-011), with Turnstile test keys.
 - `deploy.yml`: on push to `main` → `opennextjs-cloudflare build && opennextjs-cloudflare deploy` (production). On PR → `opennextjs-cloudflare upload` (new version + preview URL, comment on the PR). In the Static profile it also runs on `repository_dispatch: [sanity-publish]`.
 - `backup.yml`: weekly `sanity dataset export production` → artifact (90-day retention). Optionally push to a private backup repo or R2. This matters because Free has no backup/restore SLA and the client is an Administrator.
 - Lighthouse CI on the PR preview URL with budgets (see `SEO.md` §8).

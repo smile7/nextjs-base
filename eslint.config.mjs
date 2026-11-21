@@ -67,9 +67,6 @@ const eslintConfig = defineConfig([
     '.open-next/**',
     '.wrangler/**',
     'cloudflare-env.d.ts',
-    'playwright-report/**',
-    'test-results/**',
-    '.screenshots/**',
     'sanity.types.ts',
   ]),
 ])

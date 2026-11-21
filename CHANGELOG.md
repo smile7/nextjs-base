@@ -6,7 +6,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 ### Added
-- Next.js 16 scaffold with pinned toolchain, strict TypeScript, ESLint/Prettier, Vitest and Playwright.
+- Next.js 16 scaffold with pinned toolchain, strict TypeScript, ESLint/Prettier and Vitest.
 - OpenNext Cloudflare configuration with ISR (default) and Static cache profiles.
 - CI and deploy workflows, Renovate config.
 - Typed, lazily validated environment variables.

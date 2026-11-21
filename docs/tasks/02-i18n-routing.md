@@ -39,7 +39,7 @@
 **AC:** Unit tests for both locales, including edge cases (closed days, midnight).
 **Done check:** `pnpm test src/lib/i18n`.
 
-### T02.5 — i18n e2e and "add a language" doc check
+### T02.5 — i18n e2e and "add a language" doc check — e2e part SKIPPED (ADR-011)
 **Steps:** e2e: switcher keyboard flow, the cookie remembers the choice, alternates in `<head>`. Then temporarily add `de` to `locales` in a branch, verify the type errors guide you to everything needed (messages, pathnames, Sanity language list), and document the exact steps in `docs/ARCHITECTURE.md` §7 "Adding a language". Revert.
 **AC:** The checklist "Adding a language" is accurate and ≤ 6 steps.
 **Done check:** e2e green; doc updated.

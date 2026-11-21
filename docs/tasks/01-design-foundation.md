@@ -52,7 +52,7 @@
 **AC:** Renders at 360/768/1280 without horizontal scroll; noindex meta present; 404 when disabled.
 **Done check:** `pnpm shots` (after T01.7) → review the images.
 
-### T01.7 — Screenshot script
+### T01.7 — Screenshot script — SKIPPED (ADR-011)
 **Steps:** `scripts/shots.ts` (Playwright library, not test runner): reads the route list from `scripts/shots.config.ts` (default: `/bg`, `/en`, `/bg/styleguide`, later the main pages), viewports 360×800, 768×1024, 1280×800, full-page, `reducedMotion: 'reduce'`, waits for fonts (`document.fonts.ready`) and network idle, writes `.screenshots/<date>/<route>-<w>.png` + an `index.html` contact sheet. Option `--base-url` (default `http://localhost:3000`). Script: `"shots": "tsx scripts/shots.ts"`.
 **Files:** `scripts/shots.ts`, `scripts/shots.config.ts`, `package.json`.
 **AC:** One command produces all screenshots + a contact sheet in < 60 s locally.

@@ -75,8 +75,8 @@ Optional: the full Cloudflare API MCP `https://mcp.cloudflare.com/mcp` (powerful
 1. Open a **new chat** in Cursor (one task = one chat; keeps context clean).
 2. Switch to **Plan Mode**. Paste the per-task prompt (§5.2) with the task ID.
 3. Review the plan. Push back on anything that contradicts the docs, adds scope or skips verification. Then let it build (switch to Agent mode).
-4. Claude verifies the acceptance criteria, runs `pnpm check` (and `pnpm shots` for UI), ticks `docs/PROGRESS.md` and commits.
-5. **You** look at the result: the screenshots (UI) and the diff summary. If it's not right, use the fix prompt (§5.5) in the **same** chat. If the chat gets long or confused, start a new one with the "resume" prompt.
+4. Claude verifies the acceptance criteria, runs `pnpm check`, ticks `docs/PROGRESS.md` and commits.
+5. **You** look at the result: the page in your browser (UI) and the diff summary. If it's not right, use the fix prompt (§5.5) in the **same** chat. If the chat gets long or confused, start a new one with the "resume" prompt.
 6. At the end of a phase, run the phase review prompt (§5.3) in a new chat, then pass the gate in `docs/tasks/README.md`.
 
 Rules of thumb
@@ -110,7 +110,7 @@ Plan first:
 - list the files you'll create/change,
 - list the risks/unknowns and how you'll verify each,
 - say what you will NOT do (scope guard).
-Wait for my OK. Then implement, verify every acceptance criterion with evidence (command output, test names, screenshots for UI), run pnpm check (+ pnpm shots for UI and look at the images), update docs/PROGRESS.md (tick + notes), and commit with a Conventional Commit message that includes the task ID.
+Wait for my OK. Then implement, verify every acceptance criterion with evidence (command output, test names), skip any e2e/Playwright/pnpm shots step (ADR-011), run pnpm check, update docs/PROGRESS.md (tick + notes), and commit with a Conventional Commit message that includes the task ID.
 ```
 
 ### 5.3 Phase review (new chat after the last task of a phase)
@@ -118,14 +118,14 @@ Wait for my OK. Then implement, verify every acceptance criterion with evidence 
 Phase <NN> is done. Review it against docs/tasks/<phase-file>.md and the rules in .cursor/rules.
 1) For every task: are all acceptance criteria met? Show evidence or say "not verified".
 2) Look for boundary violations (content layer, i18n strings, tokens), accessibility gaps, performance risks on Workers (CPU, bundle size) and drift from the docs.
-3) Run pnpm check, pnpm e2e and pnpm shots, and review the screenshots at 360/768/1280.
+3) Run pnpm check. List what needs a manual check in the browser at 360/768/1280 (keyboard, focus, reduced motion, layout).
 Report findings as a prioritized list (blocker / should fix / nice to have). Don't fix anything yet; wait for me to pick.
 ```
 
 ### 5.4 Design review (UI phases 01, 05, 06, 07)
 ```
 Use the frontend-design and web-design-guidelines skills.
-Review the screenshots in .screenshots/<latest>/ (all widths) and the components behind them.
+Review the screenshots I attach (all widths) and the components behind them.
 Our direction: docs/DESIGN-SYSTEM.md §1 and §13 (warm, calm, trustworthy, child-friendly but not childish; parents are the audience; mobile-first).
 Give me 5–10 concrete improvements (spacing, hierarchy, type, color use, motion, touch targets), each tied to a token or component change, not one-off classes. Flag anything that looks like a generic template.
 Then wait. I'll pick which to apply.
@@ -134,7 +134,7 @@ Then wait. I'll pick which to apply.
 ### 5.5 Fix / bug (same chat if small, new chat if not)
 ```
 Problem: <what you see, where (URL, viewport, locale), expected vs actual; paste the error or attach the screenshot>.
-Find the root cause first and explain it in 2–3 sentences. Then propose the smallest fix consistent with the docs and rules. After my OK: fix, add a regression test (unit or e2e), run pnpm check, commit "fix(<scope>): … (T<XX.Y>)".
+Find the root cause first and explain it in 2–3 sentences. Then propose the smallest fix consistent with the docs and rules. After my OK: fix, add a regression test (unit/render), run pnpm check, commit "fix(<scope>): … (T<XX.Y>)".
 ```
 
 ### 5.6 Resume (when a chat got long or was interrupted)
@@ -161,7 +161,7 @@ We're starting client <name>. Follow docs/NEW-CLIENT.md step by step. Tell me wh
 | Phase | Outcome | Your gate |
 | --- | --- | --- |
 | 00 Setup + spike | Strict repo, CI, deploys to Workers. Spike measures proxy.ts, CPU, Studio size | Read the spike results. Confirm ISR vs Static default and Free vs Paid recommendation |
-| 01 Design foundation | Tokens, fonts (Cyrillic), primitives, shadcn, motion, `/styleguide`, `pnpm shots` | Pick font pairing + palette from styleguide screenshots |
+| 01 Design foundation | Tokens, fonts (Cyrillic), primitives, shadcn, motion, `/styleguide` | Pick font pairing + palette from the styleguide |
 | 02 i18n | BG/EN routing, localized paths, switcher, hreflang | Click through both languages |
 | 03 Studio | Full content model, i18n plugins, seed | Try editing as an editor would |
 | 04 Content layer | Typed API, webhook revalidation, preview/Presentation | Publish → see it live on preview |
@@ -171,7 +171,7 @@ We're starting client <name>. Follow docs/NEW-CLIENT.md step by step. Tell me wh
 | 08 Contact | Form → email, map, booking CTAs | Send a real message |
 | 09 Consent/legal | Banner only when needed, analytics adapters, legal templates | Check with GA4 on and off |
 | 10 SEO/perf | JSON-LD, sitemap, `llms.txt`, OG, Lighthouse ≥ 95 | Read the LHCI report |
-| 11 QA/launch | e2e/a11y/visual suites, CSP, backups, editor guide, `new-client`, v1.0.0 | Fresh-clone test |
+| 11 QA/launch | Manual a11y pass, CSP, backups, editor guide, `new-client`, v1.0.0 | Fresh-clone test |
 
 Realistic effort: about 75 focused chats. Phases 00–04 are the foundation, so don't rush them. The spike in T00.4 decides two important ADRs.
 

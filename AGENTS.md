@@ -24,10 +24,9 @@ If an API you plan to use is not in those docs, stop and say so. Don't invent AP
 - Start in **Plan Mode**. Your plan must list the files you will touch, the approach, open questions, risks, and how you will verify the result. Wait for approval.
 - Keep diffs small and focused. Never refactor outside the task scope. Write unrelated issues down under "Follow-ups" in `docs/PROGRESS.md` instead.
 - When done:
-  1. Run `pnpm check` (lint, typecheck, unit tests) and the task's **Done check**.
-  2. For UI tasks, run `pnpm shots` and **look at the screenshots** (360, 768, 1280 px) before you claim the task is done.
-  3. Tick the task in `docs/PROGRESS.md` and add short notes.
-  4. Propose a Conventional Commit message (`feat(header): shrink on scroll`). The human commits.
+  1. Run `pnpm check` (lint, typecheck, unit tests, contrast) and the task's **Done check**. Skip any e2e, Playwright or `pnpm shots` step in a Done check (ADR-011).
+  2. Tick the task in `docs/PROGRESS.md` and add short notes.
+  3. Propose a Conventional Commit message (`feat(header): shrink on scroll`). The human commits.
 - If the task file is wrong or incomplete, say so in the plan. Don't improvise silently.
 
 ## Non-negotiable rules
@@ -64,7 +63,7 @@ If an API you plan to use is not in those docs, stop and say so. Don't invent AP
 **Quality**
 - TypeScript strict. No `any`, no `@ts-ignore` (use `@ts-expect-error` with a reason if truly needed).
 - Every content mapper, i18n helper and JSON-LD builder has Vitest unit tests.
-- Every new route has a Playwright smoke test in both locales.
+- There are no e2e or browser tests (no Playwright; ADR-011). Don't add them. Cover behavior with Vitest unit/render tests where jsdom allows it.
 
 ## Commands
 
@@ -72,10 +71,8 @@ If an API you plan to use is not in those docs, stop and say so. Don't invent AP
 | --- | --- |
 | `pnpm dev` | Next dev server (Node). Studio at `/admin` |
 | `pnpm preview` | Build and run in workerd locally (closest to production) |
-| `pnpm check` | lint + typecheck + unit tests (run before every commit) |
+| `pnpm check` | lint + typecheck + unit tests + contrast check (run before every commit) |
 | `pnpm typegen` | Extract the Sanity schema and generate `sanity.types.ts` |
-| `pnpm e2e` | Playwright smoke + a11y tests |
-| `pnpm shots` | Screenshots of key routes at 360/768/1280 into `.screenshots/` |
 | `pnpm seed` | Seed demo BG/EN content into the `development` dataset |
 | `pnpm run deploy` | OpenNext build + deploy (CI normally does this). Use `pnpm run deploy`, because `pnpm deploy` is a built-in pnpm command |
 

@@ -30,7 +30,7 @@ First client: **Rumi Dent** (Руми Дент), a dental practice in Ruse, Bulg
 - Full SEO/AEO kit: metadata, hreflang, sitemap, robots, OG, JSON-LD, llms.txt.
 - Embedded Sanity Studio at `/admin` with Presentation (visual editing) and draft mode.
 - Cloudflare Workers hosting (two cache profiles), CI/CD, backups.
-- Quality gates: lint, types, unit, e2e, axe, Lighthouse CI, screenshot review.
+- Quality gates: lint, types, unit, contrast, Lighthouse CI, manual a11y + visual review (no e2e: ADR-011).
 
 ### Non-goals (v1), but design for them
 | Future feature | How v1 prepares |
@@ -55,7 +55,7 @@ Format: **F-ID — Feature**, then acceptance criteria (AC). "Both locales" mean
 ### F-02 Styleguide route
 - AC1: `/[locale]/styleguide` shows color tokens (with WCAG contrast ratios for text/background pairs), the type scale, spacing, radius, shadows, motion samples, and every component in all its states (default/hover/focus/disabled/error, mobile + desktop).
 - AC2: `noindex, nofollow`, excluded from the sitemap, disallowed in robots, and available only when `NEXT_PUBLIC_ENABLE_STYLEGUIDE=true`.
-- AC3: Screenshots at 360/768/1280 are produced by `pnpm shots` for sign-off.
+- AC3: Reviewed manually at 360/768/1280 for sign-off (no screenshot script: ADR-011).
 
 ### F-03 Internationalization
 - AC1: `/` redirects to `/bg`. Every page exists under `/bg/...` and `/en/...` with localized static pathnames (e.g. `/bg/uslugi` ↔ `/en/services`).
@@ -114,10 +114,10 @@ Each section: editable in the Studio, renders responsively from 320 px, passes a
 - AC3: Sends an email via Resend to `CONTACT_TO_EMAIL` or the settings recipient, with `replyTo` = the visitor's email when given. Subject and template are localized. No submission is stored anywhere else.
 - AC4: Success and error states are announced (`aria-live`), with focus moved to the result message. Double submits are prevented.
 - AC5: Notice text says "don't include sensitive medical details". Retention is described in the privacy policy.
-- AC6: E2E test with Turnstile test keys and Resend mocked.
+- AC6: Unit tests for the server action with Turnstile verification and Resend mocked (no e2e: ADR-011).
 
 ### F-10 Map and directions
-- AC1: No request to Google before the user clicks "Show map" (verified in the network panel/e2e). The placeholder is a local image or a styled block with the address.
+- AC1: No request to Google before the user clicks "Show map" (verified manually in the network panel). The placeholder is a local image or a styled block with the address.
 - AC2: After the click (or if "External media" consent was given earlier), the Google Maps embed iframe (URL from settings) loads with `title`, lazy loading and `referrerpolicy`.
 - AC3: The "Directions" link opens `https://www.google.com/maps/dir/?api=1&destination=<lat,lng or address>` in a new tab with an accessible label.
 
@@ -139,7 +139,7 @@ See `docs/SEO.md`. AC: metadata on every route in both locales, canonical + href
 - WCAG 2.2 AA: axe has zero serious/critical issues on all templates in both locales. Keyboard-only walkthrough passes (checklist in `tasks/11-qa-launch.md`).
 - Lighthouse CI budgets (mobile): Performance ≥ 95, A11y 100, Best Practices ≥ 95, SEO 100 on home, services, article and contact.
 - JS budget: ≤ 110 KB gzip first-load JS on home (excluding the Studio route).
-- Tests: Vitest (units), Playwright (smoke in both locales, a11y, key interactions), screenshot review.
+- Tests: Vitest (units, render tests). No Playwright/e2e (ADR-011); a11y and key interactions are checked manually.
 
 ### F-15 Operations
 - CI on every PR. Preview deployments. Production deploy on main.

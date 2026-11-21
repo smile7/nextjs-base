@@ -2,12 +2,12 @@
 
 Tick tasks as they are completed (the agent updates this at the end of each task). Add notes, deviations and follow-ups.
 
-Legend: [ ] todo · [~] in progress · [x] done · [!] blocked
+Legend: [ ] todo · [~] in progress · [x] done · [!] blocked · [-] skipped
 
 ## Phase 00 — Repo, toolchain, Cloudflare spike
 - [x] T00.1 · [x] T00.2 · [~] T00.3 · [ ] T00.4 · [~] T00.5 · [x] T00.6 · [~] T00.7
 ## Phase 01 — Design tokens, primitives, styleguide
-- [x] T01.1 · [x] T01.2 · [x] T01.3 · [x] T01.4 · [x] T01.5 · [x] T01.6 · [x] T01.7
+- [x] T01.1 · [x] T01.2 · [x] T01.3 · [x] T01.4 · [x] T01.5 · [x] T01.6 · [-] T01.7
 ## Phase 02 — i18n and routing
 - [ ] T02.1 · [ ] T02.2 · [ ] T02.3 · [ ] T02.4 · [ ] T02.5
 ## Phase 03 — Sanity Studio and schemas
@@ -27,7 +27,7 @@ Legend: [ ] todo · [~] in progress · [x] done · [!] blocked
 ## Phase 10 — SEO/AEO and performance
 - [ ] T10.1 · [ ] T10.2 · [ ] T10.3 · [ ] T10.4 · [ ] T10.5
 ## Phase 11 — QA, launch, template packaging
-- [ ] T11.1 · [ ] T11.2 · [ ] T11.3 · [ ] T11.4 · [ ] T11.5 · [ ] T11.6 · [ ] T11.7
+- [ ] T11.1 · [-] T11.2 · [ ] T11.3 · [ ] T11.4 · [ ] T11.5 · [ ] T11.6 · [ ] T11.7
 
 ## Task notes
 
@@ -51,6 +51,7 @@ Phases 00–01 were run in one batch chat at the owner's request (no per-task Pl
 - **T01.5:** `motion@14.14.0`. `MotionProvider` (in the root layout): `LazyMotion strict` + `MotionConfig reducedMotion="user"`. `Reveal`: `m.div` with fade + 12 px lift, `whileInView` once, `--duration-slow`/`--ease-standard`, optional `delay`. Under reduced motion it renders a plain `div`. Reduced motion is read with a `useSyncExternalStore` hook (server snapshot `false`), because Motion's `useReducedMotion` reads `matchMedia` on the first client render and would cause a hydration mismatch. `tokens.ts` mirrors `--duration-*`/`--ease-*`; `tokens.test.ts` parses `tokens.css` so they can't drift. **Deviation (needed for the AC):** `domAnimation` is loaded asynchronously (`features={() => import('./features')}`, documented in Motion's typings) instead of `features={domAnimation}`. Measured with esbuild (min + gz, React external), synchronous loading costs ~38 kB (LazyMotion + MotionConfig + m ≈ 16 kB, domAnimation ≈ 23 kB on top), which fails the < 20 kB AC. **Bundle note (first-load JS, gz, `next build`):** `/` 174.6 → 186.0 kB (**+11.2 kB**), `/styleguide` 263.3 → 279.3 kB (+16.0 kB, includes the demo). Trade-off: `Reveal` content stays at opacity 0 until hydration plus the features chunk (never use it on the LCP element or above the fold). `e2e/motion.spec.ts` (reduced: static, transform `none`, opacity 1; allowed: opacity 0 → 1 after scrolling) passes on all 3 projects.
 - **T01.6:** `/styleguide` is gated by `NEXT_PUBLIC_ENABLE_STYLEGUIDE` (`notFound()`; a build with it off prerenders the route with status 404, verified in `.next/server/app/styleguide.meta`) and has `robots: noindex, nofollow`. Sections: palette (primitive scales + semantic swatches), **live contrast ratios** for the 30 `pnpm contrast` pairs, type scale (BG + EN), lead/body/small, Cyrillic specimen, 3 font pairings for sign-off (Nunito + Onest current; M PLUS Rounded 1c 700/800 + Manrope; Comfortaa + Golos Text; loaded only by `/styleguide` via `src/components/styleguide/fontAlternatives.ts`, `preload: false`), Wordmark variants, spacing/section spacing/radius/shadow scales, all components (T01.4), motion (T01.5). **Contrast in the browser:** the build pipeline rewrites the token colors (`oklch()` → `lab()` in the computed values), so the table paints each token onto a 1-px canvas and reads back sRGB. Browser ratios match `pnpm contrast` within ±0.02. The contrast math + pairs moved from `scripts/lib/` to `src/lib/design/{contrast,contrast-pairs}.ts` so the script and the page share them. **For Silvena (fonts):** Nunito and Onest render Russian-style д/л (no Bulgarian `locl` forms); Comfortaa and Manrope show the Bulgarian forms. Worth deciding knowingly. Not yet on the page: header states (Phase 05) and sections (Phase 06); hover/focus/active states are live (hover/Tab), not frozen. CI: `NEXT_PUBLIC_ENABLE_STYLEGUIDE: 'true'` in `ci.yml`, plus `pnpm contrast` now runs in CI (previously only in `pnpm check`). Tests: `page.test.tsx` (404 when disabled, noindex), e2e noindex meta, no horizontal scroll at 360/768/1280, all 30 live ratios pass. The axe helper now waits for `networkidle`: Base UI sets the checkbox label id in an effect, so axe raced hydration on slower projects.
 - **T01.7:** `pnpm shots [--base-url URL]` (`scripts/shots.ts`, Playwright library) needs a running server (`pnpm dev` or `pnpm preview`; it exits with a hint if none is running). Viewports 360×800 / 768×1024 / 1280×800 run in parallel contexts, `reducedMotion: 'reduce'`, one scroll-through (lazy images / in-view content), `networkidle` + `document.fonts.ready`, full page. Output: `.screenshots/<YYYY-MM-DD>/<route>-<w>.png` + `index.html` contact sheet (flags HTTP ≥ 400). The Next dev-tools badge is hidden. Routes in `scripts/shots.config.ts`: `/`, `/styleguide` for now. **Switch to `/bg`, `/en`, `/bg/styleguide` in Phase 02** (the task text assumes locale routes that don't exist yet). `routeSlug` is Unicode-aware (Cyrillic slugs) and unit-tested. Run: 6 screenshots in **4.0 s**. Review: `/` is the empty T00.1 placeholder (expected); styleguide has no overflow at 360/768/1280. Fixed after review: primitive swatch labels (now step numbers) and section-spacing rows.
+- **ADR-011 (2026-11-21): Playwright removed at the owner's request.** Deleted `e2e/` (smoke, styleguide keyboard/axe, motion specs), `playwright.config.ts`, `@playwright/test`, `@axe-core/playwright`, `scripts/shots*` and the `e2e`/`shots` scripts, the CI e2e step, the test-only `data-reveal`/`data-contrast-pair` attributes and Playwright ignore entries. T01.7 and T11.2 are skipped; e2e parts of every other task are skipped (see `docs/tasks/README.md`). The T01.4–T01.6 notes above describe e2e checks that ran at the time and no longer exist. AGENTS, README prompts, PRD, ARCHITECTURE and NEW-CLIENT updated.
 
 ### MCP / skills status
 | Item | Status |
@@ -63,5 +64,6 @@ Phases 00–01 were run in one batch chat at the owner's request (no per-task Pl
 _To be filled: proxy.ts OK?, worker size, cold start, CPU ms for static hit / ISR miss / server action / draft mode._
 
 ## Follow-ups
+- With e2e gone, consider Vitest render tests for `Reveal` (reduced-motion branch, mocking `matchMedia`) and the `ContrastTable` math, so the T01.5/T01.6 behavior keeps some automated coverage.
 - Phase 08 (forms): Base UI `Checkbox` SSR output references a label id that is only set after hydration (`aria-labelledby` dangles until then). Verify with the `Field` component or give the label an explicit id.
 - `Reveal` content is invisible without JS (Motion SSR outputs `opacity:0`). If no-JS rendering matters, add a `<noscript>` style override or switch to a CSS-only reveal (`animation-timeline: view()`) once support is broad enough.

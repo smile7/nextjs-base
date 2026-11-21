@@ -9,18 +9,20 @@ Task format
 - **Acceptance criteria (AC):** what must be true. Verify every AC before claiming done.
 - **Done check:** commands/observations that prove it.
 
+> **ADR-011 (no Playwright) overrides the task files.** Skip every e2e / Playwright / axe-in-browser / `pnpm shots` step, AC and Done check. Replace with a Vitest test when jsdom can cover the behavior, otherwise note a manual check in PROGRESS. Fully skipped: **T01.7** (screenshot script) and **T11.2** (visual regression). Partly skipped: **T02.5** (e2e part), **T11.1** (automated suite; the manual screen-reader pass stays).
+
 Phase order and gates
 
 | Phase | File | Gate at the end |
 | --- | --- | --- |
 | 00 | `00-setup.md` | Spike results recorded. ADR-003/004/010 confirmed or amended |
-| 01 | `01-design-foundation.md` | Styleguide screenshots reviewed by Silvena |
+| 01 | `01-design-foundation.md` | Styleguide reviewed by Silvena |
 | 02 | `02-i18n-routing.md` | Both locales route correctly |
 | 03 | `03-sanity-studio.md` | Studio usable with seed content |
 | 04 | `04-content-layer.md` | Publish → page updates (ISR on preview deploy) |
-| 05 | `05-layout-shell.md` | Header/menu/action bar pass the keyboard + screenshot review |
+| 05 | `05-layout-shell.md` | Header/menu/action bar pass a manual keyboard + visual review |
 | 06 | `06-sections.md` | Every section in the styleguide + home renders the seed |
-| 07 | `07-routes-pages.md` | All routes in both locales, smoke tests green |
+| 07 | `07-routes-pages.md` | All routes in both locales (manual check) |
 | 08 | `08-contact-integrations.md` | Form sends real email from preview |
 | 09 | `09-consent-analytics-legal.md` | Banner logic correct with GA4 on/off |
 | 10 | `10-seo-performance.md` | Lighthouse budgets green on preview |

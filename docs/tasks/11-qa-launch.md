@@ -5,12 +5,12 @@
 
 ---
 
-### T11.1 — Full e2e, accessibility and keyboard suite
+### T11.1 — Full e2e, accessibility and keyboard suite — automated part SKIPPED (ADR-011); manual screen-reader pass stays
 **Steps:** Consolidate the e2e specs: smoke over all sitemap URLs (status 200, one h1, `lang`, title, canonical, no console errors), axe (WCAG 2.2 AA tags: `wcag2a`, `wcag2aa`, `wcag21aa`, `wcag22aa`) on every template page in both locales, keyboard journeys (menu, tiles, FAQ, lightbox, form, consent), 200% zoom/reflow at 320 CSS px (no horizontal scroll: WCAG 1.4.10), `prefers-reduced-motion`, forced colors (`forcedColors: 'active'`) sanity check, target size checks for the action bar. Manual pass with VoiceOver (iOS Safari) and NVDA or Narrator, with findings in PROGRESS.
 **AC:** Zero axe violations; all journeys pass on mobile/tablet/desktop projects (chromium + webkit).
 **Done check:** `pnpm e2e` green in CI.
 
-### T11.2 — Visual regression baselines
+### T11.2 — Visual regression baselines — SKIPPED (ADR-011)
 **Steps:** Playwright `toHaveScreenshot` for `/styleguide` sections and 5 key pages at 3 widths, with masks for dynamic content (dates, announcement) and `reducedMotion`, fonts awaited. Baselines generated in CI's Linux container (document `pnpm e2e:update-shots` via a workflow_dispatch job that commits baselines, to avoid OS font differences). Threshold `maxDiffPixelRatio: 0.01`.
 **AC:** An intentional token change shows a diff; unchanged code passes 3 consecutive runs (no flakiness).
 **Done check:** CI run links in PROGRESS.
