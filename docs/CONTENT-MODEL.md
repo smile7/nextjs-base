@@ -6,7 +6,7 @@ Conventions
 - `defaultLanguages: ['bg']` (from `defaultLocale`) creates a BG row on every new document. EN rows are added with "Add EN". Validation requires the default language. Other languages are optional, and the content layer falls back per field.
 - Validation messages are written for non-technical editors ("Add a short title, max 60 characters").
 - Every type defines a `preview` (title, subtitle, media) and an icon (`@sanity/icons`/lucide).
-- Free-plan budget: keep the total unique attribute paths < 1,500 (limit 2,000). Reuse objects. The CI step `sanity documents validate` + an attribute count check after seeding.
+- Free-plan budget: keep the total unique attribute paths < 1,500 (limit 2,000). Reuse objects. Check `sanity documents validate` and the attribute count (`/data/stats/<dataset>` → `fields.count`) after seeding; 645 with the full demo seed (2026-11-21).
 - **Never** store secrets or personal data. Datasets are public on Free.
 
 ---
@@ -303,7 +303,8 @@ Missing translations → "Not yet in <language>" per language, across page/servi
 ---
 
 ## 8. Seed content (`seed/`, `pnpm seed` → `development` dataset)
-- Deterministic `_id`s (`seed.page.home.bg`), idempotent (`createOrReplace`).
-- Demo brand "Demo Dental" with plausible BG/EN content for every section and type, images from `seed/images/` (license-free or generated placeholders, clearly marked).
-- Legal pages from the `LEGAL-GDPR.md` templates with `[[placeholders]]`.
-- For a real client, `pnpm seed --client` creates only the structure (system pages with standard sections, empty settings, legal templates) in `production`.
+- Deterministic `_id`s (`seed.page.home.bg`, metadata `seed.meta.page.home`; singletons keep `siteSettings` / `navigation`), idempotent (`createOrReplace`). `--reset` deletes `seed.**` and `drafts.seed.**` only. Demo content is refused for `production`.
+- Demo brand "Demo Dental" with plausible BG/EN content for every section and type, images from `seed/images/` (generated placeholders labelled "placeholder"; Sanity dedupes re-uploads by hash).
+- Legal pages from the `LEGAL-GDPR.md` templates with `[[placeholders]]` (filled with demo company details in demo mode).
+- For a real client, `pnpm seed --client --dataset production` creates only the structure (system pages with standard empty sections, empty settings, legal templates with placeholders, system-route navigation) **as drafts, create-only**: a document is skipped if its published or draft version exists, so re-running never overwrites a client's edits. Translation metadata is published, as the plugin does.
+- Checked offline by `scripts/seed/build.test.ts` (unique ids, references resolve, metadata per routable doc, slugs, section rules, every field exists in `schema.json`) and after a run by `sanity documents validate`. The seed doesn't run in CI (the write token is local only).

@@ -343,7 +343,7 @@ Consumers: next-intl routing, both Sanity i18n plugins (`supportedLanguages` / `
 - **Collections (field-level i18n):** `serviceCategory`, `teamMember`, `faqItem`, `galleryItem`, `testimonial`, `announcement`.
 - **Objects:** `seo`, `link`, `cta`, `imageWithAlt`, `richText` (Portable Text), `openingHoursSpec`, `specialHours`, `address`, `geo`, `socialLink`, `legalEntity`, `bookingConfig`.
 - **Sections** (`page.sections[]`, each an object type `section.<name>`): `hero`, `textImage`, `tiles`, `faq`, `ctaBand`, `team`, `gallery`, `blogTeaser`, `contactHours`, `processSteps`, `testimonials`, `richTextBlock`. **Reserved, not built:** `priceList`, `beforeAfter`, `googleReviews`.
-- Unique-attribute budget (Free: 2k per dataset): internationalized arrays keep attribute paths flat. Reuse object types instead of near-duplicates. The seed + `sanity documents validate` run in CI.
+- Unique-attribute budget (Free: 2k per dataset): internationalized arrays keep attribute paths flat. Reuse object types instead of near-duplicates. Run `sanity documents validate` after seeding (locally; the write token never reaches CI). CI type-checks the seed against `schema.json` in unit tests.
 - Ordering via `@sanity/orderable-document-list` (`orderRank` field).
 - Datasets: `production` (live) and `development` (seed, experiments, Sanity MCP writes). Both are public on Free, so **never store secrets or personal data in Sanity**.
 

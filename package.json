@@ -15,7 +15,7 @@
     "lint:fix": "eslint --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "next typegen && tsc --noEmit",
+    "typecheck": "pnpm typegen && next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm contrast",
@@ -25,6 +25,7 @@
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "typegen": "sanity schema extract --path schema.json --force && sanity typegen generate",
+    "seed": "tsx scripts/seed.ts",
     "studio:deploy": "sanity deploy"
   },
   "dependencies": {
