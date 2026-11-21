@@ -13,7 +13,7 @@ Structure
 
 Accessibility (non-negotiable)
 - Semantic HTML first: landmarks (`header`, `nav` with `aria-label`, `main#main`, `footer`), one `h1` per page, no skipped heading levels (headings levels come from section position), lists for lists, `<table>` for hours, `<address>`, `<time dateTime>`.
-- Every interactive element is keyboard operable with a visible focus indicator (`--color-ring`, 2px + offset; never `outline: none` without a replacement). Focus is not obscured by the sticky header/action bar (`scroll-padding`).
+- Every interactive element is keyboard operable with a visible focus indicator (`--color-focus`, 2px + offset; never `outline: none` without a replacement). Focus is not obscured by the sticky header/action bar (`scroll-padding`).
 - Target size ≥ 44×44 px for primary touch targets (≥ 24 px minimum anywhere).
 - Disclosure pattern for tiles/FAQ: `<button aria-expanded aria-controls>` inside the heading. Dialogs (menu, lightbox, preferences) trap focus, close on Escape and restore focus.
 - Images: meaningful `alt` from CMS, `alt=""` only for decorative. Icons `aria-hidden` unless standalone (then `aria-label`). Icon-only buttons need a label from messages.

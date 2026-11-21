@@ -64,7 +64,6 @@ Phases 00–01 were run in one batch chat at the owner's request (no per-task Pl
 _To be filled: proxy.ts OK?, worker size, cold start, CPU ms for static hit / ISR miss / server action / draft mode._
 
 ## Follow-ups
-- `.cursor/rules/styling-tokens.mdc` and `components-a11y.mdc` use the pre-T01.1 token names (`text-muted-fg`, `ring-ring`, `--color-ring`); the real tokens are `fg-muted` and `--color-focus` (see T01.1 deviations). Align the rules.
 - With e2e gone, consider Vitest render tests for `Reveal` (reduced-motion branch, mocking `matchMedia`) and the `ContrastTable` math, so the T01.5/T01.6 behavior keeps some automated coverage.
 - Phase 08 (forms): Base UI `Checkbox` SSR output references a label id that is only set after hydration (`aria-labelledby` dangles until then). Verify with the `Field` component or give the label an explicit id.
 - `Reveal` content is invisible without JS (Motion SSR outputs `opacity:0`). If no-JS rendering matters, add a `<noscript>` style override or switch to a CSS-only reveal (`animation-timeline: view()`) once support is broad enough.
