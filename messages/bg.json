@@ -93,7 +93,10 @@
     "ratingStars": "{rating} от 5",
     "hoursClosed": "Затворено",
     "hoursSpecial": "Специално работно време",
-    "contactMapPlaceholder": "Картата ще се зареди тук",
+    "mapTitle": "Карта: {name}",
+    "mapLoad": "Зареди картата (Google)",
+    "mapNotice": "Картата се зарежда от Google Maps. С натискането на бутона Google получава вашия IP адрес и може да постави бисквитки.",
+    "mapDirections": "Упътване в Google Maps",
     "blogRead": "Прочетете",
     "teamBioExpand": "Покажи биография",
     "teamBioCollapse": "Скрий биография"

@@ -1,8 +1,13 @@
+import { MapPinIcon } from 'lucide-react'
+
 import { submitContact } from '@/actions/contact'
 import { ContactForm } from '@/components/forms/ContactForm'
+import { DirectionsLink } from '@/components/map/DirectionsLink'
+import { MapEmbed } from '@/components/map/MapEmbed'
+import { ContentImage } from '@/components/primitives/ContentImage'
 import { Heading } from '@/components/primitives/Heading'
 import { readPublicEnv } from '@/env'
-import { primaryPhone } from '@/lib/site/actions'
+import { directionsUrl, primaryPhone } from '@/lib/site/actions'
 import { Text } from '@/components/primitives/Text'
 import type { ContactHoursSection as ContactHoursModel } from '@/lib/content'
 import { addressLines, hoursRows } from '@/lib/site/footer'
@@ -35,6 +40,7 @@ export async function ContactHoursSection({
   const level = sectionHeadingLevel(index, sections)
   const rows = hoursRows(locale, site.openingHours)
   const phone = site.phones[0]
+  const directions = directionsUrl(site)
 
   return (
     <SectionShell section={section} labelledBy={section.heading ? titleId : undefined}>
@@ -108,13 +114,39 @@ export async function ContactHoursSection({
           </ul>
         </div>
       ) : null}
-      {section.showMap ? (
-        <div
-          className="mt-10 flex min-h-48 items-center justify-center rounded-card border border-dashed border-border bg-surface-muted text-fg-muted"
-          role="img"
-          aria-label={t('contactMapPlaceholder')}
-        >
-          {t('contactMapPlaceholder')}
+      {section.showMap && (site.mapEmbedUrl || directions) ? (
+        <div className="mt-10">
+          {site.mapEmbedUrl ? (
+            <MapEmbed
+              embedUrl={site.mapEmbedUrl}
+              title={t('mapTitle', { name: site.brandName })}
+              loadLabel={t('mapLoad')}
+              notice={t('mapNotice')}
+            >
+              {site.mapPlaceholder ? (
+                <ContentImage
+                  image={site.mapPlaceholder}
+                  sizes="(min-width: 1280px) 1200px, 100vw"
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="flex h-full flex-col items-center pt-6 text-center sm:pt-10">
+                  <MapPinIcon aria-hidden="true" className="size-10 text-primary" />
+                  <Text className="mt-2 font-semibold">{site.brandName}</Text>
+                  <Text tone="muted">{addressLines(site.address)[0]}</Text>
+                </div>
+              )}
+            </MapEmbed>
+          ) : null}
+          {directions ? (
+            <DirectionsLink
+              href={directions}
+              label={t('mapDirections')}
+              opensInNewTab={t('opensInNewTab')}
+              className="mt-4"
+            />
+          ) : null}
         </div>
       ) : null}
       {section.note ? (

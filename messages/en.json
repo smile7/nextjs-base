@@ -93,7 +93,10 @@
     "ratingStars": "{rating} out of 5",
     "hoursClosed": "Closed",
     "hoursSpecial": "Special opening hours",
-    "contactMapPlaceholder": "Map loads here",
+    "mapTitle": "Map: {name}",
+    "mapLoad": "Load the map (Google)",
+    "mapNotice": "The map is loaded from Google Maps. When you press the button, Google receives your IP address and may set cookies.",
+    "mapDirections": "Directions in Google Maps",
     "blogRead": "Read",
     "teamBioExpand": "Show bio",
     "teamBioCollapse": "Hide bio"
