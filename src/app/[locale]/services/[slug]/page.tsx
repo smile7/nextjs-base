@@ -10,9 +10,8 @@ import { Heading } from '@/components/primitives/Heading'
 import { Prose } from '@/components/primitives/Prose'
 import { Section } from '@/components/primitives/Section'
 import { Text } from '@/components/primitives/Text'
-import { faqSchemaFromSection } from '@/components/sections/faq-schema'
 import { SectionRenderer } from '@/components/sections/SectionRenderer'
-import { JsonLd } from '@/components/seo/JsonLd'
+import { PageJsonLd } from '@/components/seo/JsonLd'
 import { bookingCtaBand } from '@/components/site/booking-cta'
 import { Breadcrumbs } from '@/components/site/Breadcrumbs'
 import { SetPageTranslations } from '@/components/site/PageTranslations'
@@ -95,7 +94,6 @@ export default async function ServicePage({ params }: PageProps<'/[locale]/servi
     book: tCta('book'),
     call: tCta('call'),
   })
-  const faqSchema = faq ? faqSchemaFromSection(faq) : null
 
   return (
     <>
@@ -178,7 +176,16 @@ export default async function ServicePage({ params }: PageProps<'/[locale]/servi
       ) : null}
 
       <SectionRenderer sections={[cta]} locale={locale} site={settings} />
-      {faqSchema ? <JsonLd data={faqSchema} /> : null}
+      <PageJsonLd
+        locale={locale}
+        settings={settings}
+        name={service.title}
+        description={service.seo.description || service.teaser}
+        translations={service.translations}
+        parents={[{ name: servicesPage?.title ?? tCrumbs('services'), href: '/services' }]}
+        service={service}
+        faq={faq}
+      />
     </>
   )
 }

@@ -1,13 +1,12 @@
 import type { ReactNode } from 'react'
 
-import { faqSchemaFromSection } from '@/components/sections/faq-schema'
 import { pageUsesHeroH1 } from '@/components/sections/helpers'
 import { SectionRenderer } from '@/components/sections/SectionRenderer'
-import type { SectionSiteContext } from '@/components/sections/types'
-import { JsonLd } from '@/components/seo/JsonLd'
+import { PageJsonLd } from '@/components/seo/JsonLd'
 import type { Locale } from '@/config/i18n'
-import type { FaqSection, Page } from '@/lib/content'
+import type { FaqSection, Page, SiteSettings, SystemPageKey, TeamSection } from '@/lib/content'
 import type { Href } from '@/lib/i18n/translations'
+import type { WebPageType } from '@/lib/seo/jsonld/webPage'
 
 import { PageHeader } from './PageHeader'
 import { SetPageTranslations } from './PageTranslations'
@@ -15,7 +14,7 @@ import { SetPageTranslations } from './PageTranslations'
 export type CmsPageProps = {
   page: Page
   locale: Locale
-  site: SectionSiteContext
+  site: SiteSettings
   /** Where the language switcher goes for a locale without a translation. */
   fallback?: Href
   /** Wraps the rendered sections (e.g. the services audience filter). */
@@ -26,7 +25,15 @@ export type CmsPageProps = {
   children?: ReactNode
 }
 
-/** A page-builder page: `h1` (hero or title band), sections, FAQ JSON-LD. */
+const PAGE_TYPES: Partial<Record<SystemPageKey, Exclude<WebPageType, 'MedicalWebPage'>>> = {
+  about: 'AboutPage',
+  contact: 'ContactPage',
+  services: 'CollectionPage',
+  gallery: 'CollectionPage',
+  blog: 'CollectionPage',
+}
+
+/** A page-builder page: `h1` (hero or title band), sections, the page's JSON-LD graph. */
 export function CmsPage({
   page,
   locale,
@@ -39,7 +46,9 @@ export function CmsPage({
   const faq = page.sections.find(
     (section): section is FaqSection => section.type === 'faq' && section.emitSchema,
   )
-  const faqSchema = faq ? faqSchemaFromSection(faq) : null
+  const people = page.sections
+    .filter((section): section is TeamSection => section.type === 'team')
+    .flatMap((section) => section.members)
   const sections = <SectionRenderer sections={page.sections} locale={locale} site={site} />
 
   return (
@@ -52,7 +61,17 @@ export function CmsPage({
       )}
       {wrapSections ? wrapSections(sections) : sections}
       {children}
-      {faqSchema ? <JsonLd data={faqSchema} /> : null}
+      <PageJsonLd
+        locale={locale}
+        settings={site}
+        home={page.pageKey === 'home'}
+        name={page.title}
+        description={page.seo.description || page.intro}
+        translations={page.translations}
+        type={page.pageKey ? PAGE_TYPES[page.pageKey] : undefined}
+        faq={faq}
+        people={people}
+      />
     </>
   )
 }

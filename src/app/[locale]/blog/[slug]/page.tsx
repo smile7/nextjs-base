@@ -10,6 +10,7 @@ import { Prose } from '@/components/primitives/Prose'
 import { Section } from '@/components/primitives/Section'
 import { Text } from '@/components/primitives/Text'
 import { SectionRenderer } from '@/components/sections/SectionRenderer'
+import { PageJsonLd } from '@/components/seo/JsonLd'
 import { AuthorCard } from '@/components/site/AuthorCard'
 import { bookingCtaBand } from '@/components/site/booking-cta'
 import { Breadcrumbs } from '@/components/site/Breadcrumbs'
@@ -156,6 +157,15 @@ export default async function ArticlePage({ params }: PageProps<'/[locale]/blog/
       </article>
 
       <SectionRenderer sections={closing} locale={locale} site={settings} />
+      <PageJsonLd
+        locale={locale}
+        settings={settings}
+        name={article.title}
+        description={article.seo.description || article.excerpt}
+        translations={article.translations}
+        parents={[{ name: blogPage?.title ?? tCrumbs('blog'), href: '/blog' }]}
+        article={article}
+      />
     </>
   )
 }

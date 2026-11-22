@@ -8,8 +8,6 @@ import { SectionShell, sectionTitleId } from './SectionShell'
 import { sectionHeadingLevel } from './helpers'
 import type { SectionComponentProps } from './types'
 
-export { faqSchemaFromSection } from './faq-schema'
-
 export function FaqSection({
   section: raw,
   index,

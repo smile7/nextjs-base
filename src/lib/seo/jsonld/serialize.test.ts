@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
-import { faqSchemaFromSection } from '@/components/sections/faq-schema'
 import type { FaqSection, RichTextValue } from '@/lib/content'
 
-import { serializeJsonLd } from './jsonld'
+import { faqPage } from './faqPage'
+import { serializeJsonLd } from './serialize'
 
 const marker = '\u200b\u200c\u200d\ufeff'.repeat(8)
 
@@ -22,7 +22,7 @@ const faq: FaqSection = {
 
 describe('serializeJsonLd', () => {
   it('strips stega markers from FAQ JSON-LD (draft mode)', () => {
-    const json = serializeJsonLd(faqSchemaFromSection(faq)!)
+    const json = serializeJsonLd(faqPage('https://example.com/bg', faq))
 
     expect(json).not.toMatch(/[\u200b-\u200d\ufeff]/)
     expect(JSON.parse(json)).toMatchObject({

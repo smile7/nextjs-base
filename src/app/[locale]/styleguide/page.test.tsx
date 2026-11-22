@@ -25,7 +25,9 @@ describe('/styleguide', () => {
 
   it('renders when enabled', async () => {
     vi.stubEnv('NEXT_PUBLIC_ENABLE_STYLEGUIDE', 'true')
-    await expect(StyleguidePage({ params: Promise.resolve({ locale: 'bg' }) })).resolves.toBeTruthy()
+    await expect(
+      StyleguidePage({ params: Promise.resolve({ locale: 'bg' }) }),
+    ).resolves.toBeTruthy()
   })
 
   it('is never indexed', () => {

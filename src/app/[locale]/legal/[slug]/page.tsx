@@ -7,6 +7,7 @@ import { Container } from '@/components/primitives/Container'
 import { Prose } from '@/components/primitives/Prose'
 import { Section } from '@/components/primitives/Section'
 import { Text } from '@/components/primitives/Text'
+import { PageJsonLd } from '@/components/seo/JsonLd'
 import { PageHeader } from '@/components/site/PageHeader'
 import { SetPageTranslations } from '@/components/site/PageTranslations'
 import { readPublicEnv } from '@/env'
@@ -102,6 +103,13 @@ export default async function LegalPage({ params }: PageProps<'/[locale]/legal/[
           </Prose>
         </Container>
       </Section>
+      <PageJsonLd
+        locale={locale}
+        settings={settings}
+        name={page.title}
+        description={page.excerpt}
+        translations={page.translations}
+      />
     </>
   )
 }

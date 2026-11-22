@@ -20,11 +20,7 @@ export const metadata: Metadata = {
 }
 
 /** Internal sign-off surface. 404 unless NEXT_PUBLIC_ENABLE_STYLEGUIDE=true. */
-export default async function StyleguidePage({
-  params,
-}: {
-  params: Promise<{ locale: string }>
-}) {
+export default async function StyleguidePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   const { NEXT_PUBLIC_ENABLE_STYLEGUIDE } = readPublicEnv('NEXT_PUBLIC_ENABLE_STYLEGUIDE')
   if (!NEXT_PUBLIC_ENABLE_STYLEGUIDE) notFound()

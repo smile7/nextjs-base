@@ -53,15 +53,17 @@ export function pageTitle(input: Pick<MetadataInput, 'settings' | 'title' | 'seo
     : `%s${SEPARATOR}${brandName}`
   // The page part is shortened so the brand suffix survives.
   const room = Math.max(TITLE_MAX - (template.length - 2), 20)
-  return truncate(template.replace('%s', truncate(input.seo?.title || input.title, room)), TITLE_MAX)
+  return truncate(
+    template.replace('%s', truncate(input.seo?.title || input.title, room)),
+    TITLE_MAX,
+  )
 }
 
 /** The route's full `Metadata` (SEO.md §1). Every string goes through `withoutStega`. */
 export function composeMetadata(input: MetadataInput, context: MetadataContext): Metadata {
   const { locale, settings, seo, translations, article } = input
   const title = pageTitle(input)
-  const fullDescription =
-    seo?.description || input.description || settings.seoDefaults.description
+  const fullDescription = seo?.description || input.description || settings.seoDefaults.description
   const description = fullDescription ? truncate(fullDescription, DESCRIPTION_MAX) : undefined
   const { googleVerification, bingVerification } = settings.seoDefaults
   const alternates = buildAlternates(locale, translations)
