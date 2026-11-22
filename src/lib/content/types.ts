@@ -129,6 +129,8 @@ export type SiteSettings = {
   legalLinks: LinkTarget[]
   /** Localized path of the privacy policy (`legalPage` of kind `privacy`), for the contact form. */
   privacyHref?: string
+  /** Localized path of the cookie policy (`legalPage` of kind `cookies`), for the preferences dialog. */
+  cookiePolicyHref?: string
   footerNote?: string
   seoDefaults: { titleTemplate?: string; description?: string; ogImage?: ImageAsset }
 }

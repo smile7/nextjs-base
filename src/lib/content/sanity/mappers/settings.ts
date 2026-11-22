@@ -138,6 +138,7 @@ export function mapSiteSettings(
     ...present({
       footerNote: row.footerNote,
       privacyHref: row.privacyPage ? routePath(row.privacyPage, locale) : null,
+      cookiePolicyHref: row.cookiePolicyPage ? routePath(row.cookiePolicyPage, locale) : null,
     }),
     seoDefaults: {
       ...present({

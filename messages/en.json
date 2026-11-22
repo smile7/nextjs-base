@@ -65,7 +65,8 @@
       "whatsapp": "WhatsApp",
       "googleBusiness": "Google profile",
       "other": "Website"
-    }
+    },
+    "cookieSettings": "Cookie settings"
   },
   "SkipLink": {
     "label": "Skip to main content"
@@ -99,7 +100,8 @@
     "mapDirections": "Directions in Google Maps",
     "blogRead": "Read",
     "teamBioExpand": "Show bio",
-    "teamBioCollapse": "Hide bio"
+    "teamBioCollapse": "Hide bio",
+    "mapAlwaysAllow": "Always load Google Maps"
   },
   "Error": {
     "title": "Something went wrong",
@@ -196,5 +198,90 @@
     "subject": "{prefix}: {topic}",
     "heading": "New inquiry from the website",
     "footer": "Sent from the contact form on {sentAt} (UTC). Consent to data processing: given, text version {version}."
+  },
+  "Consent": {
+    "banner": {
+      "title": "Cookies",
+      "text": "We only use necessary cookies unless you allow others, for example for statistics. You can change your choice at any time with “Cookie settings” at the bottom of the page.",
+      "settings": "Settings"
+    },
+    "acceptAll": "Accept all",
+    "rejectAll": "Reject all",
+    "policy": "Cookie policy",
+    "dialog": {
+      "title": "Cookie settings",
+      "description": "Choose which cookies and external services you allow. You can change your choice at any time.",
+      "save": "Save choices",
+      "close": "Close",
+      "alwaysOn": "(always on)"
+    }
+  },
+  "Cookies": {
+    "categories": {
+      "necessary": {
+        "title": "Necessary",
+        "description": "Needed for the site to work. They can't be switched off."
+      },
+      "preferences": {
+        "title": "Preferences",
+        "description": "Remember choices you make on the site."
+      },
+      "analytics": {
+        "title": "Statistics",
+        "description": "Help us understand how the site is used."
+      },
+      "marketing": {
+        "title": "Marketing",
+        "description": "Used for advertising and tracking across sites."
+      },
+      "embeds": {
+        "title": "External content",
+        "description": "Loads content from other sites, such as Google Maps, without asking each time."
+      }
+    },
+    "providers": {
+      "firstParty": "This website",
+      "cloudflare": "Cloudflare",
+      "umami": "Umami",
+      "google": "Google"
+    },
+    "items": {
+      "locale": {
+        "purpose": "Remembers the chosen language.",
+        "duration": "Until the browser is closed"
+      },
+      "consent": {
+        "purpose": "Stores your cookie choices.",
+        "duration": "6 months"
+      },
+      "announcement": {
+        "purpose": "Remembers that you closed the announcement at the top of the site.",
+        "duration": "Until the tab is closed"
+      },
+      "preview": {
+        "purpose": "Editors previewing drafts only. Never set for visitors.",
+        "duration": "Until the browser is closed"
+      },
+      "turnstile": {
+        "purpose": "Protects the contact form from bots. Loaded only on the page with the form.",
+        "duration": "Session"
+      },
+      "cfAnalytics": {
+        "purpose": "Anonymous visit statistics without cookies or personal profiles.",
+        "duration": "Nothing is stored on your device"
+      },
+      "umami": {
+        "purpose": "Anonymous visit statistics without cookies or personal profiles.",
+        "duration": "Nothing is stored on your device"
+      },
+      "ga4": {
+        "purpose": "Visit statistics in Google Analytics (pseudonymous identifiers).",
+        "duration": "Up to 2 years"
+      },
+      "googleMaps": {
+        "purpose": "Shows the location map after you load it.",
+        "duration": "Up to 6 months"
+      }
+    }
   }
 }

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { getMessages, getTranslations } from 'next-intl/server'
 
+import { ConsentProvider } from '@/components/consent/ConsentProvider'
 import { MotionProvider } from '@/components/motion/MotionProvider'
 import { AnnouncementBanner } from '@/components/site/AnnouncementBanner'
 import { MobileActionBar } from '@/components/site/MobileActionBar'
@@ -83,46 +84,50 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             Error: messages.Error,
             Sections: messages.Sections,
             ContactForm: messages.ContactForm,
+            Consent: messages.Consent,
+            Cookies: messages.Cookies,
           }}
         >
-          <PageTranslationsProvider>
-            <PageShell
-              skipLabel={t('SkipLink.label')}
-              header={
-                settings ? (
+          <ConsentProvider cookiePolicyHref={settings?.cookiePolicyHref}>
+            <PageTranslationsProvider>
+              <PageShell
+                skipLabel={t('SkipLink.label')}
+                header={
+                  settings ? (
+                    <>
+                      {announcement ? (
+                        <AnnouncementBanner
+                          announcement={announcement}
+                          settings={settings}
+                          homePath={getPathname({ locale, href: '/' })}
+                        />
+                      ) : null}
+                      <SiteHeader
+                        brandName={settings.brandName}
+                        nav={nav}
+                        phone={phone}
+                        menu={<MobileNav nav={nav} phone={phone} booking={booking} />}
+                      />
+                    </>
+                  ) : null
+                }
+                footer={
                   <>
-                    {announcement ? (
-                      <AnnouncementBanner
-                        announcement={announcement}
+                    {settings ? (
+                      <SiteFooter
+                        locale={locale}
                         settings={settings}
-                        homePath={getPathname({ locale, href: '/' })}
+                        columns={navigation?.footerColumns ?? []}
                       />
                     ) : null}
-                    <SiteHeader
-                      brandName={settings.brandName}
-                      nav={nav}
-                      phone={phone}
-                      menu={<MobileNav nav={nav} phone={phone} booking={booking} />}
-                    />
+                    {barActions.length > 0 ? <MobileActionBar actions={barActions} /> : null}
                   </>
-                ) : null
-              }
-              footer={
-                <>
-                  {settings ? (
-                    <SiteFooter
-                      locale={locale}
-                      settings={settings}
-                      columns={navigation?.footerColumns ?? []}
-                    />
-                  ) : null}
-                  {barActions.length > 0 ? <MobileActionBar actions={barActions} /> : null}
-                </>
-              }
-            >
-              <MotionProvider>{children}</MotionProvider>
-            </PageShell>
-          </PageTranslationsProvider>
+                }
+              >
+                <MotionProvider>{children}</MotionProvider>
+              </PageShell>
+            </PageTranslationsProvider>
+          </ConsentProvider>
         </NextIntlClientProvider>
         {draft.isEnabled && <PreviewTools />}
       </body>

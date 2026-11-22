@@ -129,6 +129,7 @@ export async function ContactHoursSection({
               title={t('mapTitle', { name: site.brandName })}
               loadLabel={t('mapLoad')}
               notice={t('mapNotice')}
+              alwaysAllowLabel={t('mapAlwaysAllow')}
             >
               {site.mapPlaceholder ? (
                 <ContentImage

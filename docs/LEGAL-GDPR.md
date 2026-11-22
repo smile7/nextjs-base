@@ -28,29 +28,29 @@
 International transfers: Cloudflare, Resend, Sanity and Google are US-based or have US sub-processors. Rely on the EU–US Data Privacy Framework and/or SCCs. Sign/accept each provider's DPA in the **client's** account. Prefer EU regions where offered (check Resend's sending-region options when adding the domain; the static site stores no data on Cloudflare) **(verify)**.
 
 ## 3. Cookie and storage registry (`src/config/cookies.ts`)
-Single source for the consent banner, the preferences dialog and the cookie policy table.
-```ts
-export const cookieRegistryVersion = 1 // bump → users are asked again
-export const cookies: CookieEntry[] = [
-  { name: 'NEXT_LOCALE', provider: 'first-party', category: 'necessary', purpose: { bg: '…', en: 'Remembers the chosen language' }, duration: { bg: '1 година', en: '1 year' }, type: 'cookie' },
-  { name: 'consent', provider: 'first-party', category: 'necessary', purpose: {…'Stores your cookie choices'}, duration: {…'12 months'}, type: 'cookie' },
-  { name: 'announcement-dismissed:*', provider: 'first-party', category: 'necessary', type: 'localStorage', … },
-  { name: '__prerender_bypass, __next_preview_data', provider: 'first-party', category: 'necessary', purpose: {…'Editor preview only (not set for visitors)'}, … },
-  // added automatically when the feature is on:
-  { name: '_ga, _ga_*', provider: 'Google', category: 'analytics', feature: 'ga4', … },
-  { name: 'Google Maps (NID, …)', provider: 'Google', category: 'externalMedia', feature: 'map', … },
-]
-```
-Categories: `necessary` (always on, not toggleable), `analytics`, `marketing`, `externalMedia`.
+Single source for the consent banner, the preferences dialog and the cookie policy table. Each entry has `id` (purpose and duration are messages under `Cookies.items.<id>`, BG + EN), `name`, `provider`, `category`, `storage` (`cookie | localStorage | sessionStorage | none`) and optionally `enabledWhen(context)`, `askedAtEmbed`, `deletePrefixes`. Bump `cookieRegistryVersion` when an entry that needs consent is added or changes purpose: every visitor is asked again.
+
+| Entry | Category | Storage | Enabled |
+| --- | --- | --- | --- |
+| `NEXT_LOCALE` | necessary | cookie (session) | always |
+| `consent` | necessary | cookie (6 months) | always |
+| `announcement-dismissed:*` | necessary | sessionStorage | always |
+| `__prerender_bypass`, `__next_preview_data` | necessary | cookie (editors only) | always |
+| Cloudflare Turnstile | necessary | none | always (contact form, §1) |
+| Cloudflare Web Analytics / Umami | analytics | none (cookieless) | `NEXT_PUBLIC_ANALYTICS` |
+| `_ga`, `_ga_*` | analytics | cookie (up to 2 years) | `NEXT_PUBLIC_ANALYTICS=ga4` |
+| Google Maps (`NID`, …) | embeds | cookie, asked at the embed | always (click-to-load) |
+
+Categories: `necessary` (always on, not toggleable), `preferences`, `analytics`, `marketing`, `embeds`. `requiresConsent()` is true only when an enabled entry is non-necessary, stores something on the device and isn't asked at the embed, so cookieless analytics and the click-to-load map never show the banner. The dialog offers a switch for each category that has such an entry (the map's `embeds` always; `analytics` with GA4).
 
 ## 4. Consent UX rules (when the banner is active)
 - First layer: a short text + **Accept all**, **Reject all**, **Settings**, with equal visual weight (same button style and size). No pre-ticked boxes. No cookie wall. The site stays usable.
 - The banner doesn't block the main content on mobile (bottom sheet ≤ 40 % of the viewport height), is keyboard-accessible, and is announced as a non-modal `region` with a heading.
 - Settings dialog: a toggle per category with a description, and a link to the cookie policy.
-- The choice is stored with a timestamp and registry version for 12 months, then the banner asks again.
+- The choice is stored with a timestamp and registry version for 6 months (cookie `consent`), then the banner asks again.
 - A **"Cookie settings"** link in the footer reopens the dialog. Withdrawing consent is as easy as giving it.
 - GA4 Consent Mode v2: `gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 })` before any tag. Load `gtag.js` only after analytics consent (basic mode, the conservative default). Then `gtag('consent', 'update', { analytics_storage: 'granted' })`.
-- External media: a per-embed "Load map" button + a "Always allow Google Maps" checkbox that sets `externalMedia` consent.
+- External media: a per-embed "Load map" button + an "Always allow Google Maps" checkbox that grants the `embeds` category.
 
 ## 5. Contact form compliance
 - Under the submit button: «Изпращайки формата, вие се съгласявате личните ви данни да бъдат обработени, за да отговорим на запитването ви. Моля, не изпращайте медицинска информация. [Политика за поверителност]» / "By sending this form you agree that we process your data to answer your inquiry. Please don't include medical details. [Privacy policy]".

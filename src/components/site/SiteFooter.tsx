@@ -1,6 +1,7 @@
 import { MailIcon, PhoneIcon } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 
+import { CookieSettingsButton } from '@/components/consent/CookieSettingsButton'
 import { Container } from '@/components/primitives/Container'
 import type { Locale } from '@/config/i18n'
 import { Link } from '@/i18n/navigation'
@@ -128,17 +129,21 @@ export async function SiteFooter({ locale, settings, columns }: SiteFooterProps)
 
       <div className="border-t border-border">
         <Container width="wide" className="flex flex-col gap-3 py-6 text-step--1 text-fg-muted">
-          {settings.legalLinks.length > 0 ? (
-            <nav aria-label={t('legal')}>
-              <ul className="flex flex-wrap gap-x-6">
-                {settings.legalLinks.map((link) => (
-                  <li key={link.href}>
-                    <NavLink link={link} className={`${linkClass} text-fg`} />
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ) : null}
+          <nav aria-label={t('legal')}>
+            <ul className="flex flex-wrap gap-x-6">
+              {settings.legalLinks.map((link) => (
+                <li key={link.href}>
+                  <NavLink link={link} className={`${linkClass} text-fg`} />
+                </li>
+              ))}
+              <li>
+                <CookieSettingsButton
+                  label={t('cookieSettings')}
+                  className={`${linkClass} cursor-pointer text-fg`}
+                />
+              </li>
+            </ul>
+          </nav>
           {provider.length > 0 ? <p>{provider.join(' · ')}</p> : null}
           {settings.footerNote ? <p>{settings.footerNote}</p> : null}
           <p>

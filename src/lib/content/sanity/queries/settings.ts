@@ -47,6 +47,7 @@ export const siteSettingsQuery = defineQuery(`*[_id == "siteSettings"][0]{
   },
   "legalLinks": legalLinks[]{ "doc": ${localizedRef('@', '^._ref')} },
   "privacyPage": *[_type == "legalPage" && kind == "privacy" && language == $locale][0]{ ${routeFields} },
+  "cookiePolicyPage": *[_type == "legalPage" && kind == "cookies" && language == $locale][0]{ ${routeFields} },
   "footerNote": ${i18n('footerNote')},
   seoDefaults{
     "titleTemplate": ${i18n('titleTemplate')},

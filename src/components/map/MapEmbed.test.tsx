@@ -7,7 +7,13 @@ const embedUrl = 'https://www.google.com/maps/embed?pb=demo'
 
 function renderMap() {
   return render(
-    <MapEmbed embedUrl={embedUrl} title="Map" loadLabel="Load the map (Google)" notice="Notice">
+    <MapEmbed
+      embedUrl={embedUrl}
+      title="Map"
+      loadLabel="Load the map (Google)"
+      notice="Notice"
+      alwaysAllowLabel="Always load Google Maps"
+    >
       <span>Placeholder</span>
     </MapEmbed>,
   )
