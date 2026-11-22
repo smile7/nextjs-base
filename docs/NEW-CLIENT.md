@@ -61,8 +61,8 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 - [ ] [C/D] Move DNS to Cloudflare (change nameservers at the registrar), or add a CNAME setup if the registrar requires it.
 - [ ] [D] Worker → Settings → Domains & Routes → add the custom domain (`<domain>` and `www.<domain>`). Redirect Rule: `www` → apex (or the reverse), 301.
 - [ ] [D] Update `NEXT_PUBLIC_SITE_URL`, CORS and the Presentation `previewUrl` to the real domain, then redeploy. (The publish webhook points at GitHub, so it doesn't change.)
-- [ ] [D] SSL mode Full (strict). "Always Use HTTPS" on. HSTS via our headers (no preload until stable).
-- [ ] [D] Contact form rate limit (client-owned zone, Free includes one rate-limiting rule): Security → WAF → Rate limiting rules → "Contact form POST": `http.request.method eq "POST" and http.request.uri.path in {"/bg/kontakti" "/en/contact"}` (the localized contact paths), counting by IP, 5 requests per 10 seconds, action Block for 10 seconds. Works only on the custom domain (not `workers.dev`).
+- [ ] [D] SSL mode Full (strict). "Always Use HTTPS" on. HSTS via our headers (no preload until stable). HSTS `includeSubDomains` forces HTTPS on all client subdomains — verify each subdomain (e.g. `www`, `mail`, staging) before go-live.
+- [ ] [D] Contact form rate limit (client-owned zone, Free includes one rate-limiting rule): Security → WAF → Rate limiting rules → "Contact form POST": `http.request.uri.path in {"/bg/kontakti" "/en/contact"}` (the localized contact paths; on the Free plan the rule can only match **Path**, not HTTP method). Counting by IP, 10 requests per 10 seconds, action Block for 10 seconds. Page loads to the contact URL count toward the limit too (not only form submits). Works only on the custom domain (not `workers.dev`).
 - [ ] [D] Old site? Redirect map in `src/config/redirects.ts` (SEO.md §9): one `{ source, destination }` per old URL, served as 308. `www` ↔ apex is the Cloudflare Redirect Rule above, not a list entry.
 
 ## 9. Launch QA (run `pnpm launch-check --url https://<domain>` from T11.6, then the manual items below)
@@ -103,6 +103,6 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 - [ ] **Проверка:** след няколко минути сайтът се обновява сам. Отворете страниците и се уверете, че човекът вече не се показва.
 
 ## Upstream changes (template ↔ client repos)
-- The template repo is the source of truth for components and infra. Client repos add the template as a remote: `git remote add template git@github.com:<you>/site-starter.git`.
+- The template repo is the source of truth for components and infra. Client repos add the template as a remote: `git remote add template git@github.com:smile7/nextjs-base.git`.
 - Improve generic things in the template first (PR there), then release a tag (`vX.Y.Z`, CHANGELOG entry). In client repos: `git fetch template --tags && git merge vX.Y.Z` (or `git cherry-pick <sha>` for a single fix), resolve conflicts in favor of the client's config files, run `pnpm check && pnpm build`, and note the template version at the top of the client's `docs/PROGRESS.md`. Client-specific files (`src/config/*`, `tokens.css`, `fonts.ts`, `messages/*`, `public/brand/*`) are designed not to conflict.
 - Keep `CHANGELOG.md` in the template (semver). Client repos note which template version they're on.

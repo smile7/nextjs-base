@@ -32,7 +32,6 @@ Node 24 LTS, pnpm 12.21.0, next 16.4.6, react 19.3.1, typescript 6.0.3, tailwind
 - The CSP ships as Report-Only and needs `script-src 'unsafe-inline'` (prerendered pages can't use nonces). Switch to enforcing after a clean week live (NEW-CLIENT §9).
 - First-load JS is about 239 KB gzip (budget 250 KB; Lighthouse Perf and TBT are the real gates).
 - Next 16.4.6 renders `notFound()` as a blank HTML shell until hydration; no-JS visitors see an empty 404 page (status and `noindex` are correct).
-- `Reveal` animations leave content invisible without JS.
 - Draft preview renders on the Worker within the Free 10 ms CPU limit; a heavy page or `/{locale}/opengraph-image` in draft mode may fail there (preview with `pnpm dev`). Never-published documents 404 in Presentation.
 - No automated content backups (Sanity Free has no restore SLA); export by hand.
 - Header dropdowns (`navigation.header[].children`) are not rendered; booking modes are phone and external URL only.

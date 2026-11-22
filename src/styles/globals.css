@@ -147,4 +147,9 @@
   html.js [data-tile-panel][data-open='false'] {
     display: none;
   }
+
+  html:not(.js) [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

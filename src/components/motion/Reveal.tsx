@@ -26,6 +26,7 @@ export function Reveal({ children, className, delay = 0 }: RevealProps) {
 
   return (
     <m.div
+      data-reveal
       className={className}
       initial={{ opacity: 0, y: revealOffset }}
       whileInView={{ opacity: 1, y: 0 }}
