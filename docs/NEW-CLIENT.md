@@ -62,6 +62,7 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 - [ ] [D] Worker → Settings → Domains & Routes → add the custom domain (`<domain>` and `www.<domain>`). Redirect Rule: `www` → apex (or the reverse), 301.
 - [ ] [D] Update `NEXT_PUBLIC_SITE_URL`, CORS and the Presentation `previewUrl` to the real domain, then redeploy. (The publish webhook points at GitHub, so it doesn't change.)
 - [ ] [D] SSL mode Full (strict). "Always Use HTTPS" on. HSTS via our headers (no preload until stable).
+- [ ] [D] Contact form rate limit (client-owned zone, Free includes one rate-limiting rule): Security → WAF → Rate limiting rules → "Contact form POST": `http.request.method eq "POST" and http.request.uri.path in {"/bg/kontakti" "/en/contact"}` (the localized contact paths), counting by IP, 5 requests per 10 seconds, action Block for 10 seconds. Works only on the custom domain (not `workers.dev`).
 - [ ] [D] Old site? Redirect map in `src/config/redirects.ts` (SEO.md §9): one `{ source, destination }` per old URL, served as 308. `www` ↔ apex is the Cloudflare Redirect Rule above, not a list entry.
 
 ## 9. Launch QA (run `pnpm launch-check --url https://<domain>` from T11.6, then the manual items below)
@@ -71,6 +72,7 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 - [ ] Legal checklist (LEGAL-GDPR.md §10).
 - [ ] Publish test: edit a text → the GitHub deploy run starts → live in < 10 min.
 - [ ] Search Console: add the property, submit the sitemap. Bing Webmaster import. GBP website link with UTM.
+- [ ] CSP (`src/config/csp.ts`, T11.3) ships as `Content-Security-Policy-Report-Only`. After about a week live with no violations in the browser console (walk every page journey: home, services, a service, about, gallery, blog, an article, contact with the form and the map loaded, a legal page, the cookie dialog, `/admin` + Presentation), set `CSP_HEADER = 'Content-Security-Policy'`, deploy, and walk the same journeys again. If something breaks, revert that one line. A new analytics provider or embed means a new host in `csp.ts` first.
 
 ## 10. Handover
 - [ ] [D] 30-minute Studio training for the client (record it): editing texts, hours/special hours, adding an article, translating, gallery consent flags, Presentation preview, announcements.

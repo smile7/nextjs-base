@@ -1,5 +1,8 @@
 import { z } from 'zod'
 
+// Zod's JIT probes `new Function('')`, which the CSP reports as `script-src` eval on the contact page.
+z.config({ jitless: true })
+
 /**
  * Contact form schema, shared by `ContactForm` (client) and the contact Server Action.
  * Error messages are keys of `ContactForm.errors` in `messages/*.json`, so the schema stays
