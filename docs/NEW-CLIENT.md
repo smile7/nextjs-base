@@ -66,6 +66,7 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 - [ ] [D] Old site? Redirect map in `src/config/redirects.ts` (SEO.md §9): one `{ source, destination }` per old URL, served as 308. `www` ↔ apex is the Cloudflare Redirect Rule above, not a list entry.
 
 ## 9. Launch QA (run `pnpm launch-check --url https://<domain>` from T11.6, then the manual items below)
+`launch-check` reads the sitemap and checks every page (200, canonical = self, reciprocal hreflang, no `noindex`, JSON-LD parses, OG image reachable, no `[[placeholders]]`), robots, the styleguide 404, security headers and the email DNS records (SPF/DKIM on `mail.<domain>`, or `--mail-domain`; DMARC on the apex). It exits 1 on any failure and prints the manual items. Try it before deploying: `NEXT_PUBLIC_ENV=production NEXT_PUBLIC_ENABLE_STYLEGUIDE=false pnpm build && pnpm start` (same env on both), then `pnpm launch-check --url http://localhost:3000` (DNS is skipped for localhost).
 - [ ] `pnpm check`, manual Lighthouse run (mobile) within the SEO.md §8 budgets on the production URL.
 - [ ] Manual: iPhone Safari + Android Chrome (call, directions, menu, tiles, form, map, language switch), keyboard-only walkthrough, screen-reader spot check (VoiceOver/TalkBack) of the home + contact pages.
 - [ ] SEO: view-source canonical/hreflang, Rich Results Test (home, article), sitemap reachable, robots correct, `llms.txt` content correct.
