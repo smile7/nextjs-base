@@ -107,17 +107,28 @@ describe('submitContact', () => {
     expect(options.idempotencyKey).toMatch(/^contact-[0-9a-f]{64}$/)
   })
 
-  it('uses the settings recipient without CONTACT_TO_EMAIL, and the EN subject', async () => {
+  it('uses the settings recipient without CONTACT_TO_EMAIL, and BG notification copy for EN visitors', async () => {
     vi.stubEnv('CONTACT_TO_EMAIL', '')
     mocks.settings.mockResolvedValue({ brandName: 'Demo Dental', recipient: 'inbox@example.bg' })
     await submitContact('en', null, formData({ topic: 'general', email: '' }))
     const [payload] = mocks.send.mock.calls[0]!
     expect(payload).toMatchObject({
       to: 'inbox@example.bg',
-      subject: 'Demo Dental: General question',
+      subject: 'Demo Dental: Общ въпрос',
     })
     expect(payload).not.toHaveProperty('replyTo')
     expect(payload.text).not.toContain("Child's age")
+  })
+
+  it('refuses the Turnstile test secret in production', async () => {
+    vi.stubEnv('NEXT_PUBLIC_ENV', 'production')
+    vi.stubEnv('TURNSTILE_SECRET_KEY', '1x0000000000000000000000000000000AA')
+    await expect(submitContact('bg', null, formData())).resolves.toEqual({
+      ok: false,
+      formError: 'unavailable',
+    })
+    expect(fetchMock).not.toHaveBeenCalled()
+    expect(loggedText()).toContain('"code":"turnstile"')
   })
 
   it('returns field errors from the shared schema', async () => {

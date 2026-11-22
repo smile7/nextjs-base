@@ -6,7 +6,7 @@ import { DirectionsLink } from '@/components/map/DirectionsLink'
 import { MapEmbed } from '@/components/map/MapEmbed'
 import { ContentImage } from '@/components/primitives/ContentImage'
 import { Heading } from '@/components/primitives/Heading'
-import { readPublicEnv } from '@/env'
+import { readPublicEnv, TURNSTILE_TEST_SITE_KEY } from '@/env'
 import { directionsUrl, primaryPhone } from '@/lib/site/actions'
 import { Text } from '@/components/primitives/Text'
 import type { ContactHoursSection as ContactHoursModel } from '@/lib/content'
@@ -21,7 +21,14 @@ import type { SectionComponentProps } from './types'
 /** A build without the key still renders; submits are then refused with the phone as fallback. */
 function turnstileSiteKey(): string | undefined {
   try {
-    return readPublicEnv('NEXT_PUBLIC_TURNSTILE_SITE_KEY').NEXT_PUBLIC_TURNSTILE_SITE_KEY
+    const env = readPublicEnv('NEXT_PUBLIC_TURNSTILE_SITE_KEY', 'NEXT_PUBLIC_ENV')
+    if (
+      env.NEXT_PUBLIC_ENV === 'production' &&
+      env.NEXT_PUBLIC_TURNSTILE_SITE_KEY === TURNSTILE_TEST_SITE_KEY
+    ) {
+      return undefined
+    }
+    return env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
   } catch {
     return undefined
   }

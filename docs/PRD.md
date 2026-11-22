@@ -108,10 +108,10 @@ Each section: editable in the Studio, renders responsively from 320 px, passes a
 - **404:** localized, helpful (links to home, services, contact; call button).
 
 ### F-09 Contact form
-- Fields: name*, phone or email (at least one required), message*, preferred contact method, consent checkbox* (links to the privacy policy), hidden honeypot. The field set is configurable in code (`src/config/forms.ts`) for other clients.
+- Fields: name*, phone or email (at least one required), message*, consent checkbox* (links to the privacy policy), hidden honeypot. Topic and child age are in v1 (T08.1). **Deferred:** preferred contact method and per-client field config (`src/config/forms.ts`).
 - AC1: Client-side validation (RHF + Zod) with localized messages. The same Zod schema runs server-side in the Server Action.
 - AC2: Turnstile is verified server-side (`siteverify`, with remote IP from `CF-Connecting-IP`). Failure gives a friendly message.
-- AC3: Sends an email via Resend to `CONTACT_TO_EMAIL` or the settings recipient, with `replyTo` = the visitor's email when given. Subject and template are localized. No submission is stored anywhere else.
+- AC3: Sends an email via Resend to `CONTACT_TO_EMAIL` or the settings recipient, with `replyTo` = the visitor's email when given. The clinic notification (subject + body) uses the default locale (`bg`); visitor-facing success/error messages stay in the submitter's locale. No submission is stored anywhere else.
 - AC4: Success and error states are announced (`aria-live`), with focus moved to the result message. Double submits are prevented.
 - AC5: Notice text says "don't include sensitive medical details". Retention is described in the privacy policy.
 - AC6: Unit tests for the server action with Turnstile verification and Resend mocked (no e2e: ADR-011).

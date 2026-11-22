@@ -7,7 +7,7 @@ import { createElement } from 'react'
 import { render } from 'react-email'
 import { Resend } from 'resend'
 
-import { locales, type Locale } from '@/config/i18n'
+import { defaultLocale, locales, type Locale } from '@/config/i18n'
 import {
   ContactNotification,
   contactNotificationText,
@@ -154,7 +154,7 @@ export async function submitContact(
     return unavailable
   }
 
-  const email = await buildEmail(locale, data, settings)
+  const email = await buildEmail(defaultLocale, data, settings)
   if (dryRun || !resendEnv || !to) {
     log('dry_run')
     return { ok: true }

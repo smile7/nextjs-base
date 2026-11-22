@@ -26,6 +26,6 @@
 **Done check:** Vitest render test (no iframe before the click, iframe with `title` after); manual check in the browser Network panel.
 
 ### T08.5 — BookingCTA, Viber/WhatsApp
-**Steps:** `BookingCTA` reads `bookingConfig` (mode: `phone` | `form` | `external` (URL, e.g. a future booking system) | `disabled`) and renders the right action everywhere (header, action bar, CTA bands). Messaging: Viber (`viber://chat?number=%2B359…`; works on mobile with Viber installed, so show only on mobile and keep the phone fallback) and WhatsApp (`https://wa.me/359…`). Track `booking_click` with mode.
+**Steps:** `BookingCTA` reads `bookingConfig` (mode: `phone` | `externalUrl`, as in CONTENT-MODEL) and renders the right action everywhere (header, action bar, CTA bands). Messaging: Viber (`viber://chat?number=%2B359…`; works on mobile with Viber installed, so show only on mobile and keep the phone fallback) and WhatsApp (`https://wa.me/359…`). Track `booking_click` with mode.
 **AC:** Switching `bookingConfig.mode` in Studio changes CTAs site-wide after publish; no dead links on desktop for Viber.
 **Done check:** unit tests for href builders; Studio toggle test.
