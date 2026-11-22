@@ -76,7 +76,7 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 
 ## 10. Handover
 - [ ] [D] 30-minute Studio training for the client (record it): editing texts, hours/special hours, adding an article, translating, gallery consent flags, Presentation preview, announcements.
-- [ ] [D] Write a one-page "How to edit your site" in the client's language (BG) and add it as a Studio dashboard/help link (optional).
+- [ ] [D] Hand over `docs/handover/EDITOR-GUIDE.bg.md` (editing, Presentation, translations, images and consent, announcements, publishing) and `docs/handover/OWNERSHIP.bg.md` (accounts, roles, costs, GDPR requests). Replace the `<…>` placeholders and the **📷 СНИМКА** markers with the client's screenshots first, then do a dry run: the editor publishes an announcement alone, following the guide.
 - [ ] [D] Export the content once at handover (no automated backups, ADR-012): `pnpm sanity dataset export production production-YYYY-MM-DD.tar.gz`, stored in the client's vault.
 - [ ] [D] Calendar reminders: dependency review monthly (`pnpm outdated`, merge template upgrades), publish-webhook PAT rotation, DMARC tighten in 4 weeks, GSC check in 2 weeks.
 - [ ] [D] Fill Site settings → Legal → "Privacy contact email" (footer `mailto:`), and hand the clinic the page below (print it or add it to the "How to edit your site" document).
