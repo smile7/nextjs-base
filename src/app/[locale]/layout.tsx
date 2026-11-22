@@ -35,6 +35,8 @@ export function generateMetadata(): Metadata {
   return { metadataBase: new URL(NEXT_PUBLIC_SITE_URL) }
 }
 
+const HTML_JS_SCRIPT = 'document.documentElement.classList.add("js")'
+
 // `cover` makes `env(safe-area-inset-*)` non-zero on notched phones (mobile action bar).
 export const viewport: Viewport = { viewportFit: 'cover' }
 
@@ -67,7 +69,11 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
       : []
 
   return (
-    <html lang={locale} className={fontVariables}>
+    <html lang={locale} className={fontVariables} suppressHydrationWarning>
+      <head>
+        {/* `html.js` gates progressive enhancement CSS before first paint. CSP hash in PROGRESS. */}
+        <script dangerouslySetInnerHTML={{ __html: HTML_JS_SCRIPT }} />
+      </head>
       <body
         className={cn(
           barActions.length > 0 &&

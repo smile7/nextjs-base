@@ -62,7 +62,7 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 - [ ] [D] Worker → Settings → Domains & Routes → add the custom domain (`<domain>` and `www.<domain>`). Redirect Rule: `www` → apex (or the reverse), 301.
 - [ ] [D] Update `NEXT_PUBLIC_SITE_URL`, CORS and the Presentation `previewUrl` to the real domain, then redeploy. (The publish webhook points at GitHub, so it doesn't change.)
 - [ ] [D] SSL mode Full (strict). "Always Use HTTPS" on. HSTS via our headers (no preload until stable).
-- [ ] [D] Old site? Redirect map in `src/config/redirects.ts` (SEO.md §9).
+- [ ] [D] Old site? Redirect map in `src/config/redirects.ts` (SEO.md §9): one `{ source, destination }` per old URL, served as 308. `www` ↔ apex is the Cloudflare Redirect Rule above, not a list entry.
 
 ## 9. Launch QA (run `pnpm launch-check --url https://<domain>` from T11.6, then the manual items below)
 - [ ] `pnpm check`, manual Lighthouse run (mobile) within the SEO.md §8 budgets on the production URL.

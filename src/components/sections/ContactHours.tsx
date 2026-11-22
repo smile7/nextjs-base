@@ -1,7 +1,7 @@
 import { MapPinIcon } from 'lucide-react'
 
 import { submitContact } from '@/actions/contact'
-import { ContactForm } from '@/components/forms/ContactForm'
+import { LazyContactForm } from '@/components/forms/LazyContactForm'
 import { DirectionsLink } from '@/components/map/DirectionsLink'
 import { MapEmbed } from '@/components/map/MapEmbed'
 import { ContentImage } from '@/components/primitives/ContentImage'
@@ -164,7 +164,7 @@ export async function ContactHoursSection({
       ) : null}
       {section.showForm ? (
         <div className="mt-10 max-w-(--container-prose)">
-          <ContactForm
+          <LazyContactForm
             action={submitContact.bind(null, locale)}
             phone={primaryPhone(site)}
             privacyHref={site.privacyHref}

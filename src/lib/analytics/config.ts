@@ -1,5 +1,3 @@
-import { readPublicEnv } from '@/env'
-
 export type AnalyticsProvider = 'none' | 'cloudflare' | 'umami' | 'ga4'
 
 export type AnalyticsConfig =
@@ -40,15 +38,17 @@ export function resolveAnalytics(env: AnalyticsEnv): AnalyticsConfig {
   }
 }
 
-/** The configured adapter for this build (public env is inlined, so this works on the client too). */
+/**
+ * The configured adapter for this build. Reads the inlined `process.env` literals, not
+ * `readPublicEnv`: consent and tracking code runs on every page, and `@/env` would ship zod with it.
+ * `next.config.ts` validates these variables at build time (`ANALYTICS_PUBLIC_ENV`).
+ */
 export function analyticsConfig(): AnalyticsConfig {
-  return resolveAnalytics(
-    readPublicEnv(
-      'NEXT_PUBLIC_ANALYTICS',
-      'NEXT_PUBLIC_CF_BEACON_TOKEN',
-      'NEXT_PUBLIC_UMAMI_WEBSITE_ID',
-      'NEXT_PUBLIC_UMAMI_SRC',
-      'NEXT_PUBLIC_GA_ID',
-    ),
-  )
+  return resolveAnalytics({
+    NEXT_PUBLIC_ANALYTICS: (process.env.NEXT_PUBLIC_ANALYTICS || 'none') as AnalyticsProvider,
+    NEXT_PUBLIC_CF_BEACON_TOKEN: process.env.NEXT_PUBLIC_CF_BEACON_TOKEN || undefined,
+    NEXT_PUBLIC_UMAMI_WEBSITE_ID: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID || undefined,
+    NEXT_PUBLIC_UMAMI_SRC: process.env.NEXT_PUBLIC_UMAMI_SRC || undefined,
+    NEXT_PUBLIC_GA_ID: process.env.NEXT_PUBLIC_GA_ID || undefined,
+  })
 }

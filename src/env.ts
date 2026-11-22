@@ -48,3 +48,12 @@ export const readPublicEnv = createEnvReader('public', publicShape, () => ({
 
 /** Variables every build needs. Validated in `next.config.ts` so a bad build fails fast. */
 export const BUILD_REQUIRED_PUBLIC_ENV = ['NEXT_PUBLIC_SITE_URL', 'NEXT_PUBLIC_ENV'] as const
+
+/** Read raw by `analyticsConfig()` (no zod on the client), so `next.config.ts` validates them. */
+export const ANALYTICS_PUBLIC_ENV = [
+  'NEXT_PUBLIC_ANALYTICS',
+  'NEXT_PUBLIC_CF_BEACON_TOKEN',
+  'NEXT_PUBLIC_UMAMI_WEBSITE_ID',
+  'NEXT_PUBLIC_UMAMI_SRC',
+  'NEXT_PUBLIC_GA_ID',
+] as const

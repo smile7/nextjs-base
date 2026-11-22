@@ -21,11 +21,6 @@ export function TilesSection({
 
   return (
     <SectionShell section={section} labelledBy={section.heading ? titleId : undefined}>
-      <script
-        dangerouslySetInnerHTML={{
-          __html: 'document.documentElement.classList.add("js")',
-        }}
-      />
       {section.heading ? (
         <Heading as={level} size="step-3" id={titleId}>
           {section.heading}
