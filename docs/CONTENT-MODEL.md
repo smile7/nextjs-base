@@ -23,7 +23,7 @@ Conventions
 | credit | string | — | optional (stock attribution) |
 
 ### `richText` (full Portable Text, for articles, legal and rich text blocks)
-Blocks: `normal`, `h2`, `h3`, `h4`, `blockquote`. Lists: bullet, number. Decorators: strong, em, underline (off), code (off). Annotations: `link` (see below). Custom blocks: `imageWithAlt`, `callout` (`tone: info|tip|warning`, text), `ctaInline` (cta). No h1 (the page title is the h1). Validation: warn when headings skip levels.
+Blocks: `normal`, `h2`, `h3`, `h4`, `blockquote`. Lists: bullet, number. Decorators: strong, em, underline (off), code (off). Annotations: `link` (see below). Custom blocks: `imageWithAlt`, `callout` (`tone: info|tip|warning`, text), `ctaInline` (cta), `cookieTable` and `processorsList` (optional `caption`; the site renders the content from config, for legal pages). No h1 (the page title is the h1). Validation: warn when headings skip levels.
 
 ### `richTextSimple`
 Blocks: `normal` only, lists, strong/em, `link`. Used inside tiles, team bios, FAQ answers, hero subheading (optional).
@@ -197,9 +197,8 @@ Slug uniqueness per language: custom `isUnique` that queries `!defined(*[_type =
 | kind | enum `privacy cookies gdpr terms other` | unique per language |
 | title | string | required |
 | slug | slug | required |
-| body | richText | required. **Custom validation blocks publishing while any `[[…]]` placeholder remains.** |
+| body | richText | required. **Custom validation blocks publishing while any `[[…]]` placeholder remains.** The `cookieTable` and `processorsList` blocks render live from `src/config/cookies.ts` / `src/config/processors.ts`. |
 | lastUpdated | date | required |
-| showCookieTable | boolean | default true for `cookies`. Renders the table generated from `src/config/cookies.ts`. |
 
 ---
 

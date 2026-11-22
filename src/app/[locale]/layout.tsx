@@ -87,6 +87,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             ContactForm: messages.ContactForm,
             Consent: messages.Consent,
             Cookies: messages.Cookies,
+            Processors: messages.Processors,
           }}
         >
           <ConsentProvider cookiePolicyHref={settings?.cookiePolicyHref}>

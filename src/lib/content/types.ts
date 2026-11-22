@@ -260,7 +260,6 @@ export type LegalPage = {
   slug: string
   body: RichTextValue
   lastUpdated?: string
-  showCookieTable: boolean
   translations: Translations
   /** The first paragraph, shortened to ~160 characters: the meta description. */
   excerpt?: string

@@ -282,6 +282,50 @@
         "purpose": "Показва картата с местоположението, след като я заредите.",
         "duration": "До 6 месеца"
       }
+    },
+    "table": {
+      "caption": "Бисквитки и записи, които сайтът използва",
+      "name": "Име",
+      "provider": "Доставчик",
+      "purpose": "Цел",
+      "duration": "Срок",
+      "category": "Категория"
+    }
+  },
+  "Processors": {
+    "items": {
+      "cloudflare": {
+        "name": "Cloudflare, Inc.",
+        "purpose": "Хостинг и доставка на сайта, защита от атаки и защита на формата за контакт от ботове (Turnstile)."
+      },
+      "cloudflareAnalytics": {
+        "name": "Cloudflare Web Analytics",
+        "purpose": "Анонимна статистика за посещенията, без бисквитки."
+      },
+      "umami": {
+        "name": "Umami Software, Inc.",
+        "purpose": "Анонимна статистика за посещенията, без бисквитки."
+      },
+      "googleAnalytics": {
+        "name": "Google Ireland Ltd. (Google Analytics)",
+        "purpose": "Статистика за посещенията, само след Вашето съгласие."
+      },
+      "resend": {
+        "name": "Resend, Inc.",
+        "purpose": "Изпраща съобщенията от формата за контакт до пощата на клиниката."
+      },
+      "sanity": {
+        "name": "Sanity AS",
+        "purpose": "Съхранява съдържанието на сайта (текстове и снимки). Не получава данни за посетителите."
+      },
+      "googleMaps": {
+        "name": "Google Ireland Ltd. (Google Maps)",
+        "purpose": "Показва картата на страницата за контакти, само след като я заредите."
+      },
+      "emailProvider": {
+        "name": "Доставчикът на имейл на клиниката",
+        "purpose": "Пощенската кутия, в която пристигат и се пазят запитванията."
+      }
     }
   }
 }

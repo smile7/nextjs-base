@@ -77,7 +77,7 @@ Bulgarian E-Commerce Act (ЗЕТ, art. 4) requires information-society service p
 1. Who we are (controller): `[[legalName]]`, ЕИК `[[uic]]`, address, email, phone. DPO: `[[none / name and contact]]` (a small practice usually doesn't need a DPO unless processing health data on a large scale, so verify).
 2. What data we process and why: the table from §2, filtered to the active features.
 3. Legal bases.
-4. Recipients and processors: Cloudflare (hosting, security, analytics), Resend (email), Sanity (website content; no visitor data), Google (maps after consent; GA4 if enabled), the email provider of the clinic.
+4. Recipients and processors: Cloudflare (hosting, security, analytics), Resend (email), Sanity (website content; no visitor data), Google (maps after consent; GA4 if enabled), the email provider of the clinic. Rendered by the `processorsList` block from `src/config/processors.ts`, so it follows the analytics setting.
 5. International transfers and safeguards.
 6. Retention periods.
 7. Your rights: access, rectification, erasure, restriction, portability, objection, withdrawal of consent, complaint to the **Commission for Personal Data Protection (КЗЛД)**, www.cpdp.bg, 2 Prof. Tsvetan Lazarov Blvd., Sofia 1592 (verify the current address).
@@ -87,7 +87,7 @@ Bulgarian E-Commerce Act (ЗЕТ, art. 4) requires information-society service p
 11. Changes and the "last updated" date.
 
 ### 9.2 Cookie policy (`kind: cookies`)
-What cookies/local storage are, the categories, **the auto-generated table** (name, provider, purpose, duration, category), how to change consent (footer link), and browser controls.
+What cookies/local storage are, the categories, **the auto-generated table** (the `cookieTable` Portable Text block, rendered from §3: name, provider, purpose, duration, category), how to change consent (footer link), and browser controls.
 
 ### 9.3 GDPR rights / data requests (`kind: gdpr`)
 How to exercise rights (email/post/in person), identity verification, a response within 1 month (extendable by 2), free of charge in principle, plus a template request text. Note: patient medical records are governed by health legislation and kept per the law's retention periods, **not** by website processes.

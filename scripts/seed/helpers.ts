@@ -62,12 +62,14 @@ const block = (text: string, style: BlockStyle = 'normal', listItem?: 'bullet' |
 })
 
 /**
- * Plain text → Portable Text. `## Heading` lines become h2, `### ` h3, `- item` bullets, anything
- * else a paragraph.
+ * Plain text → Portable Text. `## Heading` lines become h2, `### ` h3, `- item` bullets,
+ * `{{cookieTable}}` / `{{processorsList}}` the generated legal blocks, anything else a paragraph.
  */
 export const richText = (...lines: string[]): RichText =>
   keyed(
     lines.map((line) => {
+      if (line === '{{cookieTable}}') return { _type: 'cookieTable' as const }
+      if (line === '{{processorsList}}') return { _type: 'processorsList' as const }
       if (line.startsWith('### ')) return block(line.slice(4), 'h3')
       if (line.startsWith('## ')) return block(line.slice(3), 'h2')
       if (line.startsWith('- ')) return block(line.slice(2), 'normal', 'bullet')

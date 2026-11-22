@@ -39,6 +39,8 @@ export const richTextType = defineType({
     defineArrayMember({ type: 'imageWithAlt' }),
     defineArrayMember({ type: 'callout' }),
     defineArrayMember({ type: 'ctaInline' }),
+    defineArrayMember({ type: 'cookieTable' }),
+    defineArrayMember({ type: 'processorsList' }),
   ],
   validation: (rule) =>
     rule

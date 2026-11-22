@@ -91,13 +91,11 @@ describe('mapLegalPage', () => {
       slug: 'privacy',
       body: [],
       lastUpdated: '2026-11-01',
-      showCookieTable: null,
       translations: null,
     }
     expect(mapLegalPage(fixture<LegalPageQueryRow>(row), 'en')).toMatchObject({
       kind: 'privacy',
       lastUpdated: '2026-11-01',
-      showCookieTable: false,
       translations: { en: { pathname: '/legal/[slug]', params: { slug: 'privacy' } } },
     })
     expect(mapLegalPage(fixture<LegalPageQueryRow>({ ...row, kind: null }), 'en')).toBeNull()
@@ -124,7 +122,6 @@ describe('mapLegalPage', () => {
           block('d', 'h2', 'Your rights'),
         ],
         lastUpdated: null,
-        showCookieTable: null,
         translations: null,
       }),
       'en',
@@ -155,7 +152,6 @@ describe('mapLegalPage', () => {
           },
         ],
         lastUpdated: null,
-        showCookieTable: null,
         translations: null,
       }),
       'en',

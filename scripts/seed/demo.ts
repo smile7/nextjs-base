@@ -73,6 +73,7 @@ const demoDetails: LegalDetails = {
   email: { bg: 'hello@example.com', en: 'hello@example.com' },
   phone: { bg: '082 000 000', en: '+359 82 000 000' },
   dpo: { bg: 'не е определено', en: 'not appointed' },
+  retention: { bg: '12 месеца', en: '12 months' },
 }
 
 /** Legal pages for every kind and language. `details` fills the placeholders (demo only). */
@@ -89,7 +90,6 @@ export const legalPages = (details?: LegalDetails) =>
         slug: slugOf(slugify(template.title[locale])),
         body: richText(...template.lines[locale].map((line) => fillPlaceholders(line, values))),
         lastUpdated: SEED_DATE,
-        ...(kind === 'cookies' ? { showCookieTable: true } : {}),
       }
     }),
   )

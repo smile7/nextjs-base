@@ -165,6 +165,16 @@ export type Link = {
   openInNewTab?: boolean
 }
 
+export type ProcessorsList = {
+  _type: 'processorsList'
+  caption?: string
+}
+
+export type CookieTable = {
+  _type: 'cookieTable'
+  caption?: string
+}
+
 export type Callout = {
   _type: 'callout'
   tone?: 'info' | 'tip' | 'warning'
@@ -218,6 +228,12 @@ export type RichText = Array<
   | ({
       _key: string
     } & CtaInline)
+  | ({
+      _key: string
+    } & CookieTable)
+  | ({
+      _key: string
+    } & ProcessorsList)
 >
 
 export type SanityImageAssetReference = {
@@ -886,7 +902,6 @@ export type LegalPage = {
   slug?: Slug
   body?: RichText
   lastUpdated?: string
-  showCookieTable?: boolean
 }
 
 export type Slug = {
@@ -1215,6 +1230,8 @@ export type AllSanitySchemaTypes =
   | ArticleReference
   | LegalPageReference
   | Link
+  | ProcessorsList
+  | CookieTable
   | Callout
   | RichTextSimple
   | RichText
@@ -1962,6 +1979,11 @@ export type PageByKeyQueryResult = {
             }
           | {
               _key: string
+              _type: 'cookieTable'
+              caption?: string
+            }
+          | {
+              _key: string
               _type: 'ctaInline'
               label: string | null
               action: 'booking' | 'call' | 'directions' | 'link' | null
@@ -2021,6 +2043,11 @@ export type PageByKeyQueryResult = {
               width: number | null
               height: number | null
               lqip: string | null
+            }
+          | {
+              _key: string
+              _type: 'processorsList'
+              caption?: string
             }
         > | null
       }
@@ -2215,6 +2242,11 @@ export type PageByKeyQueryResult = {
             }
           | {
               _key: string
+              _type: 'cookieTable'
+              caption?: string
+            }
+          | {
+              _key: string
               _type: 'ctaInline'
               label: string | null
               action: 'booking' | 'call' | 'directions' | 'link' | null
@@ -2274,6 +2306,11 @@ export type PageByKeyQueryResult = {
               width: number | null
               height: number | null
               lqip: string | null
+            }
+          | {
+              _key: string
+              _type: 'processorsList'
+              caption?: string
             }
         > | null
         image: {
@@ -3179,6 +3216,11 @@ export type PageBySlugQueryResult = {
             }
           | {
               _key: string
+              _type: 'cookieTable'
+              caption?: string
+            }
+          | {
+              _key: string
               _type: 'ctaInline'
               label: string | null
               action: 'booking' | 'call' | 'directions' | 'link' | null
@@ -3238,6 +3280,11 @@ export type PageBySlugQueryResult = {
               width: number | null
               height: number | null
               lqip: string | null
+            }
+          | {
+              _key: string
+              _type: 'processorsList'
+              caption?: string
             }
         > | null
       }
@@ -3432,6 +3479,11 @@ export type PageBySlugQueryResult = {
             }
           | {
               _key: string
+              _type: 'cookieTable'
+              caption?: string
+            }
+          | {
+              _key: string
               _type: 'ctaInline'
               label: string | null
               action: 'booking' | 'call' | 'directions' | 'link' | null
@@ -3491,6 +3543,11 @@ export type PageBySlugQueryResult = {
               width: number | null
               height: number | null
               lqip: string | null
+            }
+          | {
+              _key: string
+              _type: 'processorsList'
+              caption?: string
             }
         > | null
         image: {
@@ -4215,6 +4272,11 @@ export type ServiceBySlugQueryResult = {
       }
     | {
         _key: string
+        _type: 'cookieTable'
+        caption?: string
+      }
+    | {
+        _key: string
         _type: 'ctaInline'
         label: string | null
         action: 'booking' | 'call' | 'directions' | 'link' | null
@@ -4274,6 +4336,11 @@ export type ServiceBySlugQueryResult = {
         width: number | null
         height: number | null
         lqip: string | null
+      }
+    | {
+        _key: string
+        _type: 'processorsList'
+        caption?: string
       }
   > | null
   faq: Array<{
@@ -4578,6 +4645,11 @@ export type ArticleBySlugQueryResult = {
       }
     | {
         _key: string
+        _type: 'cookieTable'
+        caption?: string
+      }
+    | {
+        _key: string
         _type: 'ctaInline'
         label: string | null
         action: 'booking' | 'call' | 'directions' | 'link' | null
@@ -4637,6 +4709,11 @@ export type ArticleBySlugQueryResult = {
         width: number | null
         height: number | null
         lqip: string | null
+      }
+    | {
+        _key: string
+        _type: 'processorsList'
+        caption?: string
       }
   > | null
   wordCount: number
@@ -4893,7 +4970,7 @@ export type ArticleBySlugQueryResult = {
 
 // Source: src/lib/content/sanity/queries/documents.ts
 // Variable: legalPageQuery
-// Query: *[_type == "legalPage" && language == $locale && slug.current == $slug][0]{    _id, kind, title, "slug": slug.current, body[]{  ...,  _type == "block" => { markDefs[]{ ..., _type == "link" => {   kind,  systemRoute,  href,  anchor,  openInNewTab,  "internal": select(  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },  *[_type == "translation.metadata" && references(^.internal._ref)][0]    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }),  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),  "email": select(kind == "email" => *[_id == "siteSettings"][0].email) } } },  _type == "imageWithAlt" => {   "url": asset->url,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip,  crop,  hotspot,  decorative,  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value), "caption": coalesce(caption[language == $locale][0].value, caption[language == $fallback][0].value) },  _type == "ctaInline" => { label, action, style, link{   kind,  systemRoute,  href,  anchor,  openInNewTab,  "internal": select(  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },  *[_type == "translation.metadata" && references(^.internal._ref)][0]    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }),  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),  "email": select(kind == "email" => *[_id == "siteSettings"][0].email) } }}, lastUpdated, showCookieTable,      "translations": *[_type == "translation.metadata" && references(^._id)][0]    .translations[]{ "locale": language, "doc": value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage } }  }
+// Query: *[_type == "legalPage" && language == $locale && slug.current == $slug][0]{    _id, kind, title, "slug": slug.current, body[]{  ...,  _type == "block" => { markDefs[]{ ..., _type == "link" => {   kind,  systemRoute,  href,  anchor,  openInNewTab,  "internal": select(  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },  *[_type == "translation.metadata" && references(^.internal._ref)][0]    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }),  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),  "email": select(kind == "email" => *[_id == "siteSettings"][0].email) } } },  _type == "imageWithAlt" => {   "url": asset->url,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip,  crop,  hotspot,  decorative,  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value), "caption": coalesce(caption[language == $locale][0].value, caption[language == $fallback][0].value) },  _type == "ctaInline" => { label, action, style, link{   kind,  systemRoute,  href,  anchor,  openInNewTab,  "internal": select(  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },  *[_type == "translation.metadata" && references(^.internal._ref)][0]    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }),  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),  "email": select(kind == "email" => *[_id == "siteSettings"][0].email) } }}, lastUpdated,      "translations": *[_type == "translation.metadata" && references(^._id)][0]    .translations[]{ "locale": language, "doc": value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage } }  }
 export type LegalPageQueryResult = {
   _id: string
   kind: 'cookies' | 'gdpr' | 'other' | 'privacy' | 'terms' | null
@@ -4963,6 +5040,11 @@ export type LegalPageQueryResult = {
       }
     | {
         _key: string
+        _type: 'cookieTable'
+        caption?: string
+      }
+    | {
+        _key: string
         _type: 'ctaInline'
         label: string | null
         action: 'booking' | 'call' | 'directions' | 'link' | null
@@ -5023,9 +5105,13 @@ export type LegalPageQueryResult = {
         height: number | null
         lqip: string | null
       }
+    | {
+        _key: string
+        _type: 'processorsList'
+        caption?: string
+      }
   > | null
   lastUpdated: string | null
-  showCookieTable: boolean | null
   translations: Array<{
     locale: string | null
     doc:
@@ -6357,7 +6443,7 @@ declare global {
     '*[_type == "service" && language == $locale && hasDetailPage == true && slug.current == $slug][0]{\n    \n  _id,\n  title,\n  "slug": slug.current,\n  icon,\n  image{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n },\n  teaser,\n  summary[]{ ..., markDefs[]{ ..., _type == "link" => { \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } } },\n  durationNote,\n  priceNote,\n  hasDetailPage,\n  "category": category->{ \n  _id,\n  "title": coalesce(title[language == $locale][0].value, title[language == $fallback][0].value),\n  "slug": coalesce(slug[language == $locale][0].value.current, slug[language == $fallback][0].value.current),\n  "description": coalesce(description[language == $locale][0].value, description[language == $fallback][0].value),\n  audience,\n  tone\n }\n,\n    body[]{\n  ...,\n  _type == "block" => { markDefs[]{ ..., _type == "link" => { \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } } },\n  _type == "imageWithAlt" => { \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n, "caption": coalesce(caption[language == $locale][0].value, caption[language == $fallback][0].value) },\n  _type == "ctaInline" => { label, action, style, link{ \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } }\n},\n    faq[]->{ \n  _id,\n  "question": coalesce(question[language == $locale][0].value, question[language == $fallback][0].value),\n  "answer": coalesce(answer[language == $locale][0].value, answer[language == $fallback][0].value)[]{ ..., markDefs[]{ ..., _type == "link" => { \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } } },\n  category\n },\n    doctors[]->{ \n  _id,\n  name,\n  nameLatin,\n  "honorific": coalesce(honorific[language == $locale][0].value, honorific[language == $fallback][0].value),\n  "role": coalesce(role[language == $locale][0].value, role[language == $fallback][0].value),\n  "specialties": specialties[]{ "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value) },\n  "bioShort": coalesce(bioShort[language == $locale][0].value, bioShort[language == $fallback][0].value),\n  "bio": coalesce(bio[language == $locale][0].value, bio[language == $fallback][0].value)[]{ ..., markDefs[]{ ..., _type == "link" => { \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } } },\n  photo{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n },\n  featured,\n  "credentials": credentials[]{ "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value), year },\n  sameAs\n },\n    seo{ \n  title, description, noIndex, canonicalOverride, ogImage{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n }\n },\n    \n  "translations": *[_type == "translation.metadata" && references(^._id)][0]\n    .translations[]{ "locale": language, "doc": value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage } }\n\n  }': ServiceBySlugQueryResult
     '{\n  "items": *[_type == "article" && language == $locale] | order(publishedAt desc)[$start...$end]{\n    \n  _id, title, "slug": slug.current, excerpt, cover{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n }, publishedAt, updatedAt\n\n  },\n  "total": count(*[_type == "article" && language == $locale])\n}': ArticlesQueryResult
     '*[_type == "article" && language == $locale && slug.current == $slug][0]{\n    \n  _id, title, "slug": slug.current, excerpt, cover{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n }, publishedAt, updatedAt\n,\n    body[]{\n  ...,\n  _type == "block" => { markDefs[]{ ..., _type == "link" => { \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } } },\n  _type == "imageWithAlt" => { \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n, "caption": coalesce(caption[language == $locale][0].value, caption[language == $fallback][0].value) },\n  _type == "ctaInline" => { label, action, style, link{ \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } }\n},\n    "wordCount": length(string::split(pt::text(body), " ")),\n    author->{ \n  _id,\n  name,\n  nameLatin,\n  "honorific": coalesce(honorific[language == $locale][0].value, honorific[language == $fallback][0].value),\n  "role": coalesce(role[language == $locale][0].value, role[language == $fallback][0].value),\n  "specialties": specialties[]{ "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value) },\n  "bioShort": coalesce(bioShort[language == $locale][0].value, bioShort[language == $fallback][0].value),\n  "bio": coalesce(bio[language == $locale][0].value, bio[language == $fallback][0].value)[]{ ..., markDefs[]{ ..., _type == "link" => { \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } } },\n  photo{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n },\n  featured,\n  "credentials": credentials[]{ "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value), year },\n  sameAs\n },\n    reviewedBy->{ \n  _id,\n  name,\n  nameLatin,\n  "honorific": coalesce(honorific[language == $locale][0].value, honorific[language == $fallback][0].value),\n  "role": coalesce(role[language == $locale][0].value, role[language == $fallback][0].value),\n  "specialties": specialties[]{ "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value) },\n  "bioShort": coalesce(bioShort[language == $locale][0].value, bioShort[language == $fallback][0].value),\n  "bio": coalesce(bio[language == $locale][0].value, bio[language == $fallback][0].value)[]{ ..., markDefs[]{ ..., _type == "link" => { \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } } },\n  photo{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n },\n  featured,\n  "credentials": credentials[]{ "label": coalesce(label[language == $locale][0].value, label[language == $fallback][0].value), year },\n  sameAs\n },\n    related[]->{ \n  _id, title, "slug": slug.current, excerpt, cover{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n }, publishedAt, updatedAt\n },\n    "latest": *[_type == "article" && language == $locale && _id != ^._id]\n      | order(publishedAt desc)[0...3]{ \n  _id, title, "slug": slug.current, excerpt, cover{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n }, publishedAt, updatedAt\n },\n    seo{ \n  title, description, noIndex, canonicalOverride, ogImage{ \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n }\n },\n    \n  "translations": *[_type == "translation.metadata" && references(^._id)][0]\n    .translations[]{ "locale": language, "doc": value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage } }\n\n  }': ArticleBySlugQueryResult
-    '*[_type == "legalPage" && language == $locale && slug.current == $slug][0]{\n    _id, kind, title, "slug": slug.current, body[]{\n  ...,\n  _type == "block" => { markDefs[]{ ..., _type == "link" => { \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } } },\n  _type == "imageWithAlt" => { \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n, "caption": coalesce(caption[language == $locale][0].value, caption[language == $fallback][0].value) },\n  _type == "ctaInline" => { label, action, style, link{ \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } }\n}, lastUpdated, showCookieTable,\n    \n  "translations": *[_type == "translation.metadata" && references(^._id)][0]\n    .translations[]{ "locale": language, "doc": value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage } }\n\n  }': LegalPageQueryResult
+    '*[_type == "legalPage" && language == $locale && slug.current == $slug][0]{\n    _id, kind, title, "slug": slug.current, body[]{\n  ...,\n  _type == "block" => { markDefs[]{ ..., _type == "link" => { \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } } },\n  _type == "imageWithAlt" => { \n  "url": asset->url,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip,\n  crop,\n  hotspot,\n  decorative,\n  "alt": coalesce(alt[language == $locale][0].value, alt[language == $fallback][0].value)\n, "caption": coalesce(caption[language == $locale][0].value, caption[language == $fallback][0].value) },\n  _type == "ctaInline" => { label, action, style, link{ \n  kind,\n  systemRoute,\n  href,\n  anchor,\n  openInNewTab,\n  "internal": select(\n  internal->language == $locale => internal->{ _type, title, "slug": slug.current, pageKey, hasDetailPage },\n  *[_type == "translation.metadata" && references(^.internal._ref)][0]\n    .translations[language == $locale][0].value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage }\n),\n  "phone": select(kind == "tel" => *[_id == "siteSettings"][0].phones[key == ^.phoneKey][0].e164),\n  "email": select(kind == "email" => *[_id == "siteSettings"][0].email)\n } }\n}, lastUpdated,\n    \n  "translations": *[_type == "translation.metadata" && references(^._id)][0]\n    .translations[]{ "locale": language, "doc": value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage } }\n\n  }': LegalPageQueryResult
     '*[_id == $id][0]{\n  _type, language, "slug": slug.current, pageKey, hasDetailPage, \n  "translations": *[_type == "translation.metadata" && references(^._id)][0]\n    .translations[]{ "locale": language, "doc": value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage } }\n\n}': TranslationsQueryResult
     '*[\n  _type == $type && defined(slug.current) && defined(language)\n  && ($type != "page" || !defined(pageKey))\n  && ($type != "service" || hasDetailPage == true)\n]{ "slug": slug.current, language }': StaticSlugsQueryResult
     '*[\n  _type in ["page", "service", "article", "legalPage"] && defined(language)\n  && seo.noIndex != true && hideFromSitemap != true\n  && (_type != "service" || hasDetailPage == true)\n  && (defined(pageKey) || defined(slug.current))\n]{ _type, title, "slug": slug.current, pageKey, hasDetailPage, language, _updatedAt, \n  "translations": *[_type == "translation.metadata" && references(^._id)][0]\n    .translations[]{ "locale": language, "doc": value->{ _type, title, "slug": slug.current, pageKey, hasDetailPage } }\n }': SitemapQueryResult

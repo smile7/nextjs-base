@@ -5,6 +5,8 @@ import { useTranslations } from 'next-intl'
 import NextLink from 'next/link'
 import type { ReactNode } from 'react'
 
+import { CookieTable } from '@/components/consent/CookieTable'
+import { ProcessorsList } from '@/components/consent/ProcessorsList'
 import { ContentImage } from '@/components/primitives/ContentImage'
 import { Heading, type HeadingLevel, type HeadingSize } from '@/components/primitives/Heading'
 import { buttonVariants } from '@/components/ui/button'
@@ -14,6 +16,7 @@ import { headingAnchor } from './anchors'
 import type {
   RichTextCalloutBlock,
   RichTextCtaBlock,
+  RichTextGeneratedBlock,
   RichTextImageBlock,
   RichTextLinkMark,
 } from './sanity/mappers/shared'
@@ -97,6 +100,12 @@ function components(headingOffset: number, anchorHeadings: boolean): PortableTex
         >
           {value.text}
         </aside>
+      ),
+      cookieTable: ({ value }: { value: RichTextGeneratedBlock }) => (
+        <CookieTable caption={value.caption} />
+      ),
+      processorsList: ({ value }: { value: RichTextGeneratedBlock }) => (
+        <ProcessorsList caption={value.caption} />
       ),
       cta: ({ value }: { value: RichTextCtaBlock }) => {
         const link = value.cta.link

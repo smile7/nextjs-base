@@ -282,6 +282,50 @@
         "purpose": "Shows the location map after you load it.",
         "duration": "Up to 6 months"
       }
+    },
+    "table": {
+      "caption": "Cookies and storage items this site uses",
+      "name": "Name",
+      "provider": "Provider",
+      "purpose": "Purpose",
+      "duration": "Duration",
+      "category": "Category"
+    }
+  },
+  "Processors": {
+    "items": {
+      "cloudflare": {
+        "name": "Cloudflare, Inc.",
+        "purpose": "Hosting and delivery of the site, protection against attacks, and bot protection for the contact form (Turnstile)."
+      },
+      "cloudflareAnalytics": {
+        "name": "Cloudflare Web Analytics",
+        "purpose": "Anonymous visit statistics without cookies."
+      },
+      "umami": {
+        "name": "Umami Software, Inc.",
+        "purpose": "Anonymous visit statistics without cookies."
+      },
+      "googleAnalytics": {
+        "name": "Google Ireland Ltd. (Google Analytics)",
+        "purpose": "Visit statistics, only after you consent."
+      },
+      "resend": {
+        "name": "Resend, Inc.",
+        "purpose": "Delivers contact form messages to the clinic's mailbox."
+      },
+      "sanity": {
+        "name": "Sanity AS",
+        "purpose": "Stores the site's content (texts and photos). Receives no visitor data."
+      },
+      "googleMaps": {
+        "name": "Google Ireland Ltd. (Google Maps)",
+        "purpose": "Shows the map on the contact page, only after you load it."
+      },
+      "emailProvider": {
+        "name": "The clinic's email provider",
+        "purpose": "The mailbox where enquiries arrive and are kept."
+      }
     }
   }
 }

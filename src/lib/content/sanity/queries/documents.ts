@@ -75,7 +75,7 @@ export const articleBySlugQuery = defineQuery(
 
 export const legalPageQuery = defineQuery(
   `*[_type == "legalPage" && language == $locale && slug.current == $slug][0]{
-    _id, kind, title, "slug": slug.current, body[]${richTextBlock}, lastUpdated, showCookieTable,
+    _id, kind, title, "slug": slug.current, body[]${richTextBlock}, lastUpdated,
     ${translationsField}
   }`,
 )

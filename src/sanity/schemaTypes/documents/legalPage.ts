@@ -67,15 +67,6 @@ export const legalPageType = defineType({
       description: 'Shown on the page. Change it whenever the content changes.',
       validation: (rule) => rule.required().error('Add the date of the last update.'),
     }),
-    defineField({
-      name: 'showCookieTable',
-      title: 'Show the cookie table',
-      type: 'boolean',
-      description:
-        'Lists every cookie the site uses. The table is kept up to date by the developer.',
-      initialValue: true,
-      hidden: ({ document }) => document?.kind !== 'cookies',
-    }),
   ],
   preview: {
     select: { title: 'title', language: 'language', kind: 'kind' },

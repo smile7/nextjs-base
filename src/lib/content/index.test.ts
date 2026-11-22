@@ -143,7 +143,6 @@ describe('content API', () => {
       slug: 'privacy',
       body: [],
       lastUpdated: null,
-      showCookieTable: null,
       translations: null,
     })
 

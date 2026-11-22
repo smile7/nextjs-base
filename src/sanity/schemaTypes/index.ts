@@ -19,6 +19,7 @@ import {
 } from './objects/contact'
 import { ctaI18nType, ctaInlineType, ctaType } from './objects/cta'
 import { imageWithAltType } from './objects/imageWithAlt'
+import { cookieTableType, processorsListType } from './objects/legalBlocks'
 import { linkType } from './objects/link'
 import { addressType, geoType } from './objects/location'
 import { calloutType, richTextSimpleType, richTextType } from './objects/richText'
@@ -32,6 +33,8 @@ const objects = [
   richTextType,
   richTextSimpleType,
   calloutType,
+  cookieTableType,
+  processorsListType,
   linkType,
   ctaType,
   ctaI18nType,

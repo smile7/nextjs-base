@@ -264,6 +264,12 @@ export type RichTextImageBlock = {
   caption?: string
 }
 export type RichTextCtaBlock = { _type: 'cta'; _key: string; cta: Cta }
+/** Rendered from config (`src/config/cookies.ts` / `processors.ts`), not from CMS content. */
+export type RichTextGeneratedBlock = {
+  _type: 'cookieTable' | 'processorsList'
+  _key: string
+  caption?: string
+}
 export type RichTextCalloutBlock = {
   _type: 'callout'
   _key: string
@@ -315,6 +321,17 @@ export function mapRichText(blocks: Nullable<BlockInput[]>, locale: Locale): Ric
               } satisfies RichTextCalloutBlock,
             ]
           : []
+      }
+      case 'cookieTable':
+      case 'processorsList': {
+        const caption = block.caption as Nullable<string>
+        return [
+          {
+            _type: block._type as RichTextGeneratedBlock['_type'],
+            _key: block._key,
+            ...(caption ? { caption } : {}),
+          } satisfies RichTextGeneratedBlock,
+        ]
       }
       default:
         return []

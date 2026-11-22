@@ -9,7 +9,6 @@ const page = (placeholders: string[]): LegalPage => ({
   title: 'Privacy',
   slug: 'privacy',
   body: [] as unknown as LegalPage['body'],
-  showCookieTable: false,
   translations: {},
   toc: [],
   placeholders,

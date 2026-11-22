@@ -207,4 +207,18 @@ describe('mapRichText', () => {
       text: 'Brush twice a day',
     })
   })
+
+  it('keeps the generated legal blocks (rendered from config)', () => {
+    const value = mapRichText(
+      [
+        { _type: 'cookieTable', _key: 't1', caption: null },
+        { _type: 'processorsList', _key: 'p1', caption: 'Who processes data' },
+      ],
+      'bg',
+    ) as unknown as Record<string, unknown>[]
+    expect(value).toEqual([
+      { _type: 'cookieTable', _key: 't1' },
+      { _type: 'processorsList', _key: 'p1', caption: 'Who processes data' },
+    ])
+  })
 })

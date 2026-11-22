@@ -88,7 +88,6 @@ export function mapLegalPage(row: LegalPageQueryRow | null, locale: Locale): Leg
     slug: clean(row.slug),
     body: mapRichText(row.body, locale),
     ...(row.lastUpdated ? { lastUpdated: clean(row.lastUpdated) } : {}),
-    showCookieTable: Boolean(row.showCookieTable),
     translations: mapTranslations(row.translations, { _type: 'legalPage', slug: row.slug }, locale),
     ...excerptOf(row.body ?? []),
     toc: (row.body ?? []).flatMap((block) =>
