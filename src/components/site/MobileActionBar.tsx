@@ -44,7 +44,12 @@ export function MobileActionBar({ actions }: MobileActionBarProps) {
               <a
                 href={action.href}
                 {...(action.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                onClick={event ? () => track(event) : undefined}
+                onClick={
+                  event
+                    ? () =>
+                        track(event, action.bookingMode ? { mode: action.bookingMode } : undefined)
+                    : undefined
+                }
                 className={cn(
                   'flex h-full flex-col items-center justify-center gap-0.5 rounded-card px-1 text-center text-step--1 leading-tight font-semibold',
                   action.kind === 'call'

@@ -1,6 +1,7 @@
 import NextLink from 'next/link'
 import { getTranslations } from 'next-intl/server'
 
+import { BookingCTA } from '@/components/site/BookingCTA'
 import { buttonVariants } from '@/components/ui/button'
 import type { Cta } from '@/lib/content'
 import { primaryPhone, resolveCta } from '@/lib/site/actions'
@@ -54,6 +55,21 @@ export async function SectionCtas({ ctas, site, className }: SectionCtasProps) {
             <NextLink key={`${cta.label}-${index}`} href={target.href} className={classes}>
               {label}
             </NextLink>
+          )
+        }
+
+        if (cta.action === 'booking') {
+          return (
+            <BookingCTA
+              key={`${cta.label}-${index}`}
+              href={target.href}
+              external={target.external}
+              mode={target.bookingMode}
+              opensInNewTab={t('opensInNewTab')}
+              className={classes}
+            >
+              {label}
+            </BookingCTA>
           )
         }
 

@@ -2,7 +2,9 @@ import type { Cta, Navigation, Phone, SiteSettings } from '@/lib/content'
 import { formatPhone } from '@/lib/i18n/format'
 
 export type PhoneLink = { href: string; display: string }
-export type ActionLink = { href: string; external: boolean }
+export type BookingMode = SiteSettings['booking']['mode']
+/** `bookingMode` is set when the link is the booking target (analytics `booking_click`). */
+export type ActionLink = { href: string; external: boolean; bookingMode?: BookingMode }
 
 /** The primary phone as a `tel:` link with the editor's display format (formatted E.164 as fallback). */
 export function primaryPhone(settings: Pick<SiteSettings, 'phones'>): PhoneLink | null {
@@ -16,10 +18,28 @@ export function primaryPhone(settings: Pick<SiteSettings, 'phones'>): PhoneLink 
 /** Booking target: the external booking URL, or a call when booking is by phone. */
 export function bookingLink(settings: Pick<SiteSettings, 'booking' | 'phones'>): ActionLink | null {
   if (settings.booking.mode === 'externalUrl' && settings.booking.url) {
-    return { href: settings.booking.url, external: true }
+    return { href: settings.booking.url, external: true, bookingMode: 'externalUrl' }
   }
   const phone = primaryPhone(settings)
-  return phone ? { href: phone.href, external: false } : null
+  return phone ? { href: phone.href, external: false, bookingMode: 'phone' } : null
+}
+
+export type MessengerLink = {
+  platform: 'viber' | 'whatsapp'
+  href: string
+  external: boolean
+  /** `viber://` links only open with the app installed, so they are offered on mobile only. */
+  mobileOnly: boolean
+}
+
+/** Viber / WhatsApp chat links from Site settings → Socials, in that order. */
+export function messengerLinks(settings: Pick<SiteSettings, 'socials'>): MessengerLink[] {
+  return (['viber', 'whatsapp'] as const).flatMap((platform) => {
+    const social = settings.socials.find((s) => s.platform === platform)
+    if (!social) return []
+    const appLink = social.url.startsWith('viber:')
+    return [{ platform, href: social.url, external: !appLink, mobileOnly: appLink }]
+  })
 }
 
 /** Google Maps directions to the map position, or to the address when there is none (PRD F-10). */
@@ -54,6 +74,7 @@ export type BarAction = {
   href: string
   label: string
   external: boolean
+  bookingMode?: BookingMode
 }
 
 export type BarLabels = Record<
@@ -87,6 +108,7 @@ export function mobileBarActions(
       href: booking.href,
       label: labels.book,
       external: booking.external,
+      ...(booking.bookingMode ? { bookingMode: booking.bookingMode } : {}),
     })
   } else if (secondary === 'email' && settings.email) {
     actions.push({
@@ -96,9 +118,14 @@ export function mobileBarActions(
       external: false,
     })
   } else if (secondary === 'viber' || secondary === 'whatsapp') {
-    const social = settings.socials.find((s) => s.platform === secondary)
-    if (social) {
-      actions.push({ kind: 'message', href: social.url, label: labels[secondary], external: true })
+    const messenger = messengerLinks(settings).find((m) => m.platform === secondary)
+    if (messenger) {
+      actions.push({
+        kind: 'message',
+        href: messenger.href,
+        label: labels[secondary],
+        external: messenger.external,
+      })
     }
   }
   return actions

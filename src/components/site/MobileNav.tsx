@@ -17,6 +17,7 @@ import type { NavItem } from '@/lib/content'
 import type { LabelledAction, PhoneLink } from '@/lib/site/actions'
 import { cn } from '@/lib/utils'
 
+import { BookingCTA } from './BookingCTA'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { NavLink } from './NavLink'
 
@@ -35,6 +36,7 @@ const rowClass =
 /** Menu sheet below `xl`. Base UI's dialog traps focus, locks scroll, closes on Escape and returns focus. */
 export function MobileNav({ nav, phone, booking }: MobileNavProps) {
   const t = useTranslations('MobileNav')
+  const tBar = useTranslations('ActionBar')
   const [open, setOpen] = useState(false)
   const panelId = useId()
 
@@ -77,9 +79,15 @@ export function MobileNav({ nav, phone, booking }: MobileNavProps) {
         ) : null}
         <SheetFooter>
           {booking ? (
-            <a href={booking.href} className={cn(buttonVariants({ size: 'lg' }))}>
+            <BookingCTA
+              href={booking.href}
+              external={booking.external}
+              mode={booking.bookingMode}
+              opensInNewTab={tBar('opensInNewTab')}
+              className={cn(buttonVariants({ size: 'lg' }))}
+            >
               {booking.label}
-            </a>
+            </BookingCTA>
           ) : null}
           {phone ? (
             <a

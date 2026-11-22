@@ -2,23 +2,18 @@ import { getTranslations } from 'next-intl/server'
 
 import { buttonVariants } from '@/components/ui/button'
 import type { SiteSettings } from '@/lib/content'
-import { primaryPhone } from '@/lib/site/actions'
+import { messengerLinks, primaryPhone } from '@/lib/site/actions'
 import { cn } from '@/lib/utils'
 
 type ContactActionsProps = {
   settings: Pick<SiteSettings, 'phones' | 'socials'>
 }
 
-const messengers = ['viber', 'whatsapp'] as const
-
-/** The contact page's primary actions: a full-width call button, then Viber / WhatsApp. */
+/** The contact page's primary actions: a full-width call button, then Viber (mobile only) / WhatsApp. */
 export async function ContactActions({ settings }: ContactActionsProps) {
   const t = await getTranslations('ActionBar')
   const phone = primaryPhone(settings)
-  const chats = messengers.flatMap((platform) => {
-    const social = settings.socials.find((s) => s.platform === platform)
-    return social ? [{ platform, url: social.url }] : []
-  })
+  const chats = messengerLinks(settings)
   if (!phone && chats.length === 0) return null
 
   return (
@@ -31,13 +26,15 @@ export async function ContactActions({ settings }: ContactActionsProps) {
       {chats.map((chat) => (
         <a
           key={chat.platform}
-          href={chat.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(buttonVariants({ variant: 'outline', size: 'lg' }))}
+          href={chat.href}
+          {...(chat.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          className={cn(
+            buttonVariants({ variant: 'outline', size: 'lg' }),
+            chat.mobileOnly && 'md:hidden',
+          )}
         >
           {t(chat.platform)}
-          <span className="sr-only"> {t('opensInNewTab')}</span>
+          {chat.external ? <span className="sr-only"> {t('opensInNewTab')}</span> : null}
         </a>
       ))}
     </div>

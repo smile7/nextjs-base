@@ -6,6 +6,7 @@ import {
   bookingAction,
   bookingLink,
   directionsUrl,
+  messengerLinks,
   mobileBarActions,
   primaryPhone,
   resolveCta,
@@ -52,13 +53,17 @@ describe('primaryPhone', () => {
 
 describe('bookingLink', () => {
   it('calls when booking is by phone', () => {
-    expect(bookingLink(settings)).toEqual({ href: 'tel:+35982841190', external: false })
+    expect(bookingLink(settings)).toEqual({
+      href: 'tel:+35982841190',
+      external: false,
+      bookingMode: 'phone',
+    })
   })
 
   it('uses the external booking URL', () => {
     expect(
       bookingLink({ ...settings, booking: { mode: 'externalUrl', url: 'https://book.example' } }),
-    ).toEqual({ href: 'https://book.example', external: true })
+    ).toEqual({ href: 'https://book.example', external: true, bookingMode: 'externalUrl' })
   })
 
   it('returns null with neither URL nor phone', () => {
@@ -91,6 +96,7 @@ describe('bookingAction', () => {
     ).toEqual({
       href: 'tel:+35982841190',
       external: false,
+      bookingMode: 'phone',
       label: 'Запишете час',
     })
   })
@@ -101,6 +107,59 @@ describe('bookingAction', () => {
         ?.label,
     ).toBe('Обадете се')
     expect(bookingAction(settings, undefined, 'fb')?.label).toBe('fb')
+  })
+
+  it('has no booking mode when the header CTA points elsewhere', () => {
+    const page = { href: '/bg/kontakti', external: false, label: 'x' }
+    expect(bookingAction(settings, cta('link', page), 'fb')).toEqual({
+      href: '/bg/kontakti',
+      external: false,
+      label: 'x',
+    })
+  })
+})
+
+describe('messengerLinks', () => {
+  it('keeps Viber app links same-tab and mobile only, WhatsApp web links in a new tab', () => {
+    expect(
+      messengerLinks({
+        socials: [
+          { platform: 'facebook', url: 'https://facebook.com/x' },
+          { platform: 'whatsapp', url: 'https://wa.me/359888123456' },
+          { platform: 'viber', url: 'viber://chat?number=%2B359888123456' },
+        ],
+      }),
+    ).toEqual([
+      {
+        platform: 'viber',
+        href: 'viber://chat?number=%2B359888123456',
+        external: false,
+        mobileOnly: true,
+      },
+      {
+        platform: 'whatsapp',
+        href: 'https://wa.me/359888123456',
+        external: true,
+        mobileOnly: false,
+      },
+    ])
+  })
+
+  it('treats an https Viber link like any web link', () => {
+    expect(
+      messengerLinks({ socials: [{ platform: 'viber', url: 'https://invite.viber.com/?g=x' }] }),
+    ).toEqual([
+      {
+        platform: 'viber',
+        href: 'https://invite.viber.com/?g=x',
+        external: true,
+        mobileOnly: false,
+      },
+    ])
+  })
+
+  it('returns nothing without messenger socials', () => {
+    expect(messengerLinks({ socials: [] })).toEqual([])
   })
 })
 
@@ -120,12 +179,22 @@ describe('mobileBarActions', () => {
   }
   const kinds = (...args: Parameters<typeof mobileBarActions>) =>
     mobileBarActions(...args).map((a) => a.kind)
-  const external = { href: 'https://book.example', external: true, label: 'Book' }
+  const external = {
+    href: 'https://book.example',
+    external: true,
+    bookingMode: 'externalUrl' as const,
+    label: 'Book',
+  }
 
-  it('returns call, directions and an external booking', () => {
-    expect(
-      kinds(full, { showDirections: true, secondaryAction: 'booking' }, external, labels),
-    ).toEqual(['call', 'directions', 'booking'])
+  it('returns call, directions and an external booking with its mode', () => {
+    const actions = mobileBarActions(
+      full,
+      { showDirections: true, secondaryAction: 'booking' },
+      external,
+      labels,
+    )
+    expect(actions.map((a) => a.kind)).toEqual(['call', 'directions', 'booking'])
+    expect(actions[2]).toMatchObject({ bookingMode: 'externalUrl', external: true })
   })
 
   it('drops a booking that only repeats the call', () => {
@@ -146,7 +215,7 @@ describe('mobileBarActions', () => {
       null,
       labels,
     )
-    expect(viber[1]).toMatchObject({ kind: 'message', label: 'viber', external: true })
+    expect(viber[1]).toMatchObject({ kind: 'message', label: 'viber', external: false })
     expect(
       kinds(full, { showDirections: false, secondaryAction: 'whatsapp' }, null, labels),
     ).toEqual(['call'])
@@ -163,7 +232,10 @@ describe('resolveCta', () => {
     })
     expect(resolveCta(cta('link'), settings)).toBeNull()
     expect(resolveCta(cta('call'), settings)?.href).toBe('tel:+35982841190')
-    expect(resolveCta(cta('booking'), settings)?.href).toBe('tel:+35982841190')
+    expect(resolveCta(cta('booking'), settings)).toMatchObject({
+      href: 'tel:+35982841190',
+      bookingMode: 'phone',
+    })
     expect(resolveCta(cta('directions'), settings)?.external).toBe(true)
   })
 })
