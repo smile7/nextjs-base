@@ -38,7 +38,9 @@ export function MobileActionBar({ actions }: MobileActionBarProps) {
       <ul className="grid h-(--action-bar-h) auto-cols-fr grid-flow-col gap-2 p-2">
         {actions.map((action) => {
           const Icon = icons[action.kind]
-          const event = events[action.kind]
+          const event = action.platform
+            ? (`${action.platform}_click` as const)
+            : events[action.kind]
           return (
             <li key={action.kind}>
               <a

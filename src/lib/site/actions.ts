@@ -75,6 +75,8 @@ export type BarAction = {
   label: string
   external: boolean
   bookingMode?: BookingMode
+  /** Set for `message` actions. */
+  platform?: MessengerLink['platform']
 }
 
 export type BarLabels = Record<
@@ -125,6 +127,7 @@ export function mobileBarActions(
         href: messenger.href,
         label: labels[secondary],
         external: messenger.external,
+        platform: messenger.platform,
       })
     }
   }

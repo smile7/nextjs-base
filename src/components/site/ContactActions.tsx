@@ -5,6 +5,8 @@ import type { SiteSettings } from '@/lib/content'
 import { messengerLinks, primaryPhone } from '@/lib/site/actions'
 import { cn } from '@/lib/utils'
 
+import { TrackedLink } from './TrackedLink'
+
 type ContactActionsProps = {
   settings: Pick<SiteSettings, 'phones' | 'socials'>
 }
@@ -19,13 +21,18 @@ export async function ContactActions({ settings }: ContactActionsProps) {
   return (
     <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
       {phone ? (
-        <a href={phone.href} className={cn(buttonVariants({ variant: 'call', size: 'lg' }))}>
+        <TrackedLink
+          event="call_click"
+          href={phone.href}
+          className={cn(buttonVariants({ variant: 'call', size: 'lg' }))}
+        >
           {t('call')}: {phone.display}
-        </a>
+        </TrackedLink>
       ) : null}
       {chats.map((chat) => (
-        <a
+        <TrackedLink
           key={chat.platform}
+          event={`${chat.platform}_click`}
           href={chat.href}
           {...(chat.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
           className={cn(
@@ -35,7 +42,7 @@ export async function ContactActions({ settings }: ContactActionsProps) {
         >
           {t(chat.platform)}
           {chat.external ? <span className="sr-only"> {t('opensInNewTab')}</span> : null}
-        </a>
+        </TrackedLink>
       ))}
     </div>
   )

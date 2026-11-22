@@ -16,6 +16,7 @@ import { SiteHeader } from '@/components/site/SiteHeader'
 import { fontVariables } from '@/config/fonts'
 import { getAnnouncement, getNavigation, getSiteSettings } from '@/lib/content'
 import { PreviewTools } from '@/lib/content/preview'
+import { Analytics } from '@/lib/analytics/Analytics'
 import { bookingAction, mobileBarActions, primaryPhone } from '@/lib/site/actions'
 import { cn } from '@/lib/utils'
 import { readPublicEnv } from '@/env'
@@ -127,6 +128,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
                 <MotionProvider>{children}</MotionProvider>
               </PageShell>
             </PageTranslationsProvider>
+            {draft.isEnabled ? null : <Analytics />}
           </ConsentProvider>
         </NextIntlClientProvider>
         {draft.isEnabled && <PreviewTools />}
