@@ -1,6 +1,7 @@
 import { submitContact } from '@/actions/contact'
 import { ContactForm } from '@/components/forms/ContactForm'
 import { Heading } from '@/components/primitives/Heading'
+import { readPublicEnv } from '@/env'
 import { primaryPhone } from '@/lib/site/actions'
 import { Text } from '@/components/primitives/Text'
 import type { ContactHoursSection as ContactHoursModel } from '@/lib/content'
@@ -11,6 +12,15 @@ import { getTranslations } from 'next-intl/server'
 import { SectionShell, sectionTitleId } from './SectionShell'
 import { sectionHeadingLevel } from './helpers'
 import type { SectionComponentProps } from './types'
+
+/** A build without the key still renders; submits are then refused with the phone as fallback. */
+function turnstileSiteKey(): string | undefined {
+  try {
+    return readPublicEnv('NEXT_PUBLIC_TURNSTILE_SITE_KEY').NEXT_PUBLIC_TURNSTILE_SITE_KEY
+  } catch {
+    return undefined
+  }
+}
 
 export async function ContactHoursSection({
   section: raw,
@@ -119,6 +129,7 @@ export async function ContactHoursSection({
             phone={primaryPhone(site)}
             privacyHref={site.privacyHref}
             successMessage={site.contactForm.successMessage}
+            turnstileSiteKey={turnstileSiteKey()}
           />
         </div>
       ) : null}

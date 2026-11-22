@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import {
   startTransition,
   useActionState,
@@ -32,6 +32,8 @@ import {
 } from '@/lib/forms/contact-schema'
 import type { PhoneLink } from '@/lib/site/actions'
 
+import { TurnstileField } from './TurnstileField'
+
 export type ContactAction = (
   previous: ContactResult | null,
   form: FormData,
@@ -44,8 +46,8 @@ export type ContactFormProps = {
   privacyHref?: string
   /** Editor's success text from the site settings. */
   successMessage?: string
-  /** Slot for the bot check (Turnstile, T08.3). */
-  verification?: ReactNode
+  /** Turnstile site key; without it no widget renders and the server refuses the submit. */
+  turnstileSiteKey?: string
 }
 
 const FIELD_ORDER: ContactField[] = [
@@ -95,9 +97,10 @@ export function ContactForm({
   phone,
   privacyHref,
   successMessage,
-  verification,
+  turnstileSiteKey,
 }: ContactFormProps) {
   const t = useTranslations('ContactForm')
+  const locale = useLocale()
   const id = useId()
   const fieldId = (field: ContactField) => `${id}-${field}`
   const errorId = (field: ContactField) => `${id}-${field}-error`
@@ -384,7 +387,9 @@ export function ContactForm({
         </div>
         <input ref={startedAtRef} type="hidden" name="startedAt" />
 
-        {verification}
+        {turnstileSiteKey ? (
+          <TurnstileField siteKey={turnstileSiteKey} language={locale} resetSignal={state} />
+        ) : null}
 
         <div className="grid gap-3">
           <Button

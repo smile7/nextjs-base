@@ -9,7 +9,7 @@
 | Maps | Click-to-load Google Maps. Nothing is sent to Google before the click. | Embeds set cookies and transfer IPs to Google. |
 | Fonts | Self-hosted via `next/font`. | No Google Fonts IP transfer (cf. the 2022 German LG München ruling). |
 | Forms | Email only (Resend). **No storage** of submissions in the CMS/DB. Honeypot + Turnstile. | Data minimisation. Sanity datasets are public on Free, so never store submissions there. |
-| Turnstile | Loaded only on pages with the form, when the form is near the viewport. | Turnstile is strictly necessary for security (legitimate interest). Disclose it in the policy. |
+| Turnstile | Loaded only on pages with the form, when the form is near the viewport. | Turnstile is strictly necessary for security (legitimate interest). Disclose it in the policy. Checked 2026-11-22 against Cloudflare's [Turnstile Privacy Addendum](https://www.cloudflare.com/turnstile-privacy-policy/) (last updated 18 June 2025): it processes "Signals" (IP address, TLS fingerprint, User-Agent, site key and origin) only to tell humans from bots, and calls them strictly necessary (its cookie section says no more than that). Cloudflare is the clinic's **processor** for bot protection, and a **controller** (legitimate interest) when it reuses the Signals to improve Turnstile. Name both roles in the privacy policy. |
 | Video embeds (if any) | `youtube-nocookie.com` + click-to-load. | |
 | Logs | Cloudflare request logs (IP, UA) under the platform's standard retention. Our code logs no PII. | |
 | Consent banner | Shown **only** when a non-essential category is enabled (GA4, marketing pixels, external media auto-load). | Avoids needless banners. Stays compliant when trackers are added. |
