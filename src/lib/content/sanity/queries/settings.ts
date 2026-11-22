@@ -1,6 +1,13 @@
 import { defineQuery } from 'next-sanity'
 
-import { ctaI18nFields, i18n, imageFields, linkFields, localizedRef } from '../fragments'
+import {
+  ctaI18nFields,
+  i18n,
+  imageFields,
+  linkFields,
+  localizedRef,
+  routeFields,
+} from '../fragments'
 
 const addressFields = /* groq */ `
   "street": ${i18n('street')},
@@ -39,6 +46,7 @@ export const siteSettingsQuery = defineQuery(`*[_id == "siteSettings"][0]{
     "supervisoryAuthority": ${i18n('supervisoryAuthority')}
   },
   "legalLinks": legalLinks[]{ "doc": ${localizedRef('@', '^._ref')} },
+  "privacyPage": *[_type == "legalPage" && kind == "privacy" && language == $locale][0]{ ${routeFields} },
   "footerNote": ${i18n('footerNote')},
   seoDefaults{
     "titleTemplate": ${i18n('titleTemplate')},

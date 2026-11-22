@@ -17,6 +17,8 @@ export type SectionSiteContext = ActionSettings &
     | 'mapEmbedUrl'
     | 'mapPlaceholder'
     | 'brandName'
+    | 'contactForm'
+    | 'privacyHref'
   >
 
 export type SectionComponentProps<T extends Section = Section> = {

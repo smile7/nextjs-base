@@ -127,6 +127,8 @@ export type SiteSettings = {
     supervisoryAuthority?: string
   }
   legalLinks: LinkTarget[]
+  /** Localized path of the privacy policy (`legalPage` of kind `privacy`), for the contact form. */
+  privacyHref?: string
   footerNote?: string
   seoDefaults: { titleTemplate?: string; description?: string; ogImage?: ImageAsset }
 }

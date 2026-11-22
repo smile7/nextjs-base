@@ -20,4 +20,5 @@ export const fixtureSite: SectionSiteContext = {
   brandName: 'Demo Dental',
   mapEmbedUrl: undefined,
   mapPlaceholder: undefined,
+  contactForm: {},
 }

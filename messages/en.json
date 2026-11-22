@@ -142,5 +142,51 @@
     "lastUpdated": "Last updated: <date></date>",
     "tocLabel": "Contents",
     "placeholderWarning": "Draft: this text still has unreplaced fields. Fill them in the Studio — the page can't be published to production like this."
+  },
+  "ContactForm": {
+    "title": "Send us a message",
+    "required": "(required)",
+    "name": "Name",
+    "phone": "Phone",
+    "email": "Email",
+    "contactHint": "Fill in a phone number or an email so we can reply.",
+    "topic": "Topic",
+    "topics": {
+      "general": "General question",
+      "childAppointment": "Appointment for a child",
+      "adultAppointment": "Appointment for an adult",
+      "other": "Other"
+    },
+    "childAge": "Child's age",
+    "childAgeHint": "Optional, in years (0–17).",
+    "message": "Message",
+    "messageHint": "Please don't include medical details.",
+    "consent": "I agree that my data is processed so I can get a reply to my inquiry, as described in the <link>Privacy policy</link>.",
+    "notice": "By sending this form you agree that we process your data to answer your inquiry. Please don't include medical details.",
+    "privacyLink": "Privacy policy",
+    "opensInNewTab": "(opens in a new tab)",
+    "honeypot": "Leave this field empty",
+    "submit": "Send",
+    "summary": "Please fix {count, plural, one {# field} other {# fields}}:",
+    "successTitle": "Thank you!",
+    "successText": "Your message has been sent. We'll get back to you soon.",
+    "errors": {
+      "nameLength": "Enter a name between 2 and 80 characters.",
+      "phoneInvalid": "Enter a valid phone number, for example +359 888 123 456.",
+      "emailInvalid": "Enter a valid email, for example name@example.com.",
+      "contactRequired": "Enter a phone number or an email.",
+      "messageLength": "The message must be between 10 and 2000 characters.",
+      "topicRequired": "Choose a topic.",
+      "childAgeInvalid": "Enter an age from 0 to 17 years.",
+      "consentRequired": "We need your consent to send the message.",
+      "generic": "Check this field."
+    },
+    "formErrors": {
+      "invalid": "Some fields aren't filled in correctly.",
+      "verificationFailed": "We couldn't confirm you're not a robot. Please try again.",
+      "sendFailed": "Your message wasn't sent. Please try again later.",
+      "unavailable": "The form isn't working right now."
+    },
+    "phoneFallback": "You can call us on <phone></phone>."
   }
 }

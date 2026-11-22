@@ -135,7 +135,10 @@ export function mapSiteSettings(
       const href = doc ? routePath(doc, locale) : null
       return href && doc?.title ? [{ href, external: false, label: doc.title }] : []
     }),
-    ...present({ footerNote: row.footerNote }),
+    ...present({
+      footerNote: row.footerNote,
+      privacyHref: row.privacyPage ? routePath(row.privacyPage, locale) : null,
+    }),
     seoDefaults: {
       ...present({
         titleTemplate: row.seoDefaults?.titleTemplate,

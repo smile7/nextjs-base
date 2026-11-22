@@ -1,4 +1,7 @@
+import { submitContact } from '@/actions/contact'
+import { ContactForm } from '@/components/forms/ContactForm'
 import { Heading } from '@/components/primitives/Heading'
+import { primaryPhone } from '@/lib/site/actions'
 import { Text } from '@/components/primitives/Text'
 import type { ContactHoursSection as ContactHoursModel } from '@/lib/content'
 import { addressLines, hoursRows } from '@/lib/site/footer'
@@ -108,6 +111,16 @@ export async function ContactHoursSection({
         <Text tone="muted" className="mt-8 max-w-(--container-prose)">
           {section.note}
         </Text>
+      ) : null}
+      {section.showForm ? (
+        <div className="mt-10 max-w-(--container-prose)">
+          <ContactForm
+            action={submitContact.bind(null, locale)}
+            phone={primaryPhone(site)}
+            privacyHref={site.privacyHref}
+            successMessage={site.contactForm.successMessage}
+          />
+        </div>
       ) : null}
     </SectionShell>
   )

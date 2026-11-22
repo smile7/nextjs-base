@@ -82,6 +82,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             Announcement: messages.Announcement,
             Error: messages.Error,
             Sections: messages.Sections,
+            ContactForm: messages.ContactForm,
           }}
         >
           <PageTranslationsProvider>
