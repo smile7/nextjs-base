@@ -2,9 +2,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { defaultLocale } from '@/config/i18n'
 
-const mocks = vi.hoisted(() => ({ sanityFetch: vi.fn() }))
+const mocks = vi.hoisted(() => ({ sanityFetch: vi.fn(), draftMode: vi.fn() }))
 
 vi.mock('server-only', () => ({}))
+vi.mock('next/headers', () => ({ draftMode: mocks.draftMode }))
 vi.mock('./sanity/fetch', () => ({ sanityFetch: mocks.sanityFetch }))
 
 const content = await import('./index')
@@ -13,6 +14,7 @@ const lastCall = () => mocks.sanityFetch.mock.calls.at(-1)![0] as Record<string,
 
 beforeEach(() => {
   mocks.sanityFetch.mockReset()
+  mocks.draftMode.mockReset().mockResolvedValue({ isEnabled: false })
   vi.spyOn(console, 'warn').mockImplementation(() => undefined)
 })
 
@@ -129,6 +131,26 @@ describe('content API', () => {
     expect(plain).toEqual({ title: 'Детска стоматология', nested: [{ name: 'Д-р Иванова' }], n: 3 })
     expect(JSON.stringify(plain)).not.toMatch(/[\u200b-\u200d\ufeff]/)
     expect(content.withoutStega(plain)).toEqual(plain)
+  })
+
+  it('returns a legal page with placeholders in draft mode even when env is production', async () => {
+    mocks.draftMode.mockResolvedValue({ isEnabled: true })
+    vi.stubEnv('NEXT_PUBLIC_ENV', 'production')
+    mocks.sanityFetch.mockResolvedValue({
+      _id: 'l1',
+      kind: 'privacy',
+      title: 'Privacy [[CLINIC_NAME]]',
+      slug: 'privacy',
+      body: [],
+      lastUpdated: null,
+      showCookieTable: null,
+      translations: null,
+    })
+
+    const page = await content.getLegalPage('privacy', 'en')
+
+    expect(page?.placeholders).toEqual(['[[CLINIC_NAME]]'])
+    vi.unstubAllEnvs()
   })
 
   it('returns no translations for a missing or non-routable document', async () => {

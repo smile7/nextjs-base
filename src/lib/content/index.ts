@@ -5,6 +5,7 @@
  */
 import 'server-only'
 
+import { draftMode } from 'next/headers'
 import { cache } from 'react'
 
 import { defaultLocale, locales, type Locale } from '@/config/i18n'
@@ -180,6 +181,7 @@ export const getLegalPage = cache(async (slug: string, locale: Locale) => {
   })
   const page = mapLegalPage(row, locale)
   if (!page) return missing(`legal page ${slug} (${locale})`)
+  if ((await draftMode()).isEnabled) return page
   return assertLegalPagePublishable(page, readPublicEnv('NEXT_PUBLIC_ENV').NEXT_PUBLIC_ENV)
 })
 

@@ -6,7 +6,7 @@ import NextLink from 'next/link'
 import type { ReactNode } from 'react'
 
 import { ContentImage } from '@/components/primitives/ContentImage'
-import { Heading, type HeadingLevel } from '@/components/primitives/Heading'
+import { Heading, type HeadingLevel, type HeadingSize } from '@/components/primitives/Heading'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -20,6 +20,13 @@ import type {
 import type { RichTextValue } from './types'
 
 const levels: HeadingLevel[] = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
+
+/** Visual size per CMS heading block — below page `h1` (`step-4`/`step-5`). */
+const cmsHeadingSize: Record<2 | 3 | 4, HeadingSize> = {
+  2: 'step-3',
+  3: 'step-2',
+  4: 'step-1',
+}
 
 /** CMS h2 → h(2 + offset), never above h6. The page owns the h1. */
 const shift = (level: number, offset: number) =>
@@ -47,9 +54,11 @@ function components(headingOffset: number, anchorHeadings: boolean): PortableTex
       children?: ReactNode
       value: { _key?: string }
     }) {
+      const cmsSize = level >= 2 && level <= 4 ? cmsHeadingSize[level as 2 | 3 | 4] : undefined
       return (
         <Heading
           as={shift(level, headingOffset)}
+          size={cmsSize}
           id={anchorHeadings && value._key ? headingAnchor(value._key) : undefined}
         >
           {children}
