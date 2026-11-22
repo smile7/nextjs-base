@@ -74,6 +74,12 @@ describe('composeMetadata', () => {
     expect(ogUrl({ image: image('hero') })?.url).toMatch(/hero-1600x900/)
     expect(ogUrl({})).toMatchObject({ width: 1200, height: 630 })
     expect(ogUrl({})?.url).toMatch(/default-1600x900/)
+    const noImages = { ...settings, seoDefaults: {} }
+    expect(ogUrl({ settings: noImages })).toEqual({
+      url: '/en/opengraph-image',
+      width: 1200,
+      height: 630,
+    })
   })
 
   it('sets canonical, hreflang and OG locales from the translations', () => {

@@ -59,6 +59,9 @@ export function pageTitle(input: Pick<MetadataInput, 'settings' | 'title' | 'seo
   )
 }
 
+/** The build-time image of `app/[locale]/opengraph-image.tsx` (resolved by `metadataBase`). */
+export const fallbackOgImagePath = (locale: Locale) => `/${locale}/opengraph-image`
+
 /** The route's full `Metadata` (SEO.md §1). Every string goes through `withoutStega`. */
 export function composeMetadata(input: MetadataInput, context: MetadataContext): Metadata {
   const { locale, settings, seo, translations, article } = input
@@ -69,7 +72,12 @@ export function composeMetadata(input: MetadataInput, context: MetadataContext):
   const alternates = buildAlternates(locale, translations)
   const canonical = seo?.canonicalOverride || alternates.canonical
   const image = seo?.ogImage ?? input.image ?? settings.seoDefaults.ogImage
-  const images = image ? [{ url: ogImageUrl(image), ...OG_IMAGE_SIZE, alt: image.alt }] : undefined
+  // A page's `openGraph` replaces the layout's, so the generated fallback has to be named here.
+  const images = [
+    image
+      ? { url: ogImageUrl(image), ...OG_IMAGE_SIZE, alt: image.alt }
+      : { url: fallbackOgImagePath(locale), ...OG_IMAGE_SIZE },
+  ]
   const noIndex = context.env !== 'production' || context.draftMode || Boolean(seo?.noIndex)
 
   return withoutStega({
