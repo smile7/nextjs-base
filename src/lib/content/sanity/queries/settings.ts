@@ -55,6 +55,12 @@ export const siteSettingsQuery = defineQuery(`*[_id == "siteSettings"][0]{
   }
 }`)
 
+/** Read at submit time by the contact Server Action (the recipient is not part of `siteSettingsQuery`). */
+export const contactFormSettingsQuery = defineQuery(`*[_id == "siteSettings"][0]{
+  "brandName": ${i18n('brandName')},
+  contactForm{ recipient, "subjectPrefix": ${i18n('subjectPrefix')} }
+}`)
+
 const navLinkFields = /* groq */ `_key, "label": ${i18n('label')}, link{ ${linkFields} }`
 
 export const navigationQuery = defineQuery(`*[_id == "navigation"][0]{

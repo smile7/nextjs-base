@@ -188,5 +188,10 @@
       "unavailable": "The form isn't working right now."
     },
     "phoneFallback": "You can call us on <phone></phone>."
+  },
+  "ContactEmail": {
+    "subject": "{prefix}: {topic}",
+    "heading": "New inquiry from the website",
+    "footer": "Sent from the contact form on {sentAt} (UTC). Consent to data processing: given, text version {version}."
   }
 }

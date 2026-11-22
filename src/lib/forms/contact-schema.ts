@@ -21,6 +21,9 @@ export const contactErrorKeys = [
 ] as const
 export type ContactErrorKey = (typeof contactErrorKeys)[number]
 
+/** Version of the `ContactForm.consent` wording, quoted in every notification. Bump when it changes. */
+export const CONSENT_TEXT_VERSION = '2026-11-22'
+
 /** Minimum time between rendering the form and submitting it; faster is treated as a bot. */
 export const MIN_FILL_MS = 3000
 

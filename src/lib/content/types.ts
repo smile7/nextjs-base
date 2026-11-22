@@ -133,6 +133,9 @@ export type SiteSettings = {
   seoDefaults: { titleTemplate?: string; description?: string; ogImage?: ImageAsset }
 }
 
+/** What the contact Server Action reads at submit time (published content only). */
+export type ContactFormSettings = { brandName?: string; recipient?: string; subjectPrefix?: string }
+
 export type NavItem = LinkTarget & { children: LinkTarget[] }
 
 export type Navigation = {

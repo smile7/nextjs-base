@@ -39,11 +39,17 @@ import {
   staticSlugsQuery,
   translationsQuery,
 } from './sanity/queries/documents'
-import { announcementQuery, navigationQuery, siteSettingsQuery } from './sanity/queries/settings'
+import {
+  announcementQuery,
+  contactFormSettingsQuery,
+  navigationQuery,
+  siteSettingsQuery,
+} from './sanity/queries/settings'
 import type {
   AnnouncementQueryResult,
   ArticleBySlugQueryResult,
   ArticlesQueryResult,
+  ContactFormSettingsQueryResult,
   FaqQueryResult,
   GalleryQueryResult,
   LegalPageQueryResult,
@@ -59,7 +65,14 @@ import type {
   TestimonialsQueryResult,
   TranslationsQueryResult,
 } from './sanity/query-types'
-import type { ArticleSummary, FaqItem, GalleryAlbum, SystemPageKey, Translations } from './types'
+import type {
+  ArticleSummary,
+  ContactFormSettings,
+  FaqItem,
+  GalleryAlbum,
+  SystemPageKey,
+  Translations,
+} from './types'
 
 export type * from './types'
 /**
@@ -75,6 +88,21 @@ const i18nParams = (locale: Locale) => ({ locale, fallback: defaultLocale })
 function missing(what: string): null {
   console.warn(`[content] ${what} not found`)
   return null
+}
+
+/** For the contact Server Action: published perspective, so it never needs draft mode. */
+export async function getContactFormSettings(locale: Locale): Promise<ContactFormSettings> {
+  const row = await sanityFetch<ContactFormSettingsQueryResult>({
+    query: contactFormSettingsQuery,
+    params: i18nParams(locale),
+    perspective: 'published',
+  })
+  const recipient = row?.contactForm?.recipient
+  return {
+    ...(row?.brandName ? { brandName: row.brandName } : {}),
+    ...(recipient ? { recipient } : {}),
+    ...(row?.contactForm?.subjectPrefix ? { subjectPrefix: row.contactForm.subjectPrefix } : {}),
+  }
 }
 
 export const getSiteSettings = cache(async (locale: Locale) => {
