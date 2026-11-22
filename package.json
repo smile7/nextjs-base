@@ -21,6 +21,7 @@
     "check": "pnpm lint && pnpm boundaries && pnpm typecheck && pnpm test && pnpm contrast",
     "check:legal": "tsx scripts/check-legal.ts",
     "contrast": "tsx scripts/check-contrast.ts",
+    "tokens:export": "tsx scripts/export-brand-colors.ts",
     "boundaries": "tsx scripts/check-boundaries.ts",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",

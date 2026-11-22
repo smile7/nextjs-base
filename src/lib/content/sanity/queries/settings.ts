@@ -52,7 +52,9 @@ export const siteSettingsQuery = defineQuery(`*[_id == "siteSettings"][0]{
   seoDefaults{
     "titleTemplate": ${i18n('titleTemplate')},
     "description": ${i18n('description')},
-    ogImage{ ${imageFields} }
+    ogImage{ ${imageFields} },
+    googleVerification,
+    bingVerification
   }
 }`)
 

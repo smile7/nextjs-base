@@ -134,7 +134,13 @@ export type SiteSettings = {
   /** Localized path of the cookie policy (`legalPage` of kind `cookies`), for the preferences dialog. */
   cookiePolicyHref?: string
   footerNote?: string
-  seoDefaults: { titleTemplate?: string; description?: string; ogImage?: ImageAsset }
+  seoDefaults: {
+    titleTemplate?: string
+    description?: string
+    ogImage?: ImageAsset
+    googleVerification?: string
+    bingVerification?: string
+  }
 }
 
 /** What the contact Server Action reads at submit time (published content only). */

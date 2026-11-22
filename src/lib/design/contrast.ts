@@ -72,6 +72,18 @@ export function ratioFromLuminance(la: number, lb: number): number {
   return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05)
 }
 
+/** `#rrggbb` (gamma-encoded sRGB) for places that can't read CSS tokens: manifest, OG images. */
+export function oklchToHex(color: Oklch): string {
+  const encode = (x: number) => (x <= 0.0031308 ? 12.92 * x : 1.055 * x ** (1 / 2.4) - 0.055)
+  return `#${oklchToLinearSrgb(color)
+    .map((x) =>
+      Math.round(encode(x) * 255)
+        .toString(16)
+        .padStart(2, '0'),
+    )
+    .join('')}`
+}
+
 export function contrastRatio(a: Oklch, b: Oklch): number {
   return ratioFromLuminance(relativeLuminance(a), relativeLuminance(b))
 }

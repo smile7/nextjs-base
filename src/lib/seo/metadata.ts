@@ -29,22 +29,41 @@ export type MetadataContext = {
 }
 
 const SEPARATOR = ' · '
+export const TITLE_MAX = 60
+export const DESCRIPTION_MAX = 160
+
+/** Shortens `text` to at most `max` characters at a word boundary, ending with `…`. */
+export function truncate(text: string, max: number): string {
+  if (text.length <= max) return text
+  const cut = text.slice(0, max - 1)
+  const space = cut.lastIndexOf(' ')
+  return `${(space > 0 ? cut.slice(0, space) : cut).replace(/[\s,.;:·|–-]+$/, '')}…`
+}
 
 export function pageTitle(input: Pick<MetadataInput, 'settings' | 'title' | 'seo' | 'home'>) {
   const { brandName, tagline, seoDefaults } = input.settings
-  if (input.home) return input.seo?.title || [brandName, tagline].filter(Boolean).join(SEPARATOR)
+  if (input.home) {
+    return truncate(
+      input.seo?.title || [brandName, tagline].filter(Boolean).join(SEPARATOR),
+      TITLE_MAX,
+    )
+  }
   const template = seoDefaults.titleTemplate?.includes('%s')
     ? seoDefaults.titleTemplate
     : `%s${SEPARATOR}${brandName}`
-  return template.replace('%s', input.seo?.title || input.title)
+  // The page part is shortened so the brand suffix survives.
+  const room = Math.max(TITLE_MAX - (template.length - 2), 20)
+  return truncate(template.replace('%s', truncate(input.seo?.title || input.title, room)), TITLE_MAX)
 }
 
 /** The route's full `Metadata` (SEO.md §1). Every string goes through `withoutStega`. */
 export function composeMetadata(input: MetadataInput, context: MetadataContext): Metadata {
   const { locale, settings, seo, translations, article } = input
   const title = pageTitle(input)
-  const description =
-    seo?.description || input.description || settings.seoDefaults.description || undefined
+  const fullDescription =
+    seo?.description || input.description || settings.seoDefaults.description
+  const description = fullDescription ? truncate(fullDescription, DESCRIPTION_MAX) : undefined
+  const { googleVerification, bingVerification } = settings.seoDefaults
   const alternates = buildAlternates(locale, translations)
   const canonical = seo?.canonicalOverride || alternates.canonical
   const image = seo?.ogImage ?? input.image ?? settings.seoDefaults.ogImage
@@ -56,6 +75,16 @@ export function composeMetadata(input: MetadataInput, context: MetadataContext):
     description,
     alternates: { canonical, languages: alternates.languages },
     robots: noIndex ? { index: false, follow: false } : { index: true, follow: true },
+    // Phone numbers are rendered as explicit tel: links.
+    formatDetection: { telephone: false },
+    ...(googleVerification || bingVerification
+      ? {
+          verification: {
+            ...(googleVerification ? { google: googleVerification } : {}),
+            ...(bingVerification ? { other: { 'msvalidate.01': bingVerification } } : {}),
+          },
+        }
+      : {}),
     openGraph: {
       title,
       description,

@@ -312,14 +312,42 @@ export const siteSettingsType = defineType({
           title: 'Default description',
           type: 'internationalizedArrayText',
           description: 'One or two sentences about the business, 70–160 characters.',
-          validation: (rule) =>
+          validation: (rule) => [
             rule.custom(validateI18n({ required: 'Add the default description for Google.' })),
+            rule
+              .custom((rows: I18nRow[] | undefined) => {
+                const long = rows?.filter(
+                  (row) => typeof row.value === 'string' && row.value.length > 160,
+                )
+                return long?.length
+                  ? long.map((row) => ({
+                      message: 'Google cuts descriptions after about 160 characters.',
+                      path: [{ _key: row._key }, 'value'],
+                    }))
+                  : true
+              })
+              .warning(),
+          ],
         }),
         defineField({
           name: 'ogImage',
           title: 'Default sharing image',
           type: 'imageWithAlt',
           description: 'Shown when a page without its own image is shared. Cropped to 1200×630.',
+        }),
+        defineField({
+          name: 'googleVerification',
+          title: 'Google Search Console code',
+          type: 'string',
+          description:
+            'Only if the domain is not verified by DNS: the content="…" value of the HTML tag Search Console gives you.',
+        }),
+        defineField({
+          name: 'bingVerification',
+          title: 'Bing Webmaster code',
+          type: 'string',
+          description:
+            'Only if the domain is not verified by DNS: the content="…" value of the msvalidate.01 tag.',
         }),
       ],
     }),

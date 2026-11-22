@@ -145,6 +145,8 @@ export function mapSiteSettings(
       ...present({
         titleTemplate: row.seoDefaults?.titleTemplate,
         description: row.seoDefaults?.description,
+        googleVerification: row.seoDefaults?.googleVerification,
+        bingVerification: row.seoDefaults?.bingVerification,
       }),
       ...(ogImage ? { ogImage } : {}),
     },

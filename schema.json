@@ -5296,6 +5296,20 @@
                 "name": "imageWithAlt"
               },
               "optional": true
+            },
+            "googleVerification": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string"
+              },
+              "optional": true
+            },
+            "bingVerification": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string"
+              },
+              "optional": true
             }
           }
         },

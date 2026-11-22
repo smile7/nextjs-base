@@ -123,7 +123,7 @@ Groups (Studio tabs): Brand · Contact · Hours · SEO · Booking & form · Lega
 | socials | array of socialLink | — | |
 | booking | bookingConfig | — | required (`mode: phone` default) |
 | contactForm | `{ recipient: email, subjectPrefix: [F] string, successMessage: [F] text }` | mixed | recipient optional if the `CONTACT_TO_EMAIL` env var is set. Description warns: "This address is publicly readable via the API." |
-| seoDefaults | `{ titleTemplate: [F] string ("%s · Руми Дент"), description: [F] text, ogImage: imageWithAlt }` | F | required description |
+| seoDefaults | `{ titleTemplate: [F] string ("%s · Руми Дент"), description: [F] text, ogImage: imageWithAlt, googleVerification: string, bingVerification: string }` | F | required description; the two verification codes are optional (DNS verification is preferred, SEO.md §6) |
 | legal | legalEntity | mixed | required before launch (warning) |
 | priceRange | string | — | optional JSON-LD (`€€`) |
 | areaServed | internationalizedArrayString | F | e.g. «Русе и региона» |

@@ -127,6 +127,50 @@ describe('composeMetadata', () => {
     expect(composeMetadata(input({ seo: { noIndex: true } }), production).robots).toEqual(noindex)
   })
 
+  it('uses a service teaser as the description when the service has no SEO description', () => {
+    const metadata = composeMetadata(
+      input({
+        translations: { en: { pathname: '/services/[slug]', params: { slug: 'check-up' } } },
+        title: "Children's check-up",
+        description: 'A calm first visit with tips for parents.',
+      }),
+      production,
+    )
+    expect(metadata.description).toBe('A calm first visit with tips for parents.')
+    expect(metadata.title).toEqual({ absolute: "Children's check-up · Demo Dental" })
+  })
+
+  it('keeps titles within 60 and descriptions within 160 characters, cut at a word', () => {
+    const long = 'Very long words '.repeat(20).trim()
+    const metadata = composeMetadata(input({ title: long, description: long }), production)
+    const title = (metadata.title as { absolute: string }).absolute
+    expect(title.length).toBeLessThanOrEqual(60)
+    expect(title).toMatch(/^Very long words .*(Very|long|words)… · Demo Dental$/)
+    expect(metadata.description?.length).toBeLessThanOrEqual(160)
+    expect(metadata.description).toMatch(/(Very|long|words)…$/)
+    const home = composeMetadata(input({ home: true, seo: { ...noSeo, title: long } }), production)
+    expect((home.title as { absolute: string }).absolute.length).toBeLessThanOrEqual(60)
+  })
+
+  it('turns off phone number detection and adds verification codes only when set', () => {
+    const plain = composeMetadata(input(), production)
+    expect(plain.formatDetection).toEqual({ telephone: false })
+    expect(plain.verification).toBeUndefined()
+    const verified = composeMetadata(
+      input({
+        settings: {
+          ...settings,
+          seoDefaults: { googleVerification: 'g-code', bingVerification: 'b-code' },
+        },
+      }),
+      production,
+    )
+    expect(verified.verification).toEqual({
+      google: 'g-code',
+      other: { 'msvalidate.01': 'b-code' },
+    })
+  })
+
   it('strips stega markers from every string', () => {
     const metadata = composeMetadata(
       input({ title: `About us${marker}`, description: `Intro${marker}` }),
