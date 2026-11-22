@@ -203,7 +203,7 @@
   "Consent": {
     "banner": {
       "title": "Cookies",
-      "text": "We only use necessary cookies unless you allow others, for example for statistics. You can change your choice at any time with “Cookie settings” at the bottom of the page.",
+      "text": "We only use necessary cookies unless you allow others, for example for statistics. “Accept all” also allows external content such as Google Maps. You can change your choice at any time with “Cookie settings” at the bottom of the page.",
       "settings": "Settings"
     },
     "acceptAll": "Accept all",
