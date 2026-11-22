@@ -122,6 +122,8 @@ export type SiteSettings = {
     vatNumber?: string
     registeredAddress?: Address
     representative?: string
+    /** Data protection contact (T09.4); the footer falls back to `email`. */
+    privacyEmail?: string
     professionalBody?: string
     registration?: string
     supervisoryAuthority?: string

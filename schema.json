@@ -121,6 +121,13 @@
           },
           "optional": true
         },
+        "privacyEmail": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
         "professionalBody": {
           "type": "objectAttribute",
           "value": {

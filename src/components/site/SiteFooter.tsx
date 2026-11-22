@@ -25,6 +25,7 @@ export type SiteFooterProps = {
 export async function SiteFooter({ locale, settings, columns }: SiteFooterProps) {
   const t = await getTranslations('Footer')
   const { legal } = settings
+  const privacyEmail = legal.privacyEmail ?? settings.email
   const hours = hoursRows(locale, settings.openingHours)
   const registeredAddress = legal.registeredAddress
     ? addressLines(legal.registeredAddress).join(', ')
@@ -136,6 +137,13 @@ export async function SiteFooter({ locale, settings, columns }: SiteFooterProps)
                   <NavLink link={link} className={`${linkClass} text-fg`} />
                 </li>
               ))}
+              {privacyEmail ? (
+                <li>
+                  <a href={`mailto:${privacyEmail}`} className={`${linkClass} text-fg`}>
+                    {t('privacyContact', { email: privacyEmail })}
+                  </a>
+                </li>
+              ) : null}
               <li>
                 <CookieSettingsButton
                   label={t('cookieSettings')}

@@ -1057,6 +1057,7 @@ export function demoDocuments(images: SeedImages) {
       legalName: demoDetails.legalName.bg,
       uic: demoDetails.uic.bg,
       representative: 'Мария Иванова',
+      privacyEmail: 'privacy@example.com',
       professionalBody: i18nString({
         bg: 'Български зъболекарски съюз',
         en: 'Bulgarian Dental Association',

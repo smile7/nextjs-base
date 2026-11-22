@@ -39,7 +39,7 @@ export const siteSettingsQuery = defineQuery(`*[_id == "siteSettings"][0]{
   booking{ mode, url, "label": ${i18n('label')}, "note": ${i18n('note')} },
   contactForm{ "subjectPrefix": ${i18n('subjectPrefix')}, "successMessage": ${i18n('successMessage')} },
   legal{
-    legalName, uic, vatNumber, representative,
+    legalName, uic, vatNumber, representative, privacyEmail,
     registeredAddress{ ${addressFields} },
     "professionalBody": ${i18n('professionalBody')},
     "registration": ${i18n('registration')},

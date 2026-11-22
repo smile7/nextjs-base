@@ -104,3 +104,17 @@ Provider information (§8), purpose of the site (information, not medical advice
 - [ ] Contact form notice + checkbox present. Test email received with the consent version.
 - [ ] Patient photos: consent references recorded for every `showsPatient` item.
 - [ ] Footer shows the legal entity info + links to all legal pages in both locales.
+
+## 11. Data subject requests
+The site stores no visitor data of its own (§1), so a request (access, erasure, rectification, objection; §9.3) is answered from these places. The clinic is the controller and answers within 1 month (+2 for complex requests, telling the person within the first month). The one-page BG procedure for the clinic is in NEW-CLIENT §10 ("Handover sheet: искания по GDPR").
+
+| Where | What can be there | How to handle it |
+| --- | --- | --- |
+| Clinic mailbox | Contact form enquiries (name, phone/email, message) | Search by name/email/phone; send a copy or delete. Retention per the privacy policy (`[[retention]]`, 12 months recommended). |
+| Resend | Delivery logs of the notification emails | Resend dashboard → Emails; the plan's log retention applies **(verify)**. |
+| Sanity | Content naming a person: testimonials, gallery photos, team members, article authors/reviewers | "Remove a person" checklist (NEW-CLIENT §10). Deleting a document does not delete its image file: delete the asset too, or the CDN URL keeps working (within [[7]] days, §6). |
+| Analytics | Cookieless (Cloudflare/Umami): no personal data, nothing to do. GA4: pseudonymous IDs | GA4 Admin → Data deletion requests, or User explorer → delete user when the person can give their client ID. |
+| Cloudflare logs | IP, UA (platform retention) | Not linked to a person by the site; no action. |
+| Medical records | Outside the website | Health legislation applies (§9.3), not this procedure. |
+
+The footer shows a `mailto:` privacy contact (`siteSettings.legal.privacyEmail`, falling back to the main email).

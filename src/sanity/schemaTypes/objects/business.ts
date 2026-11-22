@@ -43,6 +43,14 @@ export const legalEntityType = defineType({
       description: 'Optional.',
     }),
     defineField({
+      name: 'privacyEmail',
+      title: 'Privacy contact email',
+      type: 'string',
+      description:
+        'Where people send data protection requests (access, deletion, …). Shown in the footer. Leave empty to use the main email.',
+      validation: (rule) => rule.email().error("This doesn't look like an email address."),
+    }),
+    defineField({
       name: 'professionalBody',
       title: 'Professional body',
       type: 'internationalizedArrayString',

@@ -123,6 +123,7 @@ export function mapSiteSettings(
         uic: clean(row.legal?.uic),
         vatNumber: clean(row.legal?.vatNumber),
         representative: row.legal?.representative,
+        privacyEmail: clean(row.legal?.privacyEmail),
         professionalBody: row.legal?.professionalBody,
         registration: row.legal?.registration,
         supervisoryAuthority: row.legal?.supervisoryAuthority,

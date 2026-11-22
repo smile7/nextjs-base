@@ -77,6 +77,27 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 - [ ] [D] Write a one-page "How to edit your site" in the client's language (BG) and add it as a Studio dashboard/help link (optional).
 - [ ] [D] Export the content once at handover (no automated backups, ADR-012): `pnpm sanity dataset export production production-YYYY-MM-DD.tar.gz`, stored in the client's vault.
 - [ ] [D] Calendar reminders: dependency review monthly (`pnpm outdated`, merge template upgrades), publish-webhook PAT rotation, DMARC tighten in 4 weeks, GSC check in 2 weeks.
+- [ ] [D] Fill Site settings → Legal → "Privacy contact email" (footer `mailto:`), and hand the clinic the page below (print it or add it to the "How to edit your site" document).
+
+### Handover sheet: искания по GDPR (BG, one page for the clinic)
+**Процедура при искане от лице относно личните му данни** (достъп, изтриване, коригиране, възражение)
+
+1. **Приемане.** Искането може да дойде по имейл (адресът за защита на данните в долната част на сайта), по пощата или лично. Запишете датата: отговаряте до **1 месец**. При сложно искане срокът може да се удължи с още 2 месеца, но трябва да уведомите лицето в първия месец.
+2. **Самоличност.** Проверете, че искането е от самото лице (или от родителя/настойника на дете), само доколкото е нужно: например отговор от същия имейл или телефон, или документ при лично посещение. Не искайте копие от лична карта по имейл.
+3. **Къде да търсите:**
+   - **Пощата на клиниката:** запитванията от формата за контакт идват само тук. Сайтът не ги пази. Потърсете по име, имейл и телефон, после изпратете копие или ги изтрийте.
+   - **Съдържанието на сайта (Sanity Studio):** отзиви с име, снимки в галерията, профили в екипа. Вижте „Премахване на човек“ по-долу.
+   - **Статистика:** ако сайтът е със статистика без бисквитки (по подразбиране), там няма лични данни. Ако е включен Google Analytics, помолете разработчика да подаде искане за изтриване в Google Analytics.
+   - **Медицински картони:** те не са част от сайта и се пазят по здравното законодателство.
+4. **Отговор.** Пишете ясно и безплатно, в срока. Ако откажете (например ако законът изисква да пазите данните), посочете причината и правото на жалба до КЗЛД (www.cpdp.bg).
+5. **Запис.** Водете кратък дневник: дата на искането, вид, какво направихте, дата на отговора. Без излишни лични данни.
+
+**Премахване на човек от сайта (Studio)**
+- [ ] **Отзиви:** Testimonials → намерете отзива → Unpublish → Delete.
+- [ ] **Галерия:** Gallery → всяка снимка с този човек → Delete. Кажете на разработчика да изтрие и самия файл на снимката (иначе адресът ѝ продължава да работи) до 7 дни.
+- [ ] **Екип:** Team → профилът → Delete (снимката също се изтрива от разработчика). Сменете автора на статиите му.
+- [ ] **И двата езика:** проверете и английската версия на страниците, където е споменат.
+- [ ] **Проверка:** след няколко минути сайтът се обновява сам. Отворете страниците и се уверете, че човекът вече не се показва.
 
 ## Upstream changes (template ↔ client repos)
 - The template repo is the source of truth for components and infra. Client repos add the template as a remote: `git remote add template git@github.com:<you>/site-starter.git`.

@@ -52,6 +52,21 @@ describe('mapSiteSettings', () => {
     })
     expect(settings).not.toHaveProperty('tagline')
   })
+
+  it('maps the privacy contact and the cookie policy link', () => {
+    const settings = mapSiteSettings(
+      fixture<SiteSettingsQueryRow>({
+        brandName: 'Demo Dental',
+        legal: fixture<NonNullable<SiteSettingsQueryRow>['legal']>({
+          privacyEmail: 'privacy@example.com',
+        }),
+        cookiePolicyPage: { _type: 'legalPage', title: 'Cookies', slug: 'cookies' },
+      }),
+      'en',
+    )
+    expect(settings?.legal.privacyEmail).toBe('privacy@example.com')
+    expect(settings?.cookiePolicyHref).toBe('/en/legal/cookies')
+  })
 })
 
 describe('mapNavigation', () => {
