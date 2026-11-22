@@ -53,6 +53,15 @@ describe('composeMetadata', () => {
     })
   })
 
+  it('truncates only <title>; og:title and twitter:title keep the full title', () => {
+    const long = 'Professional cleaning, polishing and fluoride varnish for the whole family'
+    const metadata = composeMetadata(input({ title: long }), production)
+    const full = `${long} · Demo Dental`
+    expect(metadata.title).not.toEqual({ absolute: full })
+    expect(metadata.openGraph).toMatchObject({ title: full })
+    expect(metadata.twitter).toMatchObject({ title: full })
+  })
+
   it('falls back from seo.description to the excerpt to the settings description', () => {
     const seo = { ...noSeo, description: 'SEO description' }
     expect(composeMetadata(input({ seo, description: 'Intro' }), production).description).toBe(

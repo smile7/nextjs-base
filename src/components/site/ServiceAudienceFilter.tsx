@@ -23,7 +23,7 @@ export function ServiceAudienceFilter({ labels, children }: ServiceAudienceFilte
 
   return (
     <div data-audience-filter={audience}>
-      {/* `html.js` is set by the tiles section's inline script; without JS the chips would be inert. */}
+      {/* `html.js` is set by the inline script in the `[locale]` layout `<head>`; without JS the chips would be inert. */}
       <Container className="[html:not(.js)_&]:hidden">
         <div role="group" aria-label={labels.group}>
           <ul className="flex flex-wrap gap-2 pt-6">

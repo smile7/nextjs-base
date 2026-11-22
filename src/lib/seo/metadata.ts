@@ -40,17 +40,25 @@ export function truncate(text: string, max: number): string {
   return `${(space > 0 ? cut.slice(0, space) : cut).replace(/[\s,.;:·|–-]+$/, '')}…`
 }
 
-export function pageTitle(input: Pick<MetadataInput, 'settings' | 'title' | 'seo' | 'home'>) {
-  const { brandName, tagline, seoDefaults } = input.settings
-  if (input.home) {
-    return truncate(
-      input.seo?.title || [brandName, tagline].filter(Boolean).join(SEPARATOR),
-      TITLE_MAX,
-    )
-  }
-  const template = seoDefaults.titleTemplate?.includes('%s')
+type TitleInput = Pick<MetadataInput, 'settings' | 'title' | 'seo' | 'home'>
+
+function titleTemplate({ brandName, seoDefaults }: MetadataInput['settings']): string {
+  return seoDefaults.titleTemplate?.includes('%s')
     ? seoDefaults.titleTemplate
     : `%s${SEPARATOR}${brandName}`
+}
+
+/** The untruncated title, for `og:title` / `twitter:title` (share cards wrap long titles). */
+export function fullPageTitle(input: TitleInput): string {
+  const { brandName, tagline } = input.settings
+  if (input.home) return input.seo?.title || [brandName, tagline].filter(Boolean).join(SEPARATOR)
+  return titleTemplate(input.settings).replace('%s', input.seo?.title || input.title)
+}
+
+/** The `<title>`, at most `TITLE_MAX` characters. */
+export function pageTitle(input: TitleInput): string {
+  if (input.home) return truncate(fullPageTitle(input), TITLE_MAX)
+  const template = titleTemplate(input.settings)
   // The page part is shortened so the brand suffix survives.
   const room = Math.max(TITLE_MAX - (template.length - 2), 20)
   return truncate(
@@ -66,6 +74,7 @@ export const fallbackOgImagePath = (locale: Locale) => `/${locale}/opengraph-ima
 export function composeMetadata(input: MetadataInput, context: MetadataContext): Metadata {
   const { locale, settings, seo, translations, article } = input
   const title = pageTitle(input)
+  const shareTitle = fullPageTitle(input)
   const fullDescription = seo?.description || input.description || settings.seoDefaults.description
   const description = fullDescription ? truncate(fullDescription, DESCRIPTION_MAX) : undefined
   const { googleVerification, bingVerification } = settings.seoDefaults
@@ -96,7 +105,7 @@ export function composeMetadata(input: MetadataInput, context: MetadataContext):
         }
       : {}),
     openGraph: {
-      title,
+      title: shareTitle,
       description,
       url: canonical,
       siteName: settings.brandName,
@@ -114,6 +123,6 @@ export function composeMetadata(input: MetadataInput, context: MetadataContext):
           }
         : { type: 'website' }),
     },
-    twitter: { card: 'summary_large_image', title, description, images },
+    twitter: { card: 'summary_large_image', title: shareTitle, description, images },
   })
 }

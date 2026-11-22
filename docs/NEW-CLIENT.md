@@ -16,8 +16,8 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 - [ ] [D] Store all credentials in a shared password manager vault for the client.
 
 ## 2. Repository
-- [ ] [D] GitHub: "Use this template" → `client-<slug>-site` (private).
-- [ ] [D] `pnpm install`, then `pnpm new-client` (interactive). It asks for: client slug, brand names per locale, production domain, Sanity project ID, datasets, locales (default `bg`, `en`) and analytics provider. It writes `src/config/site.ts`, `.env.local`, `.dev.vars` and the worker name in `wrangler.jsonc`, and resets `docs/PROGRESS.md` for the client.
+- [ ] [D] GitHub: on the template repo, "Use this template" → "Create a new repository" → `client-<slug>-site`, **private**, owner = the client's org (or yours, by contract). The template repo itself has "Template repository" ticked in Settings → General.
+- [ ] [D] `pnpm install`, then `pnpm new-client` (interactive; `--dry-run` first shows what it would change; re-running with the same answers changes nothing). It asks for: client slug, production domain, Sanity project ID, the local dataset, analytics provider, whether to block AI crawlers, the theme preset (`src/styles/presets/*.css`), whether to reset `docs/PROGRESS.md` and whether to delete the demo seed images. It writes `.env.local` and `.dev.vars` (secrets already there are kept), the worker name `<slug>-site` in `wrangler.jsonc`, `blockedBots` in `src/config/site.ts`, `src/styles/tokens.css` + `src/config/brand-colors.json` from the preset, and the client `docs/PROGRESS.md`, then prints the GitHub variables and next steps. Brand names, contacts and hours are content: they go into Studio → Site settings (§6). Locales stay `bg` + `en` unless you follow ARCHITECTURE §7.1.
 - [ ] [D] Update the `README.md` header (client name, URLs, who to contact).
 
 ## 3. Sanity
@@ -104,5 +104,5 @@ Spin up a new client site from the template. Target: **≤ 2 developer days to "
 
 ## Upstream changes (template ↔ client repos)
 - The template repo is the source of truth for components and infra. Client repos add the template as a remote: `git remote add template git@github.com:<you>/site-starter.git`.
-- Improve generic things in the template first (PR there), then `git fetch template && git merge template/main` (or cherry-pick) into client repos. Client-specific files (`src/config/*`, `tokens.css`, `fonts.ts`, `messages/*`, `public/brand/*`) are designed not to conflict.
+- Improve generic things in the template first (PR there), then release a tag (`vX.Y.Z`, CHANGELOG entry). In client repos: `git fetch template --tags && git merge vX.Y.Z` (or `git cherry-pick <sha>` for a single fix), resolve conflicts in favor of the client's config files, run `pnpm check && pnpm build`, and note the template version at the top of the client's `docs/PROGRESS.md`. Client-specific files (`src/config/*`, `tokens.css`, `fonts.ts`, `messages/*`, `public/brand/*`) are designed not to conflict.
 - Keep `CHANGELOG.md` in the template (semver). Client repos note which template version they're on.

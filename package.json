@@ -1,6 +1,6 @@
 {
   "name": "site-starter",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@12.21.0",
@@ -24,6 +24,7 @@
     "tokens:export": "tsx scripts/export-brand-colors.ts",
     "boundaries": "tsx scripts/check-boundaries.ts",
     "launch-check": "tsx scripts/launch-check.ts",
+    "new-client": "tsx scripts/new-client.ts",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
@@ -66,6 +67,7 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@clack/prompts": "1.9.0",
     "@sanity/client": "8.17.0",
     "@tailwindcss/postcss": "4.3.5",
     "@tailwindcss/typography": "0.5.20",

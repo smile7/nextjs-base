@@ -42,6 +42,7 @@ Install with exact versions (`pnpm add -E`). Upgrade deliberately, one PR per ma
 | Email | resend | 6.39.0 | Transactional email API (fetch-based, works on Workers). |
 | | react-email | 6.11.16 | **v6 merged all components here.** `@react-email/components` is deprecated. Import from `react-email`. |
 | SEO | schema-dts | 2.1.0 | Typed JSON-LD. |
+| Scripts | @clack/prompts | 1.9.0 | `pnpm new-client` prompts (dev only). |
 | Tests | vitest | 5.1.1 | + @vitejs/plugin-react 6.3.0, jsdom 31.0.1, @testing-library/react 16.3.3 |
 | Lint/format | eslint | **9.39.x** | **Not 10.** `eslint-plugin-jsx-a11y` 6.10.2 (bundled by `eslint-config-next`) peers on ESLint ≤ 9. |
 | | eslint-config-next | 16.4.6 | Flat config; `next lint` was removed in Next 16, so run the ESLint CLI. |

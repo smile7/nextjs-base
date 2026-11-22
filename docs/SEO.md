@@ -83,7 +83,7 @@ One file per site, with the default-locale content first and EN links under `## 
 | LCP | ≤ 2.0 s | ≤ 1.8 s |
 | CLS | ≤ 0.05 | ≤ 0.02 |
 | INP | ≤ 200 ms | TBT ≤ 150 ms |
-| First-load JS (home) | — | ≤ 110 KB gzip |
+| First-load JS (home) | — | ≤ 250 KB gzip (Next 16 App Router + next-intl; Perf and TBT are the real gates) |
 | Total page weight (home) | — | ≤ 900 KB (first view) |
 | Lighthouse | — | Perf ≥ 95, A11y 100, BP ≥ 95, SEO 100 |
 
